@@ -30,7 +30,7 @@ const TOPPINGS = {
   'cashews': { name: 'Cashews', price: 0 },
   'peanuts': { name: 'Peanuts', price: 0 },
   'raisins': { name: 'Raisins', price: 0 },
-  'dryFruits': { name: 'Crushed Dry Fruits', price: 0 },
+  'walnut': { name: 'Walnut', price: 0 },
   'apple': { name: 'Apple', price: 0 },
   'blueberries': { name: 'Blueberries', price: 0 }
 };
