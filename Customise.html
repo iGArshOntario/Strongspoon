@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customise Your Strong Spoon</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <section class="order-container">
+    <h1 class="order-title">CUSTOMISE YOUR CUP </h1>
+
+    <form class="order-form" action="/submit-order" method="POST">
+
+      <div class="form-group">
+        <label for="flavour"><h1>Select Flavour *</h1></label>
+        <select id="flavour" name="flavour" required>
+          <option value="">-- Choose flavour --</option>
+          <option value="brownie">Brownie Issues(CHOCOLATE)</option>
+          <option value="powerMix">Power MiX(PEANUT BUTTER)</option>
+          <option value="comingSoon1" disabled>Coming Soon</option>
+          <option value="comingSoon2" disabled>Coming Soon</option>
+        </select>
+      </div>
+
+     
+
+      <div class="form-group">
+        <label><H2>Toppings (choose one or more)</H2></label>
+        <label><h3><input type="checkbox" name="toppings" value="almonds"> Almonds</h3></label><br>
+        <label><h3><input type="checkbox" name="toppings" value="cashews"> Cashews</h3></label><br>
+        <label><h3><input type="checkbox" name="toppings" value="peanuts"> Peanuts</h3></label><br>
+        <label><h3><input type="checkbox" name="toppings" value="raisins"> Raisins</h3></label><br>
+        <label><h3><input type="checkbox" name="toppings" value="dryFruits"> Crushed Dry Fruits</h3></label>
+        </div>
+
+    
+        <h1 class="title"> Add fresh Fruits</h1>
+      
+      <label><h3><input type="checkbox" name="toppings" value="apple"> Apple</h3></label><br>
+      <label><h3><input type="checkbox" name="toppings" value="blueberries"> Blueberries</h3></label><br>
+      
+      
+
+      <div class="form-group">
+        <label for="notes">Special Instructions or Allergies</label>
+        <textarea id="notes" name="notes" rows="3" placeholder="Optional"></textarea>
+      </div>
+
+      <div class="form-group">
+        
+        <label for="email">Your Email *</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+        
+        <label for="phone"> Your Phone*</label>
+        <input type="number" id="number" name="phone" placeholder="306-XXX-XXXX" required autocomplete="phone">
+
+        <label for="address">Address with postal code*</label><input type="text" id="address" name="address" placeholder="1234 street, Regina, SK, S4S 0A1"required autocomplete="address">
+        
+      </div>
+
+      <button type="submit" class="btn teal">Place Order</button>
+      
+
+    <footer>
+      <a href="https://strongspoon.ca" target="_blank">strongspoon.ca</a>
+    </footer>
+  </section>
+
+</body>
+</html>

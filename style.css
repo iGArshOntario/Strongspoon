@@ -1,0 +1,422 @@
+/* -------------------------------------------------
+   GLOBAL RESET + BASE STYLES
+-------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Great+Vibes&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* -------------------------------------------------
+   PAGE 1: INTRO (BITE INTO BETTER)
+-------------------------------------------------- */
+.hero {
+  margin-top: 40px;
+}
+
+.logo {
+  width: 280px;
+  max-width: 90%;
+  border-radius: 12px;
+  box-shadow: 0 4px 25px rgba(255, 255, 255, 0.08);
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+.tagline {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-top: 20px;
+}
+
+.about {
+  max-width: 600px;
+  margin-top: 30px;
+  font-size: 1rem;
+  color: #eaeaea;
+}
+
+.about p {
+  margin-bottom: 20px;
+}
+
+/* -------------------------------------------------
+   PAGE 2: GUESS PAGE (EINSTEIN STYLE)
+-------------------------------------------------- */
+.container {
+  max-width: 600px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #ccc;
+  line-height: 1.5;
+  margin-bottom: 40px;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+/* Buttons (shared across all pages) */
+.btn {
+  border: none;
+  outline: none;
+  font-size: 1.1rem;
+  padding: 15px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+.btn.teal {
+  background: linear-gradient(135deg, #006d6d, #009688);
+}
+
+.btn.teal:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
+}
+
+.btn.grey {
+  background: #555;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.icon {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+/* -------------------------------------------------
+   PAGE 3: PRODUCT PAGE (BROWNIE ISSUES)
+-------------------------------------------------- */
+  /* ---------- PRODUCT PAGE (CLEAN & CENTERED) ---------- */
+  .container {
+  max-width: 600px;
+}
+
+  .product-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 3rem;
+    color: #fff;
+    margin-bottom: 50px;
+    letter-spacing: 1px;
+    animation: fadeIn 1.2s ease-in-out;
+  }
+
+  .product-image {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .cup-png {
+    width: 280px;
+    max-width: 90%;
+    border-radius: 12px;
+    box-shadow: 0 4px 25px (255, 255, 255, 0.08);
+    animation: fadeIn 1.2s ease-in-out;
+  }
+
+  .ingredients {
+    color: #ddd;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 50px;
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeIn 1.2s ease-in-out;
+  }
+
+  .ingredients h3 {
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  /* Button stays same */
+  .btn.teal {
+    background: linear-gradient(135deg, #006d6d, #009688);
+    padding: 14px 35px;
+    font-size: 1.1rem;
+    border-radius: 40px;
+    transition: all 0.3s ease;
+  }
+
+  .btn.teal:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+  }
+
+  /* Mobile optimization */
+  @media (max-width: 480px) {
+    .product-title {
+      font-size: 2.3rem;
+    }
+
+    .choco-text {
+      font-size: 3.2rem;
+      letter-spacing: 2px;
+    }
+
+    .cup-img {
+      width: 500px;
+      margin-top: -250px;
+    }
+
+    .ingredients {
+      font-size: 0.75rem;
+      line-height: 1.6;
+    }
+  }
+/* ---------- ORDER FORM PAGE ---------- */
+.order-container {
+  text-align: center;
+  margin-top: 60px;
+  max-width: 650px;
+  width: 90%;
+  padding: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.order-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  margin-bottom: 30px;
+}
+
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  text-align: left
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #ccc;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  background-color: #111;
+  color: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
+}
+
+.btn.teal {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.15rem;
+  border-radius: 50px;
+  margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+  .order-title {
+    font-size: 2rem;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 0.95rem;
+  }
+}
+/* -------------------------------------------------
+   PAGE 5: SIGN UP PAGE
+-------------------------------------------------- */
+.signup-container {
+  text-align: center;
+  max-width: 450px;
+  width: 90%;
+  margin: 70px auto;
+  padding: 40px 30px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.1);
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+.signup-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.signup-sub {
+  color: #ccc;
+  margin-bottom: 25px;
+  font-size: 1rem;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: left;
+}
+
+.signup-form label {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.signup-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #111;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+}
+
+
+.signup-form input:focus {
+  border: 1px solid #00bfa5;
+  background-color: #151515;
+}
+
+.signup-login {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #bbb;
+}
+
+.signup-login a {
+  color: #00bfa5;
+  text-decoration: none;
+}
+
+.signup-login a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile optimization */
+@media (max-width: 480px) {
+  .signup-container {
+    padding: 25px;
+  }
+  .signup-title {
+    font-size: 1.8rem;
+  }
+} 
+
+/* -------------------------------------------------
+   FOOTER
+-------------------------------------------------- */
+footer {
+  margin-top: 40px;
+  font-size: 0.9rem;
+}
+
+footer a {
+  color: #00bfa5;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #fff;
+}
+
+/* -------------------------------------------------
+   ANIMATIONS
+-------------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------------------------------------
+   MOBILE RESPONSIVENESS
+-------------------------------------------------- */
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .product-title {
+    font-size: 2rem;
+  }
+
+  .choco-text {
+    font-size: 3rem;
+  }
+
+  .cup-img {
+    width: 150px;
+    margin-top: -50px;
+  }
+}
