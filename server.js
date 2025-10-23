@@ -6,6 +6,31 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const PRODUCTS = {
+  'brownie': {
+    id: 'brownie',
+    name: 'Brownie Issues',
+    price: 8.99
+  },
+  'powerMix': {
+    id: 'powerMix',
+    name: 'Power Mix',
+    price: 8.99
+  }
+};
+
+const TOPPINGS = {
+  'almonds': { name: 'Almonds', price: 1.50 },
+  'cashews': { name: 'Cashews', price: 1.50 },
+  'peanuts': { name: 'Peanuts', price: 1.00 },
+  'raisins': { name: 'Raisins', price: 1.00 },
+  'dryFruits': { name: 'Crushed Dry Fruits', price: 2.00 },
+  'apple': { name: 'Apple', price: 1.50 },
+  'blueberries': { name: 'Blueberries', price: 2.00 }
+};
+
+const TAX_RATE = 0.13;
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
@@ -18,9 +43,60 @@ app.get('/get-stripe-key', (req, res) => {
 
 app.post('/create-payment-intent', async (req, res) => {
   try {
-    const { customer, items, total } = req.body;
+    const { customer, items } = req.body;
     
-    const amountInCents = Math.round(total * 100);
+    if (!items || items.length === 0) {
+      return res.status(400).json({ error: 'Cart is empty' });
+    }
+
+    let serverSubtotal = 0;
+    const validatedItems = [];
+
+    for (const item of items) {
+      const product = PRODUCTS[item.id];
+      if (!product) {
+        console.warn(`Invalid product ID: ${item.id}`);
+        return res.status(400).json({ error: `Invalid product: ${item.id}` });
+      }
+
+      let itemPrice = product.price;
+      let toppingsPrice = 0;
+      const validatedToppings = [];
+
+      if (!Number.isInteger(item.quantity) || item.quantity < 1) {
+        console.warn(`Invalid quantity for ${item.id}: ${item.quantity}`);
+        return res.status(400).json({ error: `Invalid quantity for ${item.name}` });
+      }
+
+      if (item.toppings && item.toppings.length > 0) {
+        for (const topping of item.toppings) {
+          const validTopping = Object.values(TOPPINGS).find(t => t.name === topping.name);
+          if (validTopping) {
+            toppingsPrice += validTopping.price;
+            validatedToppings.push(validTopping);
+          } else {
+            console.warn(`Invalid topping rejected: ${topping.name}`);
+            return res.status(400).json({ error: `Invalid topping: ${topping.name}` });
+          }
+        }
+      }
+
+      const itemTotal = (itemPrice + toppingsPrice) * item.quantity;
+      serverSubtotal += itemTotal;
+
+      validatedItems.push({
+        name: product.name,
+        quantity: item.quantity,
+        basePrice: itemPrice,
+        toppings: validatedToppings,
+        itemTotal: itemTotal
+      });
+    }
+
+    const serverTax = serverSubtotal * TAX_RATE;
+    const serverTotal = serverSubtotal + serverTax;
+
+    const amountInCents = Math.round(serverTotal * 100);
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInCents,
@@ -30,15 +106,16 @@ app.post('/create-payment-intent', async (req, res) => {
         customer_email: customer.email,
         customer_phone: customer.phone,
         customer_address: customer.address,
-        items: JSON.stringify(items.map(item => ({
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price
-        })))
+        items: JSON.stringify(validatedItems),
+        subtotal: serverSubtotal.toFixed(2),
+        tax: serverTax.toFixed(2),
+        total: serverTotal.toFixed(2)
       },
     });
 
-    console.log('Payment Intent Created:', paymentIntent.id, 'Amount:', total);
+    console.log('Payment Intent Created:', paymentIntent.id, 
+                'Amount:', serverTotal.toFixed(2), 'CAD',
+                'Items:', validatedItems.length);
 
     res.json({
       clientSecret: paymentIntent.client_secret,
