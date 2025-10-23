@@ -66,15 +66,27 @@ body {
 .about {
   max-width: 700px;
   margin-top: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   font-size: 0.85rem;
   font-weight: 300;
-  color: #999;
+  color: #fff;
   line-height: 1.6;
 }
 
 .about p {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  .about {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 0.8rem;
+  }
+  
+  .about p {
+    margin-bottom: 10px;
+  }
 }
 
 /* -------------------------------------------------
@@ -574,7 +586,7 @@ body {
    FOOTER
 -------------------------------------------------- */
 footer {
-  margin-top: 50px;
+  margin-top: 35px;
   margin-bottom: 50px;
   font-size: 0.9rem;
 }
@@ -590,6 +602,17 @@ footer .btn {
 footer .btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 35px rgba(0, 191, 165, 0.6);
+}
+
+@media (max-width: 768px) {
+  footer {
+    margin-top: 25px;
+  }
+  
+  footer .btn {
+    font-size: 1.2rem;
+    padding: 16px 45px;
+  }
 }
 
 footer a {
