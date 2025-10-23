@@ -1312,13 +1312,57 @@ footer a:hover {
 /* -------------------------------------------------
    MOBILE RESPONSIVENESS
 -------------------------------------------------- */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  .checkout-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .cart-title {
+    font-size: 2rem;
+  }
+  
+  .checkout-title {
+    font-size: 2rem;
+  }
+  
+  .cart-item {
+    padding: 15px;
+  }
+  
+  .item-info {
+    min-width: 100%;
+  }
+  
+  .item-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .cart-actions {
+    flex-direction: column;
+  }
+  
+  .cart-actions .btn {
+    width: 100%;
+    min-width: 100%;
+  }
+}
+
+/* Mobile - iPhone 15 Pro and similar (480px and below) */
 @media (max-width: 480px) {
+  body {
+    padding: 15px 10px;
+  }
+  
   .title {
     font-size: 1.6rem;
   }
 
   .subtitle {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .product-title {
@@ -1333,5 +1377,232 @@ footer a:hover {
   .cup-img {
     width: 150px;
     margin-top: -50px;
+  }
+  
+  /* Cart Page Mobile Enhancements */
+  .cart-container {
+    margin: 10px auto;
+    padding: 0 5px;
+  }
+  
+  .cart-title {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+  }
+  
+  .cart-header {
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+  
+  .btn-link {
+    font-size: 0.9rem;
+  }
+  
+  .cart-item {
+    padding: 15px 12px;
+    margin-bottom: 12px;
+    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .cart-item:hover {
+    transform: none;
+  }
+  
+  .item-info {
+    width: 100%;
+    min-width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .item-info h3 {
+    font-size: 1.1rem;
+  }
+  
+  .item-description {
+    font-size: 0.85rem;
+  }
+  
+  .item-toppings {
+    font-size: 0.8rem;
+  }
+  
+  .item-controls {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .quantity-controls {
+    padding: 8px 12px;
+  }
+  
+  .qty-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 1.3rem;
+  }
+  
+  .quantity {
+    min-width: 35px;
+    font-size: 1.1rem;
+  }
+  
+  .item-price {
+    font-size: 1.3rem;
+    min-width: auto;
+    order: -1;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 8px;
+  }
+  
+  .remove-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+  }
+  
+  .cart-summary {
+    padding: 18px 15px;
+    margin-bottom: 20px;
+  }
+  
+  .summary-row {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .summary-row.total {
+    font-size: 1.4rem;
+    padding-top: 12px;
+  }
+  
+  .cart-actions {
+    gap: 12px;
+  }
+  
+  .cart-actions .btn {
+    padding: 16px 30px;
+    font-size: 1rem;
+  }
+  
+  /* Checkout Page Mobile Enhancements */
+  .checkout-container {
+    margin: 10px auto;
+    padding: 0 5px;
+  }
+  
+  .checkout-title {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+  }
+  
+  .checkout-header {
+    margin-bottom: 20px;
+  }
+  
+  .checkout-content {
+    gap: 15px;
+  }
+  
+  .checkout-left,
+  .checkout-right {
+    padding: 18px 15px;
+    border-radius: 10px;
+  }
+  
+  .checkout-left h2,
+  .checkout-right h2 {
+    font-size: 1.15rem;
+    margin-bottom: 15px;
+  }
+  
+  .checkout-item {
+    padding: 10px 0;
+    font-size: 0.9rem;
+  }
+  
+  .checkout-item-details small {
+    font-size: 0.8rem;
+  }
+  
+  .checkout-item-price {
+    font-size: 1rem;
+  }
+  
+  .checkout-summary {
+    padding: 12px;
+  }
+  
+  .form-group label {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+  
+  #card-element {
+    padding: 14px;
+  }
+  
+  .btn.teal {
+    padding: 16px 30px;
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+  
+  .payment-message {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  
+  /* Empty cart mobile */
+  .empty-cart {
+    padding: 40px 15px;
+  }
+  
+  .empty-cart h2 {
+    font-size: 1.3rem;
+  }
+  
+  .empty-cart p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra small devices - iPhone SE and similar (375px and below) */
+@media (max-width: 375px) {
+  .cart-title,
+  .checkout-title {
+    font-size: 1.6rem;
+  }
+  
+  .cart-item {
+    padding: 12px 10px;
+  }
+  
+  .item-info h3 {
+    font-size: 1rem;
+  }
+  
+  .qty-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .checkout-left,
+  .checkout-right {
+    padding: 15px 12px;
   }
 }
