@@ -196,9 +196,47 @@
   </div>
 
   <script>
+    let adminCredentials = null;
+    
+    function promptAdminLogin() {
+      const password = prompt('Enter admin password:');
+      if (!password) {
+        return null;
+      }
+      const credentials = btoa('admin:' + password);
+      return credentials;
+    }
+    
     async function loadOrders() {
       try {
-        const response = await fetch('/admin/orders');
+        // Get credentials if not already set
+        if (!adminCredentials) {
+          adminCredentials = promptAdminLogin();
+          if (!adminCredentials) {
+            document.getElementById('ordersContainer').innerHTML = 
+              '<div class="no-orders"><h2>Login Required</h2><p>Please refresh the page and enter admin credentials.</p></div>';
+            return;
+          }
+        }
+        
+        const response = await fetch('/admin/orders', {
+          headers: {
+            'Authorization': 'Basic ' + adminCredentials
+          }
+        });
+        
+        // Handle authentication failure
+        if (response.status === 401) {
+          alert('Invalid admin credentials. Please try again.');
+          adminCredentials = null;
+          loadOrders();
+          return;
+        }
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch orders');
+        }
+        
         const data = await response.json();
         
         const orders = data.orders || [];
