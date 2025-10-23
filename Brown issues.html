@@ -30,7 +30,8 @@
     </div>
 
     <div class="product-price">
-      <h2>$8.99</h2>
+      <h2>$9.99 <span id="taxIncludedProduct" class="tax-note">(Tax Included)</span></h2>
+      <p class="product-size">Size: 250g</p>
     </div>
 
     <a href="Customise.html" class="btn teal">Customise Your Cup</a>
@@ -38,5 +39,13 @@
 
   <script src="products.js"></script>
   <script src="script.js"></script>
+  <script>
+    if (typeof OFFER_MODE !== 'undefined') {
+      const taxNote = document.getElementById('taxIncludedProduct');
+      if (taxNote) {
+        taxNote.style.display = OFFER_MODE ? 'inline' : 'none';
+      }
+    }
+  </script>
 </body>
 </html>

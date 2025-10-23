@@ -110,11 +110,8 @@ class ShoppingCart {
 
   getTotal() {
     return this.items.reduce((total, item) => {
-      const basePrice = item.price || 0;
-      const toppingsPrice = (item.toppings || []).reduce((sum, topping) => 
-        sum + (topping.price || 0), 0
-      );
-      return total + ((basePrice + toppingsPrice) * item.quantity);
+      const itemPrice = PRODUCT_PRICE;
+      return total + (itemPrice * item.quantity);
     }, 0);
   }
 

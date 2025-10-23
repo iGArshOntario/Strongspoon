@@ -656,6 +656,20 @@ footer a:hover {
   border-radius: 8px;
 }
 
+.tax-note {
+  font-size: 0.6em;
+  color: #00bfa5;
+  font-weight: 400;
+  font-family: 'Poppins', sans-serif;
+}
+
+.product-size {
+  font-size: 1rem;
+  color: #999;
+  margin-top: 5px;
+  font-weight: 400;
+}
+
 .cart-count {
   background: #ff5722;
   color: white;

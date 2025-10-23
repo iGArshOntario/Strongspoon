@@ -10,6 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (October 23, 2025)
 
+### Flat Pricing Model - $9.99 (Tax Included) (Latest)
+- **New Pricing Structure**: Changed from $8.99 + toppings + 13% tax to flat $9.99 per cup (tax-included)
+- **Product Size**: All yogurt cups are now standardized at 250g
+- **Free Toppings**: All toppings (almonds, cashews, peanuts, raisins, dry fruits, apple, blueberries) are now included at no extra charge
+- **OFFER_MODE Toggle**: Added simple boolean switch in products.js to enable/disable "Tax Included" message display
+- **Simplified Cart**: Removed tax calculation rows, now shows just Total with optional "Tax Included" note
+- **Server Validation**: Updated payment processing to validate $9.99 flat rate per item
+- **Product Pages**: Display "Price: $9.99 (Tax Included) - Size: 250g" with conditional visibility
+
+## Recent Changes (October 23, 2025)
+
 ### Shopping Cart & Payment System Implementation
 - **Added Complete Shopping Cart System**: Implemented full cart functionality with localStorage persistence
 - **Stripe Payment Integration**: Integrated Stripe for secure payment processing with test and live mode support
