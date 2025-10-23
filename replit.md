@@ -24,8 +24,8 @@ Preferred communication style: Simple, everyday language.
 ### Shopping Cart & Payment System Implementation
 - **Added Complete Shopping Cart System**: Implemented full cart functionality with localStorage persistence
 - **Stripe Payment Integration**: Integrated Stripe for secure payment processing with test and live mode support
-- **Product Pricing Structure**: Established pricing for yogurt flavors ($8.99) and toppings ($1.00-$2.00)
-- **Cart Management**: Add, remove, update quantities, and calculate totals with 13% HST tax
+- **Product Pricing Structure**: Flat $9.99 per cup (tax-included) with all toppings included
+- **Cart Management**: Add, remove, update quantities, and calculate totals with flat pricing
 - **Checkout Flow**: Complete checkout page with customer information and Stripe card element
 - **Backend Server**: Created Node.js/Express server to handle Stripe payment intents and API key management
 - **Cart Navigation**: Added cart icon with item counter across all pages
