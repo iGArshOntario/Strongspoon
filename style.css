@@ -65,15 +65,16 @@ body {
 
 .about {
   max-width: 700px;
-  margin-top: 40px;
-  font-size: 1.1rem;
+  margin-top: 30px;
+  margin-bottom: 40px;
+  font-size: 0.85rem;
   font-weight: 300;
-  color: #e0e0e0;
-  line-height: 1.8;
+  color: #999;
+  line-height: 1.6;
 }
 
 .about p {
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
 /* -------------------------------------------------
@@ -573,8 +574,22 @@ body {
    FOOTER
 -------------------------------------------------- */
 footer {
-  margin-top: 40px;
+  margin-top: 50px;
+  margin-bottom: 50px;
   font-size: 0.9rem;
+}
+
+footer .btn {
+  font-size: 1.3rem;
+  padding: 18px 50px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 25px rgba(0, 191, 165, 0.4);
+}
+
+footer .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 191, 165, 0.6);
 }
 
 footer a {
