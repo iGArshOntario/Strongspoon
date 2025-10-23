@@ -64,24 +64,31 @@ if (orderForm) {
   orderForm.addEventListener('submit', e => {
     e.preventDefault();
 
-    const flavour = orderForm.querySelector('select:nth-of-type(1)').value;
-    const protein = orderForm.querySelector('select:nth-of-type(2)').value;
+    const flavour = orderForm.querySelector('#flavour') ? 
+      orderForm.querySelector('#flavour').value : 'Not selected';
     const toppings = Array.from(orderForm.querySelectorAll('input[type="checkbox"]:checked'))
-      .map(t => t.parentNode.textContent.trim());
-    const sweetness = orderForm.querySelector('input[type="range"]') ? 
-      orderForm.querySelector('input[type="range"]').value : "default";
-
-    const note = orderForm.querySelector('textarea') ? 
-      orderForm.querySelector('textarea').value.trim() : "";
+      .map(t => t.value);
+    const note = orderForm.querySelector('#notes') ? 
+      orderForm.querySelector('#notes').value.trim() : "";
+    const email = orderForm.querySelector('#email') ? 
+      orderForm.querySelector('#email').value : "";
+    const phone = orderForm.querySelector('#phone') ? 
+      orderForm.querySelector('#phone').value : "";
+    const address = orderForm.querySelector('#address') ? 
+      orderForm.querySelector('#address').value : "";
 
     const summary = `
 🧾 STRONG SPOON ORDER
 ---------------------
 Flavour: ${flavour}
-Protein: ${protein}
 Toppings: ${toppings.join(', ') || 'None'}
-Sweetness: ${sweetness}/10
 Notes: ${note || 'None'}
+
+DELIVERY INFO
+---------------------
+Email: ${email}
+Phone: ${phone}
+Address: ${address}
 `;
 
     alert(summary);
