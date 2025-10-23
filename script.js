@@ -57,46 +57,6 @@ if (loginForm) {
 }
 
 /* -----------------------------
-   ORDER FORM (CUSTOMISE)
------------------------------- */
-const orderForm = document.getElementById('orderForm');
-if (orderForm) {
-  orderForm.addEventListener('submit', e => {
-    e.preventDefault();
-
-    const flavour = orderForm.querySelector('#flavour') ? 
-      orderForm.querySelector('#flavour').value : 'Not selected';
-    const toppings = Array.from(orderForm.querySelectorAll('input[type="checkbox"]:checked'))
-      .map(t => t.value);
-    const note = orderForm.querySelector('#notes') ? 
-      orderForm.querySelector('#notes').value.trim() : "";
-    const email = orderForm.querySelector('#email') ? 
-      orderForm.querySelector('#email').value : "";
-    const phone = orderForm.querySelector('#phone') ? 
-      orderForm.querySelector('#phone').value : "";
-    const address = orderForm.querySelector('#address') ? 
-      orderForm.querySelector('#address').value : "";
-
-    const summary = `
-🧾 STRONG SPOON ORDER
----------------------
-Flavour: ${flavour}
-Toppings: ${toppings.join(', ') || 'None'}
-Notes: ${note || 'None'}
-
-DELIVERY INFO
----------------------
-Email: ${email}
-Phone: ${phone}
-Address: ${address}
-`;
-
-    alert(summary);
-    orderForm.reset();
-  });
-}
-
-/* -----------------------------
    SHOPPING CART FUNCTIONALITY
 ------------------------------ */
 class ShoppingCart {
