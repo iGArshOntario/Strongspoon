@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power Mix | Strong Spoon</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="cart-nav">
+    <a href="cart.html" class="cart-icon">
+      🛒 <span class="cart-count">0</span>
+    </a>
+  </div>
+
+  <section class="product-container">
+    <h1 class="product-title">Power Mix</h1>
+    <div class="product-image">
+      <img src="Peanut.png" alt="Strong Spoon Cup" class="cup-png">
+    </div>
+
+    <div class="ingredients">
+      <h3>Ingredients:</h3>
+      <p>
+        Greek Yogurt, Peanut butter, Almonds, Cashews, Peanuts, Raisins, 
+        Walnut, Apple, Blueberries, 
+        No sugar added, 40g+ protein until customised.
+      </p>
+    </div>
+
+    <div class="product-price">
+      <h2>$9.99 <span id="taxIncludedProduct" class="tax-note">(Tax Included)</span></h2>
+      <p class="product-size">Size: 250g</p>
+    </div>
+
+    <a href="Customise.html" class="btn teal">Customise Your Cup</a>
+  </section>
+
+  <script src="products.js"></script>
+  <script src="script.js"></script>
+  <script>
+    if (typeof OFFER_MODE !== 'undefined') {
+      const taxNote = document.getElementById('taxIncludedProduct');
+      if (taxNote) {
+        taxNote.style.display = OFFER_MODE ? 'inline' : 'none';
+      }
+    }
+  </script>
+</body>
+</html>
