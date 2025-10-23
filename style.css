@@ -107,9 +107,10 @@ body {
 }
 
 .subtitle {
-  font-size: 1.1rem;
-  color: #ccc;
-  line-height: 1.5;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: #fff;
+  line-height: 1.6;
   margin-bottom: 40px;
   animation: fadeIn 1.2s ease-in-out;
 }
@@ -117,18 +118,20 @@ body {
 .button-group {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 18px;
   width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 /* Buttons (shared across all pages) */
 .btn {
   border: none;
   outline: none;
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding: 16px 32px;
-  border-radius: 50px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 18px 40px;
+  border-radius: 12px;
   cursor: pointer;
   color: #fff;
   display: inline-flex;
@@ -139,27 +142,48 @@ body {
   text-decoration: none;
   animation: fadeIn 1.2s ease-in-out;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn.teal {
-  background: linear-gradient(135deg, #006d6d, #009688);
-  box-shadow: 0 4px 15px rgba(0, 150, 136, 0.3);
+  background: linear-gradient(135deg, #00bfa5, #009688);
+  box-shadow: 0 6px 20px rgba(0, 191, 165, 0.4),
+              0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn.teal:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(0, 255, 204, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 191, 165, 0.6),
+              0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .btn.teal:active {
-  transform: translateY(0px) scale(0.98);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 191, 165, 0.4);
 }
 
 .btn.grey {
-  background: #555;
-  color: #ccc;
+  background: rgba(255, 255, 255, 0.1);
+  color: #666;
   cursor: not-allowed;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .icon {
