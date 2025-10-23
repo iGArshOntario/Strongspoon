@@ -144,7 +144,117 @@ const cart = new ShoppingCart();
 ------------------------------ */
 document.addEventListener('DOMContentLoaded', () => {
   cart.updateCartCount();
+  initFloatingCartIcon();
 });
+
+/* -----------------------------
+   FLOATING CART ICON (DRAGGABLE)
+------------------------------ */
+function initFloatingCartIcon() {
+  const cartNav = document.querySelector('.cart-nav');
+  if (!cartNav) return;
+
+  let isDragging = false;
+  let currentX;
+  let currentY;
+  let initialX;
+  let initialY;
+  let xOffset = 0;
+  let yOffset = 0;
+
+  // Load saved position
+  const savedPos = localStorage.getItem('cartIconPosition');
+  if (savedPos) {
+    const { x, y } = JSON.parse(savedPos);
+    xOffset = x;
+    yOffset = y;
+    setTranslate(x, y, cartNav);
+  }
+
+  // Mouse events
+  cartNav.addEventListener('mousedown', dragStart);
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('mouseup', dragEnd);
+
+  // Touch events
+  cartNav.addEventListener('touchstart', dragStart, { passive: false });
+  document.addEventListener('touchmove', drag, { passive: false });
+  document.addEventListener('touchend', dragEnd);
+
+  function dragStart(e) {
+    // Don't drag if clicking on the link itself
+    if (e.target.closest('a.cart-icon')) {
+      const rect = cartNav.getBoundingClientRect();
+      
+      if (e.type === 'touchstart') {
+        initialX = e.touches[0].clientX - xOffset;
+        initialY = e.touches[0].clientY - yOffset;
+      } else {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+      }
+
+      isDragging = true;
+      cartNav.style.transition = 'none';
+    }
+  }
+
+  function drag(e) {
+    if (isDragging) {
+      e.preventDefault();
+
+      if (e.type === 'touchmove') {
+        currentX = e.touches[0].clientX - initialX;
+        currentY = e.touches[0].clientY - initialY;
+      } else {
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+      }
+
+      xOffset = currentX;
+      yOffset = currentY;
+
+      setTranslate(currentX, currentY, cartNav);
+    }
+  }
+
+  function dragEnd(e) {
+    if (isDragging) {
+      initialX = currentX;
+      initialY = currentY;
+
+      // Snap to edges
+      snapToEdge(cartNav);
+      
+      isDragging = false;
+      cartNav.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+      
+      // Save position
+      localStorage.setItem('cartIconPosition', JSON.stringify({ x: xOffset, y: yOffset }));
+    }
+  }
+
+  function setTranslate(xPos, yPos, el) {
+    el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+  }
+
+  function snapToEdge(el) {
+    const rect = el.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    // Keep within bounds
+    const maxX = viewportWidth - rect.width - 20;
+    const maxY = viewportHeight - rect.height - 20;
+    const minX = -rect.left + 20;
+    const minY = -rect.top + 20;
+    
+    xOffset = Math.max(minX, Math.min(xOffset, maxX));
+    yOffset = Math.max(minY, Math.min(yOffset, maxY));
+    
+    setTranslate(xOffset, yOffset, el);
+  }
+}
 
 /* -----------------------------
    FADE-IN ON LOAD

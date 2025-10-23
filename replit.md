@@ -32,6 +32,14 @@ Preferred communication style: Simple, everyday language.
 - **Better Spacing**: Improved padding, margins, and line-height throughout for better readability
 - **Professional Polish**: Overall refinement of UI for a more premium, cohesive look
 
+### Floating Cart Icon (Apple Assistive Touch Style)
+- **Draggable Cart**: Cart icon can now be dragged anywhere on the screen
+- **Touch Support**: Works with both mouse and touch gestures
+- **Position Memory**: Remembers your preferred position using localStorage
+- **Smooth Animations**: Fluid drag-and-drop with smooth transitions
+- **Enhanced Shadows**: Deeper shadows and backdrop blur for floating effect
+- **Grab Cursor**: Visual feedback showing it's draggable
+
 ## System Architecture
 
 ### Frontend Architecture
