@@ -128,9 +128,91 @@
       text-transform: uppercase;
     }
 
+    .status-pending {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+    }
+
     .status-completed {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196f3;
+    }
+
+    .status-delivered {
       background: rgba(76, 175, 80, 0.2);
       color: #4caf50;
+    }
+
+    .status-select {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .status-select:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .delivery-proof-btn {
+      background: rgba(0, 191, 165, 0.2);
+      border: 1px solid #00bfa5;
+      color: #00bfa5;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .delivery-proof-btn:hover {
+      background: rgba(0, 191, 165, 0.3);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      max-width: 800px;
+      max-height: 90vh;
+      position: relative;
+    }
+
+    .modal-content img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 12px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      background: #00bfa5;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
     }
 
     .loading {
@@ -175,8 +257,16 @@
 
     <div class="stats-container">
       <div class="stat-card">
-        <div class="stat-label">Total Orders</div>
-        <div class="stat-value" id="totalOrders">-</div>
+        <div class="stat-label">Pending Orders</div>
+        <div class="stat-value" style="color: #ffc107;" id="pendingOrders">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Completed Orders</div>
+        <div class="stat-value" style="color: #2196f3;" id="completedOrders">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Delivered Orders</div>
+        <div class="stat-value" style="color: #4caf50;" id="deliveredOrders">-</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Total Revenue</div>
@@ -195,6 +285,16 @@
     </div>
   </div>
 
+  <div id="deliveryProofModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeDeliveryProof()">Close</button>
+      <img id="deliveryProofImage" src="" alt="Delivery Proof">
+      <div style="margin-top: 15px; color: white; text-align: center;">
+        <p id="deliveryInfo"></p>
+      </div>
+    </div>
+  </div>
+
   <script>
     let adminCredentials = null;
     
@@ -207,6 +307,39 @@
       return credentials;
     }
     
+    async function changeOrderStatus(orderId, newStatus) {
+      try {
+        const response = await fetch(`/admin/orders/${orderId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Basic ' + adminCredentials,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+        
+        loadOrders();
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update order status');
+      }
+    }
+
+    function showDeliveryProof(deliveryProof, deliveryPerson, deliveredAt) {
+      document.getElementById('deliveryProofImage').src = deliveryProof;
+      document.getElementById('deliveryInfo').textContent = 
+        `Delivered by: ${deliveryPerson} on ${new Date(deliveredAt).toLocaleString()}`;
+      document.getElementById('deliveryProofModal').classList.add('active');
+    }
+
+    function closeDeliveryProof() {
+      document.getElementById('deliveryProofModal').classList.remove('active');
+    }
+
     async function loadOrders() {
       try {
         // Get credentials if not already set
@@ -217,6 +350,22 @@
               '<div class="no-orders"><h2>Login Required</h2><p>Please refresh the page and enter admin credentials.</p></div>';
             return;
           }
+        }
+
+        // Load statistics
+        const statsResponse = await fetch('/admin/orders/stats', {
+          headers: {
+            'Authorization': 'Basic ' + adminCredentials
+          }
+        });
+        
+        if (statsResponse.ok) {
+          const stats = await statsResponse.json();
+          document.getElementById('pendingOrders').textContent = stats.pending || 0;
+          document.getElementById('completedOrders').textContent = stats.completed || 0;
+          document.getElementById('deliveredOrders').textContent = stats.delivered || 0;
+          document.getElementById('totalRevenue').textContent = `$${stats.totalRevenue.toFixed(2)}`;
+          document.getElementById('todayOrders').textContent = stats.todayOrders || 0;
         }
         
         const response = await fetch('/admin/orders', {
@@ -241,21 +390,6 @@
         
         const orders = data.orders || [];
         
-        // Calculate stats
-        const totalOrders = orders.length;
-        const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.total_amount), 0);
-        
-        const today = new Date().toDateString();
-        const todayOrders = orders.filter(order => {
-          const orderDate = new Date(order.created_at).toDateString();
-          return orderDate === today;
-        }).length;
-        
-        // Update stats
-        document.getElementById('totalOrders').textContent = totalOrders;
-        document.getElementById('totalRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
-        document.getElementById('todayOrders').textContent = todayOrders;
-        
         // Render orders table
         const container = document.getElementById('ordersContainer');
         
@@ -274,6 +408,7 @@
                 <th>Items</th>
                 <th>Total</th>
                 <th>Status</th>
+                <th>Delivery</th>
                 <th>Date</th>
               </tr>
             </thead>
@@ -305,11 +440,20 @@
                     </td>
                     <td><strong>$${parseFloat(order.total_amount).toFixed(2)}</strong></td>
                     <td>
-                      <span class="status-badge status-${order.order_status}">
-                        ${order.order_status}
-                      </span>
+                      <select class="status-select" onchange="changeOrderStatus(${order.id}, this.value)">
+                        <option value="pending" ${order.order_status === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="completed" ${order.order_status === 'completed' ? 'selected' : ''}>Completed</option>
+                        <option value="delivered" ${order.order_status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                      </select>
                     </td>
-                    <td>${date.toLocaleDateString()} ${date.toLocaleTimeString()}</td>
+                    <td>
+                      ${order.delivery_proof ? `
+                        <button class="delivery-proof-btn" onclick='showDeliveryProof(\`${order.delivery_proof}\`, "${order.delivery_person}", "${order.delivered_at}")'>
+                          View Proof
+                        </button>
+                      ` : '<span style="color: #666; font-size: 0.85rem;">No proof</span>'}
+                    </td>
+                    <td>${date.toLocaleDateString()}<br>${date.toLocaleTimeString()}</td>
                   </tr>
                 `;
               }).join('')}

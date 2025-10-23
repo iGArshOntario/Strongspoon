@@ -294,7 +294,7 @@ app.post('/save-order', async (req, res) => {
       metadata.items || '[]',
       totalAmount,
       paymentIntentId,
-      'completed'
+      'pending'
     ];
     
     const result = await pool.query(query, values);
@@ -337,6 +337,13 @@ if (!process.env.ADMIN_PASSWORD) {
 }
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
+// Delivery authentication - REQUIRED in environment variables
+if (!process.env.DELIVERY_PASSWORD) {
+  console.warn('⚠️  WARNING: DELIVERY_PASSWORD not set! Delivery endpoint will be inaccessible.');
+  console.warn('⚠️  Set DELIVERY_PASSWORD environment variable to enable delivery access.');
+}
+const DELIVERY_PASSWORD = process.env.DELIVERY_PASSWORD;
+
 // Get all orders (admin endpoint with basic auth)
 app.get('/admin/orders', async (req, res) => {
   try {
@@ -375,6 +382,9 @@ app.get('/admin/orders', async (req, res) => {
         total_amount,
         stripe_payment_id,
         order_status,
+        delivery_proof,
+        delivery_person,
+        delivered_at,
         created_at
       FROM orders
       ORDER BY created_at DESC
@@ -392,6 +402,226 @@ app.get('/admin/orders', async (req, res) => {
   }
 });
 
+
+// Get order statistics (admin endpoint)
+app.get('/admin/orders/stats', async (req, res) => {
+  try {
+    if (!ADMIN_PASSWORD) {
+      return res.status(503).json({ error: 'Admin access not configured' });
+    }
+    
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    
+    if (username !== 'admin' || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const statsQuery = `
+      SELECT 
+        order_status,
+        COUNT(*) as count,
+        SUM(total_amount) as total_revenue
+      FROM orders
+      GROUP BY order_status
+    `;
+    
+    const todayQuery = `
+      SELECT COUNT(*) as count
+      FROM orders
+      WHERE DATE(created_at) = CURRENT_DATE
+    `;
+    
+    const statsResult = await pool.query(statsQuery);
+    const todayResult = await pool.query(todayQuery);
+    
+    const stats = {
+      pending: 0,
+      completed: 0,
+      delivered: 0,
+      totalRevenue: 0,
+      todayOrders: parseInt(todayResult.rows[0]?.count || 0)
+    };
+    
+    statsResult.rows.forEach(row => {
+      stats[row.order_status] = parseInt(row.count);
+      stats.totalRevenue += parseFloat(row.total_revenue || 0);
+    });
+    
+    res.json(stats);
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    res.status(500).json({ error: 'Failed to fetch statistics' });
+  }
+});
+
+// Update order status (admin endpoint)
+app.put('/admin/orders/:id/status', async (req, res) => {
+  try {
+    if (!ADMIN_PASSWORD) {
+      return res.status(503).json({ error: 'Admin access not configured' });
+    }
+    
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    
+    if (username !== 'admin' || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    if (!['pending', 'completed', 'delivered'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+    
+    const query = `
+      UPDATE orders
+      SET order_status = $1
+      WHERE id = $2
+      RETURNING id, order_number, order_status
+    `;
+    
+    const result = await pool.query(query, [status, id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    
+    res.json({ success: true, order: result.rows[0] });
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    res.status(500).json({ error: 'Failed to update order status' });
+  }
+});
+
+// Get orders for delivery (authenticated endpoint for delivery personnel)
+app.get('/delivery/orders', async (req, res) => {
+  try {
+    // Check if delivery password is configured
+    if (!DELIVERY_PASSWORD) {
+      return res.status(503).json({ 
+        error: 'Delivery access not configured. Set DELIVERY_PASSWORD environment variable.' 
+      });
+    }
+    
+    // Basic authentication check
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Delivery Access"');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    
+    if (username !== 'delivery' || password !== DELIVERY_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const query = `
+      SELECT 
+        id,
+        order_number,
+        customer_name,
+        customer_address,
+        customer_phone,
+        items,
+        total_amount,
+        order_status,
+        created_at
+      FROM orders
+      WHERE order_status IN ('pending', 'completed')
+      ORDER BY created_at ASC
+    `;
+    
+    const result = await pool.query(query);
+    res.json({ orders: result.rows });
+  } catch (error) {
+    console.error('Error fetching delivery orders:', error);
+    res.status(500).json({ error: 'Failed to fetch orders' });
+  }
+});
+
+// Submit delivery proof (authenticated delivery personnel endpoint)
+app.post('/delivery/orders/:id/proof', async (req, res) => {
+  try {
+    // Check if delivery password is configured
+    if (!DELIVERY_PASSWORD) {
+      return res.status(503).json({ 
+        error: 'Delivery access not configured. Set DELIVERY_PASSWORD environment variable.' 
+      });
+    }
+    
+    // Basic authentication check
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Delivery Access"');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    
+    if (username !== 'delivery' || password !== DELIVERY_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const { id } = req.params;
+    const { deliveryProof, deliveryPerson } = req.body;
+    
+    if (!deliveryProof || !deliveryPerson) {
+      return res.status(400).json({ error: 'Delivery proof and person name required' });
+    }
+    
+    // Validate base64 image
+    if (!deliveryProof.startsWith('data:image/')) {
+      return res.status(400).json({ error: 'Invalid image format' });
+    }
+    
+    const query = `
+      UPDATE orders
+      SET 
+        order_status = 'delivered',
+        delivery_proof = $1,
+        delivery_person = $2,
+        delivered_at = CURRENT_TIMESTAMP
+      WHERE id = $3
+      RETURNING id, order_number, order_status, delivered_at
+    `;
+    
+    const result = await pool.query(query, [deliveryProof, deliveryPerson, id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    
+    console.log('✅ Delivery proof uploaded for order:', result.rows[0].order_number);
+    res.json({ success: true, order: result.rows[0] });
+  } catch (error) {
+    console.error('Error submitting delivery proof:', error);
+    res.status(500).json({ error: 'Failed to submit delivery proof' });
+  }
+});
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Strong Spoon server running on port ${PORT}`);
