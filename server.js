@@ -3,6 +3,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors');
 const path = require('path');
 const { Pool } = require('pg');
+const { Resend } = require('resend');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,8 +16,122 @@ const pool = new Pool({
   }
 });
 
+// Resend email client
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
+if (!process.env.RESEND_API_KEY) {
+  console.warn('⚠️  WARNING: RESEND_API_KEY not set! Email confirmations will be disabled.');
+  console.warn('⚠️  Add RESEND_API_KEY to Replit Secrets to enable order confirmation emails.');
+}
+
 const PRODUCT_PRICE = 9.99;
 const PRODUCT_SIZE = '250g';
+
+// Email sending function
+async function sendOrderConfirmation(orderData) {
+  if (!resend) {
+    console.warn('Email service not configured - skipping confirmation email');
+    return { success: false, reason: 'No email service' };
+  }
+
+  try {
+    const items = JSON.parse(orderData.items);
+    
+    // Build items list HTML
+    const itemsHTML = items.map(item => `
+      <div style="background: #f8f8f8; padding: 15px; margin: 10px 0; border-radius: 8px;">
+        <strong style="color: #009688; font-size: 16px;">${item.name}</strong>
+        ${item.toppings && item.toppings.length > 0 ? `
+          <div style="margin-top: 8px; color: #666;">
+            <strong>Toppings:</strong> ${item.toppings.map(t => t.name).join(', ')}
+          </div>
+        ` : ''}
+        <div style="margin-top: 8px; color: #333;">
+          Quantity: ${item.quantity} × $${PRODUCT_PRICE} = $${(item.quantity * PRODUCT_PRICE).toFixed(2)}
+        </div>
+      </div>
+    `).join('');
+
+    const emailHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #009688; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .content { background: white; padding: 30px; border: 1px solid #ddd; border-top: none; }
+    .footer { background: #f4f4f4; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; font-size: 14px; color: #666; }
+    .order-number { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0; }
+    .total { background: #009688; color: white; padding: 15px; text-align: center; font-size: 20px; border-radius: 8px; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="margin: 0; font-size: 28px;">💪 Strong Spoon</h1>
+      <p style="margin: 10px 0 0 0; font-size: 16px;">Order Confirmation</p>
+    </div>
+    
+    <div class="content">
+      <h2 style="color: #009688;">Thank You, ${orderData.customer_name}!</h2>
+      <p>Your order has been confirmed and will be prepared shortly.</p>
+      
+      <div class="order-number">
+        <strong>Order Number:</strong> ${orderData.order_number}<br>
+        <strong>Date:</strong> ${new Date(orderData.created_at).toLocaleString('en-CA', { 
+          timeZone: 'America/Toronto',
+          dateStyle: 'long',
+          timeStyle: 'short'
+        })}
+      </div>
+      
+      <h3 style="color: #009688;">Order Details</h3>
+      ${itemsHTML}
+      
+      <div class="total">
+        <strong>Total Paid: $${orderData.total_amount} CAD</strong><br>
+        <span style="font-size: 14px;">(Tax Included)</span>
+      </div>
+      
+      <h3 style="color: #009688;">Delivery Information</h3>
+      <div style="background: #f8f8f8; padding: 15px; border-radius: 8px;">
+        <strong>Name:</strong> ${orderData.customer_name}<br>
+        <strong>Email:</strong> ${orderData.customer_email}<br>
+        ${orderData.customer_phone ? `<strong>Phone:</strong> ${orderData.customer_phone}<br>` : ''}
+        ${orderData.customer_address ? `<strong>Address:</strong> ${orderData.customer_address}` : ''}
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p><strong>Strong Spoon - High-Protein Yogurt</strong></p>
+      <p>Questions about your order? Reply to this email or contact us.</p>
+      <p style="font-size: 12px; color: #999;">This is an automated confirmation email.</p>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+
+    const { data, error } = await resend.emails.send({
+      from: 'Strong Spoon <orders@resend.dev>',
+      to: [orderData.customer_email],
+      subject: `Order Confirmation - ${orderData.order_number}`,
+      html: emailHTML,
+    });
+
+    if (error) {
+      console.error('Error sending email:', error);
+      return { success: false, error };
+    }
+
+    console.log('✅ Order confirmation email sent:', data.id);
+    return { success: true, emailId: data.id };
+  } catch (error) {
+    console.error('Error in sendOrderConfirmation:', error);
+    return { success: false, error: error.message };
+  }
+}
 
 const PRODUCTS = {
   'brownie': {
@@ -186,10 +301,28 @@ app.post('/save-order', async (req, res) => {
     
     console.log('Order saved after payment verification:', result.rows[0].order_number);
     
+    // Send order confirmation email
+    const orderData = {
+      order_number: result.rows[0].order_number,
+      customer_name: metadata.customer_name || '',
+      customer_email: metadata.customer_email || '',
+      customer_phone: metadata.customer_phone || '',
+      customer_address: metadata.customer_address || '',
+      items: metadata.items || '[]',
+      total_amount: totalAmount,
+      created_at: result.rows[0].created_at
+    };
+    
+    const emailResult = await sendOrderConfirmation(orderData);
+    if (emailResult.success) {
+      console.log('✅ Confirmation email sent to:', metadata.customer_email);
+    }
+    
     res.json({
       success: true,
       orderNumber: result.rows[0].order_number,
-      orderId: result.rows[0].id
+      orderId: result.rows[0].id,
+      emailSent: emailResult.success
     });
   } catch (error) {
     console.error('Error saving order:', error);
@@ -263,4 +396,5 @@ app.get('/admin/orders', async (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Strong Spoon server running on port ${PORT}`);
   console.log(`Stripe configured: ${process.env.STRIPE_SECRET_KEY ? '✓' : '✗'}`);
+  console.log(`Email service: ${resend ? '✓ Enabled' : '✗ Disabled (set RESEND_API_KEY)'}`);
 });
