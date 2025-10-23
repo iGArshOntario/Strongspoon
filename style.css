@@ -596,9 +596,9 @@ footer a:hover {
 }
 
 .cart-icon {
-  background: linear-gradient(135deg, #006d6d, #009688);
-  color: #fff;
-  border: none;
+  background: #fff;
+  color: #000;
+  border: 2px solid rgba(0, 0, 0, 0.1);
   padding: 14px 20px;
   border-radius: 50px;
   cursor: grab;
@@ -608,8 +608,8 @@ footer a:hover {
   gap: 8px;
   transition: all 0.3s ease;
   text-decoration: none;
-  box-shadow: 0 8px 20px rgba(0, 150, 136, 0.4), 
-              0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), 
+              0 4px 10px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -621,8 +621,9 @@ footer a:hover {
 
 .cart-icon:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 30px rgba(0, 255, 204, 0.5),
-              0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+              0 5px 15px rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 191, 165, 0.3);
 }
 
 /* Mobile optimization for cart icon */
