@@ -3,24 +3,24 @@
   "short_name": "Strong Spoon",
   "description": "Order premium high-protein yogurt with custom toppings. $9.99 CAD per cup, all toppings included.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#009688",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "strongspoon-logo.jpeg",
+      "src": "/app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/app-icon.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "categories": ["food", "shopping"],
-  "screenshots": [
-    {
-      "src": "strongspoon-logo.jpeg",
-      "sizes": "512x512",
-      "type": "image/jpeg"
-    }
-  ]
+  "categories": ["food", "shopping"]
 }
