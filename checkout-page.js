@@ -139,7 +139,7 @@ form.addEventListener('submit', async (e) => {
 
     const { clientSecret } = await response.json();
 
-    const { error } = await stripe.confirmCardPayment(clientSecret, {
+    const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: cardElement,
         billing_details: {
@@ -149,28 +149,44 @@ form.addEventListener('submit', async (e) => {
       },
     });
 
-    if (error) {
-      messageDiv.textContent = error.message;
+    if (result.error) {
+      messageDiv.textContent = result.error.message;
       messageDiv.className = 'payment-message error';
     } else {
-      messageDiv.textContent = '✅ Payment successful! Thank you for your order.';
-      messageDiv.className = 'payment-message success';
-      cart.clear();
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 3000);
+      // Payment successful - save order to database
+      try {
+        const saveResponse = await fetch('/save-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paymentIntentId: result.paymentIntent.id
+          }),
+        });
+        
+        if (!saveResponse.ok) {
+          throw new Error('Failed to save order');
+        }
+        
+        const saveData = await saveResponse.json();
+        console.log('Order saved:', saveData.orderNumber);
+        
+        messageDiv.textContent = `✅ Payment successful! Order #${saveData.orderNumber}. Thank you!`;
+        messageDiv.className = 'payment-message success';
+        cart.clear();
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 3000);
+      } catch (saveError) {
+        console.error('Error saving order:', saveError);
+        messageDiv.textContent = '⚠️ Payment succeeded but order save failed. Please contact support with payment ID: ' + result.paymentIntent.id;
+        messageDiv.className = 'payment-message error';
+        // Don't clear cart in case user needs the info
+      }
     }
   } catch (error) {
-    console.log('Using test payment flow');
-    messageDiv.textContent = '✅ Test payment successful! Thank you for your order.';
-    messageDiv.className = 'payment-message success';
-    
-    console.log('Order placed:', orderData);
-    
-    cart.clear();
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 3000);
+    console.error('Payment error:', error);
+    messageDiv.textContent = 'Payment processing failed. Please check your card details and try again.';
+    messageDiv.className = 'payment-message error';
   }
 
   submitButton.disabled = false;
