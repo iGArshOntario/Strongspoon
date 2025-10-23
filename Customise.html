@@ -32,20 +32,48 @@
 
      
 
-      <div class="form-group">
-        <label><H2>Toppings (choose one or more)</H2></label>
-        <label><h3><input type="checkbox" name="toppings" value="almonds"> Almonds</h3></label><br>
-        <label><h3><input type="checkbox" name="toppings" value="cashews"> Cashews</h3></label><br>
-        <label><h3><input type="checkbox" name="toppings" value="peanuts"> Peanuts</h3></label><br>
-        <label><h3><input type="checkbox" name="toppings" value="raisins"> Raisins</h3></label><br>
-        <label><h3><input type="checkbox" name="toppings" value="dryFruits"> Crushed Dry Fruits</h3></label>
+      <div class="form-group toppings-section">
+        <h2 class="section-title">Toppings (choose one or more)</h2>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="almonds" name="toppings" value="almonds">
+          <label for="almonds"><h3>🌰 Almonds</h3></label>
         </div>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="cashews" name="toppings" value="cashews">
+          <label for="cashews"><h3>🥜 Cashews</h3></label>
+        </div>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="peanuts" name="toppings" value="peanuts">
+          <label for="peanuts"><h3>🥜 Peanuts</h3></label>
+        </div>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="raisins" name="toppings" value="raisins">
+          <label for="raisins"><h3>�葡 Raisins</h3></label>
+        </div>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="dryFruits" name="toppings" value="dryFruits">
+          <label for="dryFruits"><h3>🌰 Crushed Dry Fruits</h3></label>
+        </div>
+      </div>
 
-    
-        <h1 class="title"> Add fresh Fruits</h1>
-      
-      <label><h3><input type="checkbox" name="toppings" value="apple"> Apple</h3></label><br>
-      <label><h3><input type="checkbox" name="toppings" value="blueberries"> Blueberries</h3></label><br>
+      <div class="form-group fruits-section">
+        <h2 class="section-title">Add Fresh Fruits</h2>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="apple" name="toppings" value="apple">
+          <label for="apple"><h3>🍎 Apple</h3></label>
+        </div>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="blueberries" name="toppings" value="blueberries">
+          <label for="blueberries"><h3>🫐 Blueberries</h3></label>
+        </div>
+      </div>
       
       
 
