@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Strong Spoon</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  
+  <section class="checkout-container">
+    <div class="checkout-header">
+      <h1 class="checkout-title">CHECKOUT</h1>
+      <a href="cart.html" class="btn-link">← Back to Cart</a>
+    </div>
+
+    <div class="checkout-content">
+      <div class="checkout-left">
+        <h2>Order Summary</h2>
+        <div id="checkoutItems" class="checkout-items"></div>
+        
+        <div class="checkout-summary">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="checkoutSubtotal">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Tax (13% HST):</span>
+            <span id="checkoutTax">$0.00</span>
+          </div>
+          <div class="summary-row total">
+            <span><strong>Total:</strong></span>
+            <span id="checkoutTotal"><strong>$0.00</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="checkout-right">
+        <h2>Payment Information</h2>
+        
+        <form id="payment-form">
+          <div class="form-group">
+            <label for="customerName">Full Name *</label>
+            <input type="text" id="customerName" name="customerName" required>
+          </div>
+
+          <div class="form-group">
+            <label for="customerEmail">Email *</label>
+            <input type="email" id="customerEmail" name="customerEmail" required>
+          </div>
+
+          <div class="form-group">
+            <label for="customerPhone">Phone *</label>
+            <input type="tel" id="customerPhone" name="customerPhone" required>
+          </div>
+
+          <div class="form-group">
+            <label for="customerAddress">Delivery Address *</label>
+            <textarea id="customerAddress" name="customerAddress" rows="2" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Card Information</label>
+            <div id="card-element"></div>
+            <div id="card-errors" role="alert"></div>
+          </div>
+
+          <button type="submit" id="submit-payment" class="btn teal">
+            <span id="button-text">Pay Now</span>
+            <span id="spinner" class="spinner" style="display:none;"></span>
+          </button>
+        </form>
+
+        <div id="payment-message" class="payment-message"></div>
+      </div>
+    </div>
+  </section>
+
+  <script src="products.js"></script>
+  <script src="script.js"></script>
+  <script src="checkout-page.js"></script>
+</body>
+</html>

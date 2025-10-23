@@ -1,5 +1,5 @@
 entrypoint = "index.html"
-modules = ["web", "python-3.11"]
+modules = ["web", "python-3.11", "nodejs-20"]
 
 [nix]
 channel = "stable-24_11"
@@ -40,7 +40,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python -m http.server 5000"
+args = "node server.js"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
@@ -53,10 +53,6 @@ externalPort = 80
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 42235
-externalPort = 3000
 
 [agent]
 expertMode = true
