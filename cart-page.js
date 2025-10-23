@@ -1,10 +1,7 @@
-const TAX_RATE = 0.13;
-
 function renderCart() {
   const cartItemsContainer = document.getElementById('cartItems');
-  const subtotalEl = document.getElementById('subtotal');
-  const taxEl = document.getElementById('tax');
   const totalEl = document.getElementById('total');
+  const taxIncludedEl = document.getElementById('taxIncluded');
   const checkoutBtn = document.getElementById('checkoutBtn');
 
   if (cart.items.length === 0) {
@@ -15,9 +12,8 @@ function renderCart() {
         <a href="Html2.html" class="btn teal">Browse Products</a>
       </div>
     `;
-    subtotalEl.textContent = '$0.00';
-    taxEl.textContent = '$0.00';
     totalEl.textContent = '$0.00';
+    if (taxIncludedEl) taxIncludedEl.style.display = 'none';
     checkoutBtn.style.display = 'none';
     return;
   }
@@ -25,18 +21,17 @@ function renderCart() {
   checkoutBtn.style.display = 'inline-block';
 
   cartItemsContainer.innerHTML = cart.items.map((item, index) => {
-    const basePrice = item.price || 0;
-    const toppingsPrice = (item.toppings || []).reduce((sum, t) => sum + (t.price || 0), 0);
-    const itemTotal = (basePrice + toppingsPrice) * item.quantity;
+    const itemPrice = PRODUCT_PRICE;
+    const itemTotal = itemPrice * item.quantity;
 
     return `
       <div class="cart-item">
         <div class="item-info">
           <h3>${item.name}</h3>
-          <p class="item-description">${item.description || ''}</p>
+          <p class="item-description">${item.description || ''} - ${PRODUCT_SIZE}</p>
           ${item.toppings && item.toppings.length > 0 ? `
             <p class="item-toppings">
-              <strong>Toppings:</strong> ${item.toppings.map(t => `${t.name} (+$${t.price.toFixed(2)})`).join(', ')}
+              <strong>Toppings:</strong> ${item.toppings.map(t => t.name).join(', ')}
             </p>
           ` : ''}
         </div>
@@ -53,13 +48,13 @@ function renderCart() {
     `;
   }).join('');
 
-  const subtotal = cart.getTotal();
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax;
+  const total = cart.getTotal();
 
-  subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-  taxEl.textContent = `$${tax.toFixed(2)}`;
   totalEl.textContent = `$${total.toFixed(2)}`;
+  
+  if (taxIncludedEl) {
+    taxIncludedEl.style.display = OFFER_MODE ? 'block' : 'none';
+  }
 }
 
 function updateItemQuantity(index, newQuantity) {

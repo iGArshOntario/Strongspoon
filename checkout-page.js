@@ -1,10 +1,7 @@
-const TAX_RATE = 0.13;
-
 function renderCheckoutItems() {
   const checkoutItemsContainer = document.getElementById('checkoutItems');
-  const subtotalEl = document.getElementById('checkoutSubtotal');
-  const taxEl = document.getElementById('checkoutTax');
   const totalEl = document.getElementById('checkoutTotal');
+  const taxIncludedEl = document.getElementById('taxIncluded');
 
   if (cart.items.length === 0) {
     window.location.href = 'cart.html';
@@ -12,14 +9,13 @@ function renderCheckoutItems() {
   }
 
   checkoutItemsContainer.innerHTML = cart.items.map(item => {
-    const basePrice = item.price || 0;
-    const toppingsPrice = (item.toppings || []).reduce((sum, t) => sum + (t.price || 0), 0);
-    const itemTotal = (basePrice + toppingsPrice) * item.quantity;
+    const itemPrice = PRODUCT_PRICE;
+    const itemTotal = itemPrice * item.quantity;
 
     return `
       <div class="checkout-item">
         <div class="checkout-item-details">
-          <strong>${item.name}</strong> × ${item.quantity}
+          <strong>${item.name}</strong> (${PRODUCT_SIZE}) × ${item.quantity}
           ${item.toppings && item.toppings.length > 0 ? `
             <br><small>+ ${item.toppings.map(t => t.name).join(', ')}</small>
           ` : ''}
@@ -29,15 +25,15 @@ function renderCheckoutItems() {
     `;
   }).join('');
 
-  const subtotal = cart.getTotal();
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax;
+  const total = cart.getTotal();
 
-  subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-  taxEl.textContent = `$${tax.toFixed(2)}`;
   totalEl.textContent = `$${total.toFixed(2)}`;
+  
+  if (taxIncludedEl) {
+    taxIncludedEl.style.display = OFFER_MODE ? 'block' : 'none';
+  }
 
-  return { subtotal, tax, total };
+  return { total };
 }
 
 const amounts = renderCheckoutItems();
@@ -127,8 +123,6 @@ form.addEventListener('submit', async (e) => {
       address: customerAddress
     },
     items: cart.items,
-    subtotal: amounts.subtotal,
-    tax: amounts.tax,
     total: amounts.total
   };
 

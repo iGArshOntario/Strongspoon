@@ -644,6 +644,18 @@ footer a:hover {
   }
 }
 
+/* Tax included note styling */
+.tax-included-note {
+  text-align: center;
+  color: #00bfa5;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 10px;
+  padding: 8px;
+  background: rgba(0, 191, 165, 0.1);
+  border-radius: 8px;
+}
+
 .cart-count {
   background: #ff5722;
   color: white;

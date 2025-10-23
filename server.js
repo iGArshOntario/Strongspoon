@@ -6,30 +6,33 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const PRODUCT_PRICE = 9.99;
+const PRODUCT_SIZE = '250g';
+
 const PRODUCTS = {
   'brownie': {
     id: 'brownie',
     name: 'Brownie Issues',
-    price: 8.99
+    price: PRODUCT_PRICE,
+    size: PRODUCT_SIZE
   },
   'powerMix': {
     id: 'powerMix',
     name: 'Power Mix',
-    price: 8.99
+    price: PRODUCT_PRICE,
+    size: PRODUCT_SIZE
   }
 };
 
 const TOPPINGS = {
-  'almonds': { name: 'Almonds', price: 1.50 },
-  'cashews': { name: 'Cashews', price: 1.50 },
-  'peanuts': { name: 'Peanuts', price: 1.00 },
-  'raisins': { name: 'Raisins', price: 1.00 },
-  'dryFruits': { name: 'Crushed Dry Fruits', price: 2.00 },
-  'apple': { name: 'Apple', price: 1.50 },
-  'blueberries': { name: 'Blueberries', price: 2.00 }
+  'almonds': { name: 'Almonds', price: 0 },
+  'cashews': { name: 'Cashews', price: 0 },
+  'peanuts': { name: 'Peanuts', price: 0 },
+  'raisins': { name: 'Raisins', price: 0 },
+  'dryFruits': { name: 'Crushed Dry Fruits', price: 0 },
+  'apple': { name: 'Apple', price: 0 },
+  'blueberries': { name: 'Blueberries', price: 0 }
 };
-
-const TAX_RATE = 0.13;
 
 app.use(cors());
 app.use(express.json());
@@ -49,7 +52,7 @@ app.post('/create-payment-intent', async (req, res) => {
       return res.status(400).json({ error: 'Cart is empty' });
     }
 
-    let serverSubtotal = 0;
+    let serverTotal = 0;
     const validatedItems = [];
 
     for (const item of items) {
@@ -59,21 +62,17 @@ app.post('/create-payment-intent', async (req, res) => {
         return res.status(400).json({ error: `Invalid product: ${item.id}` });
       }
 
-      let itemPrice = product.price;
-      let toppingsPrice = 0;
-      const validatedToppings = [];
-
       if (!Number.isInteger(item.quantity) || item.quantity < 1) {
         console.warn(`Invalid quantity for ${item.id}: ${item.quantity}`);
         return res.status(400).json({ error: `Invalid quantity for ${item.name}` });
       }
 
+      const validatedToppings = [];
       if (item.toppings && item.toppings.length > 0) {
         for (const topping of item.toppings) {
           const validTopping = Object.values(TOPPINGS).find(t => t.name === topping.name);
           if (validTopping) {
-            toppingsPrice += validTopping.price;
-            validatedToppings.push(validTopping);
+            validatedToppings.push(validTopping.name);
           } else {
             console.warn(`Invalid topping rejected: ${topping.name}`);
             return res.status(400).json({ error: `Invalid topping: ${topping.name}` });
@@ -81,20 +80,18 @@ app.post('/create-payment-intent', async (req, res) => {
         }
       }
 
-      const itemTotal = (itemPrice + toppingsPrice) * item.quantity;
-      serverSubtotal += itemTotal;
+      const itemTotal = PRODUCT_PRICE * item.quantity;
+      serverTotal += itemTotal;
 
       validatedItems.push({
         name: product.name,
+        size: product.size,
         quantity: item.quantity,
-        basePrice: itemPrice,
+        price: PRODUCT_PRICE,
         toppings: validatedToppings,
         itemTotal: itemTotal
       });
     }
-
-    const serverTax = serverSubtotal * TAX_RATE;
-    const serverTotal = serverSubtotal + serverTax;
 
     const amountInCents = Math.round(serverTotal * 100);
 
@@ -107,9 +104,8 @@ app.post('/create-payment-intent', async (req, res) => {
         customer_phone: customer.phone,
         customer_address: customer.address,
         items: JSON.stringify(validatedItems),
-        subtotal: serverSubtotal.toFixed(2),
-        tax: serverTax.toFixed(2),
-        total: serverTotal.toFixed(2)
+        total: serverTotal.toFixed(2),
+        pricing: 'Flat rate $9.99 per cup (tax included)'
       },
     });
 
