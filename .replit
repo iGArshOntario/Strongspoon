@@ -1,5 +1,5 @@
 entrypoint = "index.html"
-modules = ["web", "python-3.11", "nodejs-20"]
+modules = ["web", "nodejs-20"]
 
 [nix]
 channel = "stable-24_11"
@@ -55,8 +55,8 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 46507
-externalPort = 3000
+localPort = 40039
+externalPort = 3001
 
 [agent]
 expertMode = true
