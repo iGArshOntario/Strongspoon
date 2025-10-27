@@ -369,6 +369,7 @@ body {
 .form-group input[type="email"],
 .form-group input[type="tel"],
 .form-group input[type="number"],
+.form-group input[type="date"],
 .form-group select,
 .form-group textarea {
   width: 100%;
@@ -380,6 +381,32 @@ body {
   background-color: rgba(255, 255, 255, 0.03);
   color: #fff;
   transition: all 0.3s ease;
+}
+
+.advance-order-notice {
+  display: flex;
+  gap: 15px;
+  background: rgba(0, 191, 165, 0.1);
+  border: 2px solid rgba(0, 191, 165, 0.3);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 0;
+  text-align: left;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.advance-order-notice strong {
+  color: #00bfa5;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+.advance-order-notice p {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
 }
 
 .form-group input:focus,

@@ -38,6 +38,48 @@ function renderCheckoutItems() {
 
 const amounts = renderCheckoutItems();
 
+// Set minimum delivery date to 12 hours from now
+function setMinimumDeliveryDate() {
+  const deliveryDateInput = document.getElementById('deliveryDate');
+  const now = new Date();
+  
+  // Add 12 hours to current time
+  const minDate = new Date(now.getTime() + (12 * 60 * 60 * 1000));
+  
+  // Format as YYYY-MM-DD for input min attribute
+  const minDateString = minDate.toISOString().split('T')[0];
+  deliveryDateInput.min = minDateString;
+  
+  // Set default to tomorrow or min date, whichever is later
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const defaultDate = tomorrow > minDate ? tomorrow : minDate;
+  deliveryDateInput.value = defaultDate.toISOString().split('T')[0];
+}
+
+// Validate delivery date is at least 12 hours from now
+function validateDeliveryDate() {
+  const deliveryDate = document.getElementById('deliveryDate').value;
+  const deliveryTimeSlot = document.getElementById('deliveryTimeSlot').value;
+  
+  if (!deliveryDate || !deliveryTimeSlot) {
+    return { valid: false, error: 'Please select both delivery date and time slot' };
+  }
+  
+  const selectedDate = new Date(deliveryDate);
+  const now = new Date();
+  const minDate = new Date(now.getTime() + (12 * 60 * 60 * 1000));
+  
+  if (selectedDate < minDate) {
+    return { valid: false, error: 'Please select a delivery date at least 12 hours from now' };
+  }
+  
+  return { valid: true };
+}
+
+// Initialize date picker when page loads
+setMinimumDeliveryDate();
+
 const stripePublishableKey = 'STRIPE_PUBLISHABLE_KEY_PLACEHOLDER';
 let stripe, elements, cardElement;
 
@@ -114,6 +156,19 @@ form.addEventListener('submit', async (e) => {
   const customerEmail = document.getElementById('customerEmail').value;
   const customerPhone = document.getElementById('customerPhone').value;
   const customerAddress = document.getElementById('customerAddress').value;
+  const deliveryDate = document.getElementById('deliveryDate').value;
+  const deliveryTimeSlot = document.getElementById('deliveryTimeSlot').value;
+
+  // Validate delivery date and time slot
+  const dateValidation = validateDeliveryDate();
+  if (!dateValidation.valid) {
+    messageDiv.textContent = dateValidation.error;
+    messageDiv.className = 'payment-message error';
+    submitButton.disabled = false;
+    buttonText.style.display = 'inline';
+    spinner.style.display = 'none';
+    return;
+  }
 
   const orderData = {
     customer: {
@@ -122,6 +177,8 @@ form.addEventListener('submit', async (e) => {
       phone: customerPhone,
       address: customerAddress
     },
+    deliveryDate: deliveryDate,
+    deliveryTimeSlot: deliveryTimeSlot,
     items: cart.items,
     total: amounts.total
   };

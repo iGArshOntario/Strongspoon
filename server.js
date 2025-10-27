@@ -170,7 +170,7 @@ app.get('/get-stripe-key', (req, res) => {
 
 app.post('/create-payment-intent', async (req, res) => {
   try {
-    const { customer, items } = req.body;
+    const { customer, items, deliveryDate, deliveryTimeSlot } = req.body;
     
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
@@ -227,6 +227,8 @@ app.post('/create-payment-intent', async (req, res) => {
         customer_email: customer.email,
         customer_phone: customer.phone,
         customer_address: customer.address,
+        delivery_date: deliveryDate || '',
+        delivery_time_slot: deliveryTimeSlot || '',
         items: JSON.stringify(validatedItems),
         total: serverTotal.toFixed(2),
         pricing: 'Flat rate $9.99 per cup (tax included)'
@@ -280,8 +282,10 @@ app.post('/save-order', async (req, res) => {
         items, 
         total_amount, 
         stripe_payment_id, 
-        order_status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        order_status,
+        delivery_date,
+        delivery_time_slot
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING id, order_number, created_at
     `;
     
@@ -294,7 +298,9 @@ app.post('/save-order', async (req, res) => {
       metadata.items || '[]',
       totalAmount,
       paymentIntentId,
-      'pending'
+      'pending',
+      metadata.delivery_date || null,
+      metadata.delivery_time_slot || null
     ];
     
     const result = await pool.query(query, values);

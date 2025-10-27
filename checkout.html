@@ -62,6 +62,30 @@
             <textarea id="customerAddress" name="customerAddress" rows="2" required></textarea>
           </div>
 
+          <div class="advance-order-notice">
+            <span style="font-size: 1.2rem;">⏰</span>
+            <div>
+              <strong>Order Ahead</strong>
+              <p>Please order at least 12 hours in advance to ensure timely delivery.</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="deliveryDate">Preferred Delivery Date *</label>
+            <input type="date" id="deliveryDate" name="deliveryDate" required>
+            <small style="color: #aaa; margin-top: 5px; display: block;">Select a date at least 12 hours from now</small>
+          </div>
+
+          <div class="form-group">
+            <label for="deliveryTimeSlot">Preferred Delivery Time *</label>
+            <select id="deliveryTimeSlot" name="deliveryTimeSlot" required>
+              <option value="">Select a time slot</option>
+              <option value="Morning (8 AM - 12 PM)">Morning (8 AM - 12 PM)</option>
+              <option value="Afternoon (12 PM - 4 PM)">Afternoon (12 PM - 4 PM)</option>
+              <option value="Evening (4 PM - 8 PM)">Evening (4 PM - 8 PM)</option>
+            </select>
+          </div>
+
           <div class="form-group">
             <label>Card Information</label>
             <div id="card-element"></div>
