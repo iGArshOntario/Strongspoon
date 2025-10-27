@@ -18,8 +18,11 @@ The frontend is built using HTML5, CSS3, and vanilla JavaScript, leveraging loca
 - **Product Catalog**: Allows browsing of yogurt flavors with a flat pricing model of $9.99 per 250g cup (tax-included), where all toppings are free.
 - **Order Customization**: Customers can select from a variety of free toppings (almonds, cashews, peanuts, raisins, walnut, apple, blueberries).
 - **Shopping Cart System**: Full cart functionality with add, remove, update quantities, and real-time total calculations. Cart state persists across sessions using localStorage.
+- **Delivery Scheduling**: Customers can select preferred delivery date and time slot (Morning 8AM-12PM, Afternoon 12PM-4PM, Evening 4PM-8PM) during checkout. System enforces 12-hour minimum advance order requirement with timezone-aware validation. Scheduled delivery information is displayed in admin dashboard and delivery portal.
 - **Secure Checkout**: Integration with Stripe for secure payment processing using Payment Intents API.
 - **Order Confirmation**: Automatic email confirmations sent to customers via Resend API after successful payment, including detailed order information.
+- **Order Management System**: Complete admin dashboard (orders.html) with order status tracking (Pending/Completed/Delivered), statistics cards, status management, and delivery proof viewing. All orders start as "Pending" for proper workflow management.
+- **Delivery Tracking Portal**: Mobile-friendly delivery interface (delivery.html) for delivery personnel with camera integration for proof of delivery photos, secured with DELIVERY_PASSWORD authentication to protect customer PII.
 - **Responsive Design**: Optimized for various screen sizes, from mobile (iPhone SE, iPhone 15 Pro) to tablets.
 - **Interactive UI**: Features premium animations, custom form elements, and a draggable cart icon.
 - **Progressive Web App (PWA)**: Installable as a mobile app on iOS and Android. Includes manifest.json, service worker for offline caching, and Apple-specific meta tags for home screen installation. Runs in standalone mode when installed.
@@ -44,8 +47,13 @@ The architecture follows a modern e-commerce pattern with a client-side rich use
 - `strongspoon-logo.jpeg`
 - `Chocolate.png` (example product image)
 
+### Database Schema
+- **orders table**: Stores order information with fields for customer details, items (JSONB), payment tracking, order status (pending/completed/delivered), delivery scheduling (delivery_date, delivery_time_slot), and delivery proof (delivery_proof, delivery_person, delivered_at).
+
 ### Environment Variables (Replit Secrets)
 - `STRIPE_PUBLISHABLE_KEY`
 - `STRIPE_SECRET_KEY`
 - `RESEND_API_KEY`
+- `ADMIN_PASSWORD` - Secures admin dashboard access
+- `DELIVERY_PASSWORD` - Secures delivery portal access
 - `PORT`
