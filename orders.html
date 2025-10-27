@@ -408,8 +408,9 @@
                 <th>Items</th>
                 <th>Total</th>
                 <th>Status</th>
+                <th>Scheduled For</th>
                 <th>Delivery</th>
-                <th>Date</th>
+                <th>Order Date</th>
               </tr>
             </thead>
             <tbody>
@@ -445,6 +446,12 @@
                         <option value="completed" ${order.order_status === 'completed' ? 'selected' : ''}>Completed</option>
                         <option value="delivered" ${order.order_status === 'delivered' ? 'selected' : ''}>Delivered</option>
                       </select>
+                    </td>
+                    <td>
+                      ${order.delivery_date ? `
+                        <div style="font-weight: 600; color: #00bfa5;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                        <div style="color: #aaa; font-size: 0.85rem;">⏰ ${order.delivery_time_slot || 'Not specified'}</div>
+                      ` : '<span style="color: #666; font-size: 0.85rem;">Not scheduled</span>'}
                     </td>
                     <td>
                       ${order.delivery_proof ? `

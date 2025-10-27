@@ -423,6 +423,14 @@
                 <span class="order-status-badge">${order.order_status}</span>
               </div>
               
+              ${order.delivery_date ? `
+                <div style="background: rgba(0, 191, 165, 0.15); border: 2px solid rgba(0, 191, 165, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                  <div style="font-weight: 700; color: #00bfa5; margin-bottom: 5px;">🚚 Scheduled Delivery</div>
+                  <div style="font-size: 1rem; font-weight: 600;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                  <div style="color: #e0e0e0; margin-top: 4px;">⏰ ${order.delivery_time_slot}</div>
+                </div>
+              ` : ''}
+              
               <div class="customer-info">
                 <div class="customer-name">👤 ${order.customer_name}</div>
                 ${order.customer_address ? `<div class="customer-address">📍 ${order.customer_address}</div>` : ''}
