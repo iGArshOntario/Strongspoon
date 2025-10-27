@@ -66,12 +66,26 @@ function validateDeliveryDate() {
     return { valid: false, error: 'Please select both delivery date and time slot' };
   }
   
-  const selectedDate = new Date(deliveryDate);
-  const now = new Date();
-  const minDate = new Date(now.getTime() + (12 * 60 * 60 * 1000));
+  // Parse delivery date in local timezone (not UTC)
+  const [year, month, day] = deliveryDate.split('-').map(Number);
+  const selectedDate = new Date(year, month - 1, day); // month is 0-indexed
   
-  if (selectedDate < minDate) {
-    return { valid: false, error: 'Please select a delivery date at least 12 hours from now' };
+  // Get earliest delivery slot start time based on selected time slot
+  let deliveryStartHour = 8; // Default to morning start
+  if (deliveryTimeSlot.includes('Afternoon')) {
+    deliveryStartHour = 12;
+  } else if (deliveryTimeSlot.includes('Evening')) {
+    deliveryStartHour = 16;
+  }
+  
+  // Set the time to the start of the selected delivery window
+  selectedDate.setHours(deliveryStartHour, 0, 0, 0);
+  
+  const now = new Date();
+  const minDateTime = new Date(now.getTime() + (12 * 60 * 60 * 1000));
+  
+  if (selectedDate < minDateTime) {
+    return { valid: false, error: 'Please select a delivery date and time at least 12 hours from now' };
   }
   
   return { valid: true };
