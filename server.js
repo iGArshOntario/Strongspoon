@@ -391,6 +391,8 @@ app.get('/admin/orders', async (req, res) => {
         delivery_proof,
         delivery_person,
         delivered_at,
+        delivery_date,
+        delivery_time_slot,
         created_at
       FROM orders
       ORDER BY created_at DESC
@@ -552,6 +554,8 @@ app.get('/delivery/orders', async (req, res) => {
         items,
         total_amount,
         order_status,
+        delivery_date,
+        delivery_time_slot,
         created_at
       FROM orders
       WHERE order_status IN ('pending', 'completed')
