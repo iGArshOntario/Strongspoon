@@ -295,6 +295,58 @@
     .hidden {
       display: none;
     }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      color: #00bfa5;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .past-deliveries-section {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+
+    .past-delivery-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .past-delivery-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .past-delivery-proof {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .delivered-badge {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -312,6 +364,13 @@
 
     <div id="ordersContainer" class="loading-state">
       Loading orders...
+    </div>
+
+    <h2 class="section-title">✅ Past Deliveries (24 Hours)</h2>
+    <div class="past-deliveries-section">
+      <div id="pastDeliveriesContainer">
+        <p style="color: #888; text-align: center;">Loading past deliveries...</p>
+      </div>
     </div>
   </div>
 
@@ -388,7 +447,8 @@
         if (response.status === 401) {
           alert('Invalid delivery credentials. Please try again.');
           deliveryCredentials = null;
-          loadOrders();
+          await loadOrders();
+          loadPastDeliveries();
           return;
         }
         
@@ -619,8 +679,89 @@
       }
     });
 
+    // Load Past Deliveries (24 hours)
+    async function loadPastDeliveries(retryOnAuth = true) {
+      try {
+        if (!deliveryCredentials) {
+          document.getElementById('pastDeliveriesContainer').innerHTML = '<p style="color: #888; text-align: center;">Login required to view past deliveries</p>';
+          return;
+        }
+        
+        const response = await fetch('/delivery/past-deliveries', {
+          headers: {
+            'Authorization': 'Basic ' + deliveryCredentials
+          }
+        });
+        
+        if (response.status === 401 && retryOnAuth) {
+          deliveryCredentials = null;
+          deliveryCredentials = promptDeliveryLogin();
+          if (deliveryCredentials) {
+            loadPastDeliveries(false);
+          }
+          return;
+        }
+        
+        if (!response.ok) throw new Error('Failed to fetch past deliveries');
+        
+        const data = await response.json();
+        const orders = data.orders || [];
+        
+        const container = document.getElementById('pastDeliveriesContainer');
+        
+        if (orders.length === 0) {
+          container.innerHTML = '<p style="color: #888; text-align: center;">No deliveries completed in the past 24 hours</p>';
+          return;
+        }
+        
+        container.innerHTML = orders.map(order => {
+          const deliveredDate = new Date(order.delivered_at);
+          let items = [];
+          try {
+            items = Array.isArray(order.items) ? order.items : JSON.parse(order.items || '[]');
+          } catch (e) { items = []; }
+          
+          return `
+            <div class="past-delivery-card">
+              <div class="past-delivery-info">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                  <span style="color: #00bfa5; font-weight: 600; font-family: monospace;">${order.order_number}</span>
+                  <span class="delivered-badge">Delivered</span>
+                </div>
+                <div><strong>${order.customer_name}</strong></div>
+                <div style="color: #aaa; font-size: 0.85rem;">${order.customer_address || ''}</div>
+                <div style="margin-top: 6px; font-size: 0.85rem; color: #888;">
+                  ${items.map(i => `${i.name || 'Item'} × ${i.quantity || 1}`).join(', ')}
+                </div>
+                <div style="margin-top: 6px; color: #4caf50; font-size: 0.8rem;">
+                  ✅ By ${order.delivery_person || 'Unknown'} at ${deliveredDate.toLocaleTimeString('en-CA', { timeZone: 'America/Toronto', hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+              ${order.delivery_proof ? `
+                <img class="past-delivery-proof" src="${order.delivery_proof}" alt="Proof">
+              ` : ''}
+            </div>
+          `;
+        }).join('');
+        
+      } catch (error) {
+        console.error('Error loading past deliveries:', error);
+        document.getElementById('pastDeliveriesContainer').innerHTML = '<p style="color: #888; text-align: center;">Error loading past deliveries</p>';
+      }
+    }
+    
     loadOrders();
-    setInterval(loadOrders, 30000);
+    
+    // Load past deliveries after a short delay
+    setTimeout(() => {
+      loadPastDeliveries();
+    }, 1000);
+    
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      loadOrders();
+      loadPastDeliveries();
+    }, 30000);
   </script>
 </body>
 </html>

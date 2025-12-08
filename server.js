@@ -496,6 +496,159 @@ app.get('/admin/orders/stats', async (req, res) => {
   }
 });
 
+// Get past deliveries - last 24 hours (admin endpoint)
+app.get('/admin/orders/past-deliveries', async (req, res) => {
+  try {
+    if (!ADMIN_PASSWORD) {
+      return res.status(503).json({ error: 'Admin access not configured' });
+    }
+    
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    
+    if (username !== 'admin' || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const query = `
+      SELECT 
+        id, order_number, customer_name, customer_email, customer_phone, customer_address,
+        items, total_amount, order_status, delivery_proof, delivery_person, delivered_at,
+        delivery_date, delivery_time_slot, created_at
+      FROM orders
+      WHERE order_status = 'delivered' 
+        AND delivered_at >= NOW() - INTERVAL '24 hours'
+      ORDER BY delivered_at DESC
+    `;
+    
+    const result = await pool.query(query);
+    res.json({ orders: result.rows, total: result.rows.length });
+  } catch (error) {
+    console.error('Error fetching past deliveries:', error);
+    res.status(500).json({ error: 'Failed to fetch past deliveries' });
+  }
+});
+
+// Get analytics with timeframes (admin endpoint)
+app.get('/admin/orders/analytics', async (req, res) => {
+  try {
+    if (!ADMIN_PASSWORD) {
+      return res.status(503).json({ error: 'Admin access not configured' });
+    }
+    
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    
+    if (username !== 'admin' || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const range = req.query.range || 'all';
+    let dateFilter = '';
+    
+    switch(range) {
+      case '1d':
+        dateFilter = "AND created_at >= NOW() - INTERVAL '1 day'";
+        break;
+      case '7d':
+        dateFilter = "AND created_at >= NOW() - INTERVAL '7 days'";
+        break;
+      case '14d':
+        dateFilter = "AND created_at >= NOW() - INTERVAL '14 days'";
+        break;
+      default:
+        dateFilter = '';
+    }
+    
+    const metricsQuery = `
+      SELECT 
+        COUNT(*) as total_orders,
+        COUNT(CASE WHEN order_status = 'delivered' THEN 1 END) as delivered_orders,
+        COUNT(CASE WHEN order_status = 'pending' THEN 1 END) as pending_orders,
+        COUNT(CASE WHEN order_status = 'completed' THEN 1 END) as completed_orders,
+        COALESCE(SUM(total_amount), 0) as total_revenue,
+        COALESCE(AVG(total_amount), 0) as avg_order_value,
+        COALESCE(AVG(EXTRACT(EPOCH FROM (delivered_at - created_at))/3600), 0) as avg_delivery_hours
+      FROM orders
+      WHERE 1=1 ${dateFilter}
+    `;
+    
+    const dailyRevenueQuery = `
+      SELECT 
+        DATE(created_at AT TIME ZONE 'America/Toronto') as date,
+        COUNT(*) as orders,
+        COALESCE(SUM(total_amount), 0) as revenue
+      FROM orders
+      WHERE 1=1 ${dateFilter}
+      GROUP BY DATE(created_at AT TIME ZONE 'America/Toronto')
+      ORDER BY date DESC
+      LIMIT 14
+    `;
+    
+    const topProductsQuery = `
+      SELECT 
+        item->>'name' as product_name,
+        COUNT(*) as order_count
+      FROM orders, jsonb_array_elements(items::jsonb) as item
+      WHERE 1=1 ${dateFilter}
+      GROUP BY item->>'name'
+      ORDER BY order_count DESC
+      LIMIT 5
+    `;
+    
+    const [metricsResult, dailyResult, topProductsResult] = await Promise.all([
+      pool.query(metricsQuery),
+      pool.query(dailyRevenueQuery),
+      pool.query(topProductsQuery)
+    ]);
+    
+    const metrics = metricsResult.rows[0];
+    const completionRate = metrics.total_orders > 0 
+      ? ((parseInt(metrics.delivered_orders) / parseInt(metrics.total_orders)) * 100).toFixed(1)
+      : 0;
+    
+    res.json({
+      range,
+      metrics: {
+        totalOrders: parseInt(metrics.total_orders) || 0,
+        deliveredOrders: parseInt(metrics.delivered_orders) || 0,
+        pendingOrders: parseInt(metrics.pending_orders) || 0,
+        completedOrders: parseInt(metrics.completed_orders) || 0,
+        totalRevenue: parseFloat(metrics.total_revenue) || 0,
+        avgOrderValue: parseFloat(metrics.avg_order_value) || 0,
+        avgDeliveryHours: parseFloat(metrics.avg_delivery_hours) || 0,
+        completionRate: parseFloat(completionRate) || 0
+      },
+      dailyRevenue: dailyResult.rows.map(row => ({
+        date: row.date,
+        orders: parseInt(row.orders),
+        revenue: parseFloat(row.revenue)
+      })),
+      topProducts: topProductsResult.rows.map(row => ({
+        name: row.product_name,
+        count: parseInt(row.order_count)
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching analytics:', error);
+    res.status(500).json({ error: 'Failed to fetch analytics' });
+  }
+});
+
 // Update order status (admin endpoint)
 app.put('/admin/orders/:id/status', async (req, res) => {
   try {
@@ -616,6 +769,46 @@ app.get('/delivery/orders', async (req, res) => {
   } catch (error) {
     console.error('Error fetching delivery orders:', error);
     res.status(500).json({ error: 'Failed to fetch orders' });
+  }
+});
+
+// Get past deliveries - last 24 hours (delivery personnel endpoint)
+app.get('/delivery/past-deliveries', async (req, res) => {
+  try {
+    if (!DELIVERY_PASSWORD) {
+      return res.status(503).json({ error: 'Delivery access not configured' });
+    }
+    
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Delivery Access"');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    
+    if (username !== 'delivery' || password !== DELIVERY_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const query = `
+      SELECT 
+        id, order_number, customer_name, customer_address, customer_phone,
+        items, total_amount, order_status, delivery_proof, delivery_person, 
+        delivered_at, delivery_date, delivery_time_slot, created_at
+      FROM orders
+      WHERE order_status = 'delivered' 
+        AND delivered_at >= NOW() - INTERVAL '24 hours'
+      ORDER BY delivered_at DESC
+    `;
+    
+    const result = await pool.query(query);
+    res.json({ orders: result.rows, total: result.rows.length });
+  } catch (error) {
+    console.error('Error fetching past deliveries:', error);
+    res.status(500).json({ error: 'Failed to fetch past deliveries' });
   }
 });
 
