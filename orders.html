@@ -415,29 +415,44 @@
             </thead>
             <tbody>
               ${orders.map(order => {
-                const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+                // Safely parse items with fallback to empty array
+                let items = [];
+                try {
+                  if (Array.isArray(order.items)) {
+                    items = order.items;
+                  } else if (typeof order.items === 'string' && order.items.trim()) {
+                    items = JSON.parse(order.items);
+                  } else if (order.items && typeof order.items === 'object') {
+                    items = [order.items];
+                  }
+                } catch (e) {
+                  console.error('Failed to parse items for order:', order.order_number, e);
+                  items = [];
+                }
+                if (!Array.isArray(items)) items = [];
+                
                 const date = new Date(order.created_at);
                 
                 return `
                   <tr>
                     <td><span class="order-number">${order.order_number}</span></td>
                     <td>
-                      <strong>${order.customer_name}</strong><br>
+                      <strong>${order.customer_name || 'Unknown'}</strong><br>
                       ${order.customer_address || ''}
                     </td>
                     <td>
-                      ${order.customer_email}<br>
+                      ${order.customer_email || ''}<br>
                       ${order.customer_phone || ''}
                     </td>
                     <td class="order-items">
-                      ${items.map(item => `
+                      ${items.length > 0 ? items.map(item => `
                         <div class="order-item">
-                          <strong>${item.name}</strong> (${item.size}) × ${item.quantity}
+                          <strong>${item.name || 'Item'}</strong> (${item.size || 'N/A'}) × ${item.quantity || 1}
                           ${item.toppings && item.toppings.length > 0 ? `
                             <div class="order-toppings">+ ${item.toppings.join(', ')}</div>
                           ` : ''}
                         </div>
-                      `).join('')}
+                      `).join('') : '<span style="color: #666;">No items</span>'}
                     </td>
                     <td><strong>$${parseFloat(order.total_amount).toFixed(2)}</strong></td>
                     <td>
