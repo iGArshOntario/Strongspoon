@@ -631,6 +631,10 @@
         
         const orders = data.orders || [];
         
+        // Load analytics and past deliveries after successful login
+        loadAnalytics('all');
+        loadPastDeliveries();
+        
         // Render orders table
         const container = document.getElementById('ordersContainer');
         
@@ -866,11 +870,8 @@
       }
     }
     
-    // Load all data after orders load
-    setTimeout(() => {
-      loadAnalytics('all');
-      loadPastDeliveries();
-    }, 1000);
+    // Note: loadAnalytics and loadPastDeliveries are now called from within loadOrders
+    // after successful authentication to ensure credentials are available
     
     // Auto-refresh every 30 seconds
     setInterval(() => {
