@@ -1,5 +1,4 @@
 const express = require('express');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors');
 const path = require('path');
 const { Pool } = require('pg');
@@ -8,20 +7,49 @@ const { Resend } = require('resend');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// PostgreSQL connection pool
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
+console.log(`🚀 Starting Strong Spoon server...`);
+console.log(`📌 PORT environment variable: ${process.env.PORT || 'not set, using 5000'}`);
+console.log(`📌 DATABASE_URL: ${process.env.DATABASE_URL ? 'configured' : 'NOT SET'}`);
+console.log(`📌 STRIPE_SECRET_KEY: ${process.env.STRIPE_SECRET_KEY ? 'configured' : 'NOT SET'}`);
+
+// Initialize Stripe with error handling
+let stripe = null;
+try {
+  if (process.env.STRIPE_SECRET_KEY) {
+    stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+    console.log('✅ Stripe initialized successfully');
+  } else {
+    console.warn('⚠️ STRIPE_SECRET_KEY not set - payment processing disabled');
   }
-});
+} catch (err) {
+  console.error('❌ Failed to initialize Stripe:', err.message);
+}
+
+// PostgreSQL connection pool with error handling
+let pool = null;
+try {
+  if (process.env.DATABASE_URL) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false
+      }
+    });
+    console.log('✅ Database pool created');
+  } else {
+    console.error('❌ DATABASE_URL not set - database features disabled');
+  }
+} catch (err) {
+  console.error('❌ Failed to create database pool:', err.message);
+}
 
 // Resend email client
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 if (!process.env.RESEND_API_KEY) {
-  console.warn('⚠️  WARNING: RESEND_API_KEY not set! Email confirmations will be disabled.');
-  console.warn('⚠️  Add RESEND_API_KEY to Replit Secrets to enable order confirmation emails.');
+  console.warn('⚠️ RESEND_API_KEY not set - email confirmations disabled');
+} else {
+  console.log('✅ Resend email service initialized');
 }
 
 const PRODUCT_PRICE = 9.99;
@@ -304,8 +332,38 @@ const TOPPINGS = {
 };
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.use(express.static('.'));
+
+// Health check endpoint for deployment verification
+app.get('/health', async (req, res) => {
+  const health = {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    services: {
+      stripe: stripe ? 'configured' : 'not configured',
+      database: 'checking...',
+      email: resend ? 'configured' : 'not configured'
+    }
+  };
+  
+  // Test database connection
+  if (pool) {
+    try {
+      await pool.query('SELECT 1');
+      health.services.database = 'connected';
+    } catch (err) {
+      health.services.database = 'error: ' + err.message;
+      health.status = 'degraded';
+    }
+  } else {
+    health.services.database = 'not configured';
+    health.status = 'degraded';
+  }
+  
+  res.json(health);
+});
 
 app.get('/get-stripe-key', (req, res) => {
   res.json({
@@ -1039,8 +1097,41 @@ app.post('/delivery/orders/:id/proof', async (req, res) => {
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Strong Spoon server running on port ${PORT}`);
-  console.log(`Stripe configured: ${process.env.STRIPE_SECRET_KEY ? '✓' : '✗'}`);
-  console.log(`Email service: ${resend ? '✓ Enabled' : '✗ Disabled (set RESEND_API_KEY)'}`);
+// Test database connection before starting server
+async function startServer() {
+  // Test database connection
+  if (pool) {
+    try {
+      await pool.query('SELECT 1');
+      console.log('✅ Database connection verified');
+    } catch (err) {
+      console.error('❌ Database connection failed:', err.message);
+      console.error('Server will start but database features may not work');
+    }
+  }
+  
+  // Start the server
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Strong Spoon server running on port ${PORT}`);
+    console.log(`Stripe configured: ${stripe ? '✓' : '✗'}`);
+    console.log(`Email service: ${resend ? '✓ Enabled' : '✗ Disabled'}`);
+    console.log(`Health check available at: /health`);
+  });
+  
+  server.on('error', (err) => {
+    console.error('❌ Server failed to start:', err.message);
+    process.exit(1);
+  });
+}
+
+// Handle uncaught errors
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err.message);
+  console.error(err.stack);
 });
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+startServer();
