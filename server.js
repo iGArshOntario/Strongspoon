@@ -376,29 +376,55 @@ app.get('/admin/orders', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     
-    const query = `
-      SELECT 
-        id,
-        order_number,
-        customer_name,
-        customer_email,
-        customer_phone,
-        customer_address,
-        items,
-        total_amount,
-        stripe_payment_id,
-        order_status,
-        delivery_proof,
-        delivery_person,
-        delivered_at,
-        delivery_date,
-        delivery_time_slot,
-        created_at
-      FROM orders
-      ORDER BY created_at DESC
-    `;
-    
-    const result = await pool.query(query);
+    // Try query with delivery scheduling columns first, fallback to basic query
+    let result;
+    try {
+      const fullQuery = `
+        SELECT 
+          id,
+          order_number,
+          customer_name,
+          customer_email,
+          customer_phone,
+          customer_address,
+          items,
+          total_amount,
+          stripe_payment_id,
+          order_status,
+          delivery_proof,
+          delivery_person,
+          delivered_at,
+          delivery_date,
+          delivery_time_slot,
+          created_at
+        FROM orders
+        ORDER BY created_at DESC
+      `;
+      result = await pool.query(fullQuery);
+    } catch (columnError) {
+      // Fallback query without delivery scheduling columns
+      console.log('Using fallback query (delivery columns may not exist)');
+      const basicQuery = `
+        SELECT 
+          id,
+          order_number,
+          customer_name,
+          customer_email,
+          customer_phone,
+          customer_address,
+          items,
+          total_amount,
+          stripe_payment_id,
+          order_status,
+          delivery_proof,
+          delivery_person,
+          delivered_at,
+          created_at
+        FROM orders
+        ORDER BY created_at DESC
+      `;
+      result = await pool.query(basicQuery);
+    }
     
     res.json({
       orders: result.rows,
@@ -544,25 +570,48 @@ app.get('/delivery/orders', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     
-    const query = `
-      SELECT 
-        id,
-        order_number,
-        customer_name,
-        customer_address,
-        customer_phone,
-        items,
-        total_amount,
-        order_status,
-        delivery_date,
-        delivery_time_slot,
-        created_at
-      FROM orders
-      WHERE order_status IN ('pending', 'completed')
-      ORDER BY created_at ASC
-    `;
+    // Try query with delivery scheduling columns first, fallback to basic query
+    let result;
+    try {
+      const fullQuery = `
+        SELECT 
+          id,
+          order_number,
+          customer_name,
+          customer_address,
+          customer_phone,
+          items,
+          total_amount,
+          order_status,
+          delivery_date,
+          delivery_time_slot,
+          created_at
+        FROM orders
+        WHERE order_status IN ('pending', 'completed')
+        ORDER BY created_at ASC
+      `;
+      result = await pool.query(fullQuery);
+    } catch (columnError) {
+      // Fallback query without delivery scheduling columns
+      console.log('Using fallback query for delivery (delivery columns may not exist)');
+      const basicQuery = `
+        SELECT 
+          id,
+          order_number,
+          customer_name,
+          customer_address,
+          customer_phone,
+          items,
+          total_amount,
+          order_status,
+          created_at
+        FROM orders
+        WHERE order_status IN ('pending', 'completed')
+        ORDER BY created_at ASC
+      `;
+      result = await pool.query(basicQuery);
+    }
     
-    const result = await pool.query(query);
     res.json({ orders: result.rows });
   } catch (error) {
     console.error('Error fetching delivery orders:', error);
