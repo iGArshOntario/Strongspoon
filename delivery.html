@@ -413,7 +413,22 @@
         }
         
         container.innerHTML = orders.map(order => {
-          const items = JSON.parse(order.items);
+          // Safely parse items with fallback
+          let items = [];
+          try {
+            if (Array.isArray(order.items)) {
+              items = order.items;
+            } else if (typeof order.items === 'string' && order.items.trim()) {
+              items = JSON.parse(order.items);
+            } else if (order.items && typeof order.items === 'object') {
+              items = [order.items];
+            }
+          } catch (e) {
+            console.error('Failed to parse items:', e);
+            items = [];
+          }
+          if (!Array.isArray(items)) items = [];
+          
           const date = new Date(order.created_at);
           
           return `
@@ -426,7 +441,7 @@
               ${order.delivery_date ? `
                 <div style="background: rgba(0, 191, 165, 0.15); border: 2px solid rgba(0, 191, 165, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
                   <div style="font-weight: 700; color: #00bfa5; margin-bottom: 5px;">🚚 Scheduled Delivery</div>
-                  <div style="font-size: 1rem; font-weight: 600;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                  <div style="font-size: 1rem; font-weight: 600;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>
                   <div style="color: #e0e0e0; margin-top: 4px;">⏰ ${order.delivery_time_slot}</div>
                 </div>
               ` : ''}
@@ -438,16 +453,16 @@
               </div>
               
               <div class="order-items-list">
-                ${items.map(item => `
+                ${items.length > 0 ? items.map(item => `
                   <div class="order-item">
-                    <strong>${item.name}</strong> (${item.size}) × ${item.quantity}
-                    ${item.toppings && item.toppings.length > 0 ? `<br><small style="color: #aaa;">+ ${item.toppings.map(t => t.name).join(', ')}</small>` : ''}
+                    <strong>${item.name || 'Item'}</strong> (${item.size || 'N/A'}) × ${item.quantity || 1}
+                    ${item.toppings && item.toppings.length > 0 ? `<br><small style="color: #aaa;">+ ${item.toppings.map(t => typeof t === 'string' ? t : t.name).join(', ')}</small>` : ''}
                   </div>
-                `).join('')}
+                `).join('') : '<div class="order-item">No items</div>'}
               </div>
               
               <div style="color: #aaa; font-size: 0.85rem; margin-bottom: 15px;">
-                📅 Ordered: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}
+                📅 Ordered: ${date.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' })} ${date.toLocaleTimeString('en-CA', { timeZone: 'America/Toronto' })}
               </div>
               
               <button class="deliver-btn" onclick="openDeliveryModal(${order.id}, '${order.order_number}')">

@@ -464,7 +464,7 @@
                     </td>
                     <td>
                       ${order.delivery_date ? `
-                        <div style="font-weight: 600; color: #00bfa5;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                        <div style="font-weight: 600; color: #00bfa5;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}</div>
                         <div style="color: #aaa; font-size: 0.85rem;">⏰ ${order.delivery_time_slot || 'Not specified'}</div>
                       ` : '<span style="color: #666; font-size: 0.85rem;">Not scheduled</span>'}
                     </td>
@@ -475,7 +475,7 @@
                         </button>
                       ` : '<span style="color: #666; font-size: 0.85rem;">No proof</span>'}
                     </td>
-                    <td>${date.toLocaleDateString()}<br>${date.toLocaleTimeString()}</td>
+                    <td>${date.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' })}<br>${date.toLocaleTimeString('en-CA', { timeZone: 'America/Toronto' })}</td>
                   </tr>
                 `;
               }).join('')}
