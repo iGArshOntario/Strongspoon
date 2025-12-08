@@ -133,6 +133,151 @@ async function sendOrderConfirmation(orderData) {
   }
 }
 
+// Delivery notification email function with proof photo
+async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson) {
+  if (!resend) {
+    console.warn('Email service not configured - skipping delivery notification');
+    return { success: false, reason: 'No email service' };
+  }
+
+  try {
+    let items = [];
+    try {
+      items = Array.isArray(orderData.items) ? orderData.items : JSON.parse(orderData.items || '[]');
+    } catch (e) {
+      items = [];
+    }
+
+    // Use actual delivered_at from database, fallback to now
+    const deliveredAtDate = orderData.delivered_at ? new Date(orderData.delivered_at) : new Date();
+    const deliveredAt = deliveredAtDate.toLocaleString('en-CA', {
+      timeZone: 'America/Toronto',
+      dateStyle: 'long',
+      timeStyle: 'short'
+    });
+
+    // Build items list HTML
+    const itemsHTML = items.map(item => `
+      <div style="background: #f0fdf4; padding: 12px; margin: 8px 0; border-radius: 6px; border-left: 3px solid #22c55e;">
+        <strong style="color: #166534;">${item.name || 'Item'}</strong>
+        <span style="color: #666; margin-left: 10px;">× ${item.quantity || 1}</span>
+      </div>
+    `).join('');
+
+    // Prepare the proof image as an inline attachment
+    let attachments = [];
+    let proofImageHTML = '';
+    
+    if (deliveryProof && deliveryProof.startsWith('data:image/')) {
+      // Extract content type and base64 data
+      const matches = deliveryProof.match(/^data:(image\/\w+);base64,(.+)$/);
+      if (matches) {
+        const contentType = matches[1];
+        const base64Data = matches[2];
+        const extension = contentType.split('/')[1] || 'jpeg';
+        
+        // Convert base64 to Buffer for Resend API
+        const imageBuffer = Buffer.from(base64Data, 'base64');
+        
+        attachments = [{
+          filename: `delivery-proof.${extension}`,
+          content: imageBuffer,
+          contentType: contentType,
+          cid: 'deliveryproof'
+        }];
+        
+        proofImageHTML = `
+          <div style="margin: 20px 0; text-align: center;">
+            <p style="color: #666; margin-bottom: 10px; font-size: 14px;">📷 Proof of Delivery</p>
+            <img src="cid:deliveryproof" alt="Delivery Proof" style="max-width: 100%; max-height: 400px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+          </div>
+        `;
+      }
+    }
+
+    const emailHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0; }
+    .content { background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
+    .footer { background: #f9fafb; padding: 20px; text-align: center; border-radius: 0 0 12px 12px; font-size: 14px; color: #6b7280; border: 1px solid #e5e7eb; border-top: none; }
+    .success-badge { display: inline-block; background: #dcfce7; color: #166534; padding: 8px 16px; border-radius: 20px; font-weight: bold; margin: 10px 0; }
+    .info-box { background: #f8fafc; padding: 15px; border-radius: 8px; margin: 15px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="margin: 0; font-size: 28px;">✅ Order Delivered!</h1>
+      <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Your Strong Spoon order has arrived</p>
+    </div>
+    
+    <div class="content">
+      <div style="text-align: center; margin-bottom: 25px;">
+        <span class="success-badge">🎉 Successfully Delivered</span>
+      </div>
+      
+      <h2 style="color: #166534; margin-top: 0;">Hi ${orderData.customer_name}!</h2>
+      <p>Great news! Your order has been delivered. We hope you enjoy your high-protein yogurt!</p>
+      
+      <div class="info-box">
+        <strong>📦 Order:</strong> ${orderData.order_number}<br>
+        <strong>🕐 Delivered:</strong> ${deliveredAt}<br>
+        <strong>🚚 Delivered by:</strong> ${deliveryPerson}
+      </div>
+      
+      <h3 style="color: #166534;">Your Items</h3>
+      ${itemsHTML}
+      
+      ${proofImageHTML}
+      
+      <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+        <strong style="color: #92400e;">💡 Questions about your delivery?</strong>
+        <p style="margin: 5px 0 0 0; color: #78350f; font-size: 14px;">Simply reply to this email and we'll get back to you as soon as possible.</p>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p style="margin: 0;"><strong>💪 Strong Spoon</strong></p>
+      <p style="margin: 5px 0 0 0;">High-Protein Yogurt for Champions</p>
+      <p style="font-size: 12px; color: #9ca3af; margin-top: 15px;">Thank you for choosing Strong Spoon!</p>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+
+    const emailOptions = {
+      from: 'Strong Spoon <orders@resend.dev>',
+      to: [orderData.customer_email],
+      subject: `✅ Delivered! Your Order ${orderData.order_number} Has Arrived`,
+      html: emailHTML,
+    };
+
+    // Add attachments if we have the proof image
+    if (attachments.length > 0) {
+      emailOptions.attachments = attachments;
+    }
+
+    const { data, error } = await resend.emails.send(emailOptions);
+
+    if (error) {
+      console.error('Error sending delivery notification:', error);
+      return { success: false, error };
+    }
+
+    console.log('✅ Delivery notification email sent:', data.id);
+    return { success: true, emailId: data.id };
+  } catch (error) {
+    console.error('Error in sendDeliveryNotification:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 const PRODUCTS = {
   'brownie': {
     id: 'brownie',
@@ -858,7 +1003,7 @@ app.post('/delivery/orders/:id/proof', async (req, res) => {
         delivery_person = $2,
         delivered_at = CURRENT_TIMESTAMP
       WHERE id = $3
-      RETURNING id, order_number, order_status, delivered_at
+      RETURNING id, order_number, order_status, delivered_at, customer_name, customer_email, items, total_amount
     `;
     
     const result = await pool.query(query, [deliveryProof, deliveryPerson, id]);
@@ -867,8 +1012,27 @@ app.post('/delivery/orders/:id/proof', async (req, res) => {
       return res.status(404).json({ error: 'Order not found' });
     }
     
-    console.log('✅ Delivery proof uploaded for order:', result.rows[0].order_number);
-    res.json({ success: true, order: result.rows[0] });
+    const updatedOrder = result.rows[0];
+    console.log('✅ Delivery proof uploaded for order:', updatedOrder.order_number);
+    
+    // Send delivery notification email with proof (fail soft - don't block response)
+    // Wrapped in try-catch with explicit promise handling to prevent unhandled rejections
+    if (updatedOrder.customer_email) {
+      (async () => {
+        try {
+          const emailResult = await sendDeliveryNotification(updatedOrder, deliveryProof, deliveryPerson);
+          if (emailResult.success) {
+            console.log(`📧 Delivery notification sent to ${updatedOrder.customer_email}`);
+          } else {
+            console.warn(`⚠️ Failed to send delivery notification: ${JSON.stringify(emailResult.error || emailResult.reason)}`);
+          }
+        } catch (err) {
+          console.error('Error sending delivery notification:', err.message || err);
+        }
+      })();
+    }
+    
+    res.json({ success: true, order: updatedOrder });
   } catch (error) {
     console.error('Error submitting delivery proof:', error);
     res.status(500).json({ error: 'Failed to submit delivery proof' });
