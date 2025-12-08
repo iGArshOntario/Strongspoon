@@ -6,7 +6,6 @@ channel = "stable-24_11"
 packages = ["static-web-server", "imagemagick"]
 
 [deployment]
-publicDir = "/"
 deploymentTarget = "autoscale"
 run = ["node", "server.js"]
 
@@ -56,39 +55,30 @@ externalPort = 80
 
 [[ports]]
 localPort = 34473
-externalPort = 8000
 
 [[ports]]
 localPort = 35879
-externalPort = 4200
 
 [[ports]]
 localPort = 35969
-externalPort = 3003
 
 [[ports]]
 localPort = 36263
-externalPort = 6000
 
 [[ports]]
 localPort = 36299
-externalPort = 5173
 
 [[ports]]
 localPort = 37589
-externalPort = 3002
 
 [[ports]]
 localPort = 40947
-externalPort = 5000
 
 [[ports]]
 localPort = 44709
-externalPort = 3000
 
 [[ports]]
 localPort = 45095
-externalPort = 3001
 
 [agent]
 expertMode = true
