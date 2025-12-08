@@ -415,7 +415,7 @@
             </thead>
             <tbody>
               ${orders.map(order => {
-                const items = JSON.parse(order.items);
+                const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
                 const date = new Date(order.created_at);
                 
                 return `
