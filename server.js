@@ -373,7 +373,7 @@ app.get('/get-stripe-key', (req, res) => {
 
 app.post('/create-payment-intent', async (req, res) => {
   try {
-    const { customer, items, deliveryDate, deliveryTimeSlot } = req.body;
+    const { customer, items, orderType, deliveryDate, deliveryTimeSlot } = req.body;
     
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
@@ -430,6 +430,7 @@ app.post('/create-payment-intent', async (req, res) => {
         customer_email: customer.email,
         customer_phone: customer.phone,
         customer_address: customer.address,
+        order_type: orderType || 'delivery',
         delivery_date: deliveryDate || '',
         delivery_time_slot: deliveryTimeSlot || '',
         items: JSON.stringify(validatedItems),
@@ -486,9 +487,10 @@ app.post('/save-order', async (req, res) => {
         total_amount, 
         stripe_payment_id, 
         order_status,
+        order_type,
         delivery_date,
         delivery_time_slot
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       RETURNING id, order_number, created_at
     `;
     
@@ -502,6 +504,7 @@ app.post('/save-order', async (req, res) => {
       totalAmount,
       paymentIntentId,
       'pending',
+      metadata.order_type || 'delivery',
       metadata.delivery_date || null,
       metadata.delivery_time_slot || null
     ];
@@ -594,6 +597,7 @@ app.get('/admin/orders', async (req, res) => {
           total_amount,
           stripe_payment_id,
           order_status,
+          order_type,
           delivery_proof,
           delivery_person,
           delivered_at,
@@ -605,8 +609,8 @@ app.get('/admin/orders', async (req, res) => {
       `;
       result = await pool.query(fullQuery);
     } catch (columnError) {
-      // Fallback query without delivery scheduling columns
-      console.log('Using fallback query (delivery columns may not exist)');
+      // Fallback query without newer columns
+      console.log('Using fallback query (newer columns may not exist)');
       const basicQuery = `
         SELECT 
           id,
@@ -619,6 +623,7 @@ app.get('/admin/orders', async (req, res) => {
           total_amount,
           stripe_payment_id,
           order_status,
+          'delivery' as order_type,
           delivery_proof,
           delivery_person,
           delivered_at,
@@ -939,6 +944,7 @@ app.get('/delivery/orders', async (req, res) => {
           items,
           total_amount,
           order_status,
+          order_type,
           delivery_date,
           delivery_time_slot,
           created_at
@@ -948,8 +954,8 @@ app.get('/delivery/orders', async (req, res) => {
       `;
       result = await pool.query(fullQuery);
     } catch (columnError) {
-      // Fallback query without delivery scheduling columns
-      console.log('Using fallback query for delivery (delivery columns may not exist)');
+      // Fallback query without newer columns
+      console.log('Using fallback query for delivery (newer columns may not exist)');
       const basicQuery = `
         SELECT 
           id,
@@ -960,6 +966,7 @@ app.get('/delivery/orders', async (req, res) => {
           items,
           total_amount,
           order_status,
+          'delivery' as order_type,
           created_at
         FROM orders
         WHERE order_status = 'completed'

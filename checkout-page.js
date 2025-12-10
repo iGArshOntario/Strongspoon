@@ -1,3 +1,30 @@
+let orderType = 'delivery';
+
+function setOrderType(type) {
+  orderType = type;
+  const deliveryBtn = document.getElementById('deliveryBtn');
+  const pickupBtn = document.getElementById('pickupBtn');
+  const deliveryFields = document.getElementById('deliveryFields');
+  const pickupFields = document.getElementById('pickupFields');
+  const addressField = document.getElementById('customerAddress');
+  
+  if (type === 'delivery') {
+    deliveryBtn.classList.add('active');
+    pickupBtn.classList.remove('active');
+    deliveryFields.style.display = 'block';
+    pickupFields.style.display = 'none';
+    addressField.required = true;
+  } else {
+    deliveryBtn.classList.remove('active');
+    pickupBtn.classList.add('active');
+    deliveryFields.style.display = 'none';
+    pickupFields.style.display = 'block';
+    addressField.required = false;
+  }
+}
+
+window.setOrderType = setOrderType;
+
 function renderCheckoutItems() {
   const checkoutItemsContainer = document.getElementById('checkoutItems');
   const totalEl = document.getElementById('checkoutTotal');
@@ -169,7 +196,7 @@ form.addEventListener('submit', async (e) => {
   const customerName = document.getElementById('customerName').value;
   const customerEmail = document.getElementById('customerEmail').value;
   const customerPhone = document.getElementById('customerPhone').value;
-  const customerAddress = document.getElementById('customerAddress').value;
+  const customerAddress = orderType === 'delivery' ? document.getElementById('customerAddress').value : 'PICKUP - Regina, SK';
   const deliveryDate = document.getElementById('deliveryDate').value;
   const deliveryTimeSlot = document.getElementById('deliveryTimeSlot').value;
 
@@ -191,6 +218,7 @@ form.addEventListener('submit', async (e) => {
       phone: customerPhone,
       address: customerAddress
     },
+    orderType: orderType,
     deliveryDate: deliveryDate,
     deliveryTimeSlot: deliveryTimeSlot,
     items: cart.items,

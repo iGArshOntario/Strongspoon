@@ -58,8 +58,26 @@
           </div>
 
           <div class="form-group">
-            <label for="customerAddress">Delivery Address *</label>
-            <textarea id="customerAddress" name="customerAddress" rows="2" required></textarea>
+            <label>Order Type *</label>
+            <div class="order-type-toggle">
+              <button type="button" id="deliveryBtn" class="toggle-btn active" onclick="setOrderType('delivery')">🚗 Delivery</button>
+              <button type="button" id="pickupBtn" class="toggle-btn" onclick="setOrderType('pickup')">🏪 Pickup</button>
+            </div>
+          </div>
+
+          <div id="deliveryFields">
+            <div class="form-group">
+              <label for="customerAddress">Delivery Address *</label>
+              <textarea id="customerAddress" name="customerAddress" rows="2" required></textarea>
+            </div>
+          </div>
+
+          <div id="pickupFields" style="display: none;">
+            <div class="pickup-location-info">
+              <strong>📍 Pickup Location</strong>
+              <p>Regina, SK</p>
+              <p style="color: #aaa; font-size: 0.9rem;">Exact address will be sent via email after order confirmation</p>
+            </div>
           </div>
 
           <div class="advance-order-notice">

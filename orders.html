@@ -102,6 +102,25 @@
       font-family: monospace;
     }
 
+    .order-type-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .order-type-badge.delivery {
+      background: rgba(0, 150, 136, 0.2);
+      color: #00bfa5;
+    }
+
+    .order-type-badge.pickup {
+      background: rgba(255, 152, 0, 0.2);
+      color: #ff9800;
+    }
+
     .order-items {
       max-width: 300px;
     }
@@ -682,7 +701,8 @@
                   <tr>
                     <td><span class="order-number">${order.order_number}</span></td>
                     <td>
-                      <strong>${order.customer_name || 'Unknown'}</strong><br>
+                      <strong>${order.customer_name || 'Unknown'}</strong>
+                      <span class="order-type-badge ${order.order_type === 'pickup' ? 'pickup' : 'delivery'}">${order.order_type === 'pickup' ? '🏪 Pickup' : '🚗 Delivery'}</span><br>
                       ${order.customer_address || ''}
                     </td>
                     <td>

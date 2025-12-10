@@ -1,7 +1,7 @@
 # Strong Spoon - High-Protein Yogurt Ordering Platform
 
 ## Overview
-Strong Spoon is a full-stack e-commerce platform for a Canadian health-focused yogurt brand. It enables customers to browse high-protein yogurt flavors, customize orders with toppings, add items to a shopping cart, and complete purchases using Stripe. The platform features a responsive design, a complete shopping cart system, and a secure checkout flow, with a flat pricing model of $9.99 per 250g cup, including all toppings and taxes. The business vision is to provide a seamless and premium online ordering experience for health-conscious consumers.
+Strong Spoon is a full-stack e-commerce platform for a Canadian health-focused yogurt brand **serving Regina, SK only**. It enables customers to browse high-protein yogurt flavors, customize orders with toppings, add items to a shopping cart, and complete purchases using Stripe. The platform features a responsive design, a complete shopping cart system, and a secure checkout flow, with a flat pricing model of $9.99 per 250g cup, including all toppings and taxes. Customers can choose between **delivery** or **pickup** during checkout. The business vision is to provide a seamless and premium online ordering experience for health-conscious consumers.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -49,7 +49,7 @@ The architecture follows a modern e-commerce pattern with a client-side rich use
 - `Chocolate.png` (example product image)
 
 ### Database Schema
-- **orders table**: Stores order information with fields for customer details, items (JSONB), payment tracking, order status (pending/completed/delivered), delivery scheduling (delivery_date, delivery_time_slot), and delivery proof (delivery_proof, delivery_person, delivered_at).
+- **orders table**: Stores order information with fields for customer details, items (JSONB), payment tracking, order status (pending/completed/delivered), order type (delivery/pickup), delivery scheduling (delivery_date, delivery_time_slot), and delivery proof (delivery_proof, delivery_person, delivered_at).
 
 ### Environment Variables (Replit Secrets)
 - `STRIPE_PUBLISHABLE_KEY`
