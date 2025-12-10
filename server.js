@@ -943,7 +943,7 @@ app.get('/delivery/orders', async (req, res) => {
           delivery_time_slot,
           created_at
         FROM orders
-        WHERE order_status IN ('pending', 'completed')
+        WHERE order_status = 'completed'
         ORDER BY created_at ASC
       `;
       result = await pool.query(fullQuery);
@@ -962,7 +962,7 @@ app.get('/delivery/orders', async (req, res) => {
           order_status,
           created_at
         FROM orders
-        WHERE order_status IN ('pending', 'completed')
+        WHERE order_status = 'completed'
         ORDER BY created_at ASC
       `;
       result = await pool.query(basicQuery);
