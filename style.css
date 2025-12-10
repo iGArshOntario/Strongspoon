@@ -143,6 +143,27 @@ body {
   transition: transform 0.3s ease;
 }
 
+.logo-link {
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logo-tap-hint {
+  display: block;
+  font-size: 0.7rem;
+  color: #00bfa5;
+  margin-top: 8px;
+  opacity: 0.8;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
 .logo:hover {
   transform: scale(1.05);
 }
