@@ -35,13 +35,13 @@ body {
 .location-btn {
   background: linear-gradient(135deg, #009688, #00796b);
   color: #fff;
-  padding: 6px 12px;
-  border-radius: 15px;
-  font-size: 0.75rem;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 150, 136, 0.3);
+  box-shadow: 0 2px 10px rgba(0, 150, 136, 0.3);
   transition: all 0.3s ease;
 }
 
