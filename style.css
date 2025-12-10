@@ -395,6 +395,20 @@ body {
     font-size: 0.9rem;
   }
 
+  /* Back link styling */
+  .back-link {
+    display: block;
+    margin-top: 25px;
+    color: #888;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+  }
+
+  .back-link:hover {
+    color: #00bfa5;
+  }
+
   .btn.teal:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
@@ -628,15 +642,10 @@ body {
   cursor: pointer;
   user-select: none;
   display: block;
-}
-
-.checkbox-group label h3 {
   font-weight: 500;
-  font-size: 1.15rem;
-  margin: 0;
-  cursor: pointer;
+  font-size: 1.1rem;
+  color: #fff;
   transition: color 0.3s ease;
-  display: inline-block;
 }
 
 /* Custom checkbox box */
@@ -675,7 +684,7 @@ body {
   transform: translateY(-50%) scale(1.05);
 }
 
-.checkbox-group:hover label h3 {
+.checkbox-group:hover label {
   color: #00bfa5;
 }
 
@@ -691,7 +700,7 @@ body {
   transform: translateY(-50%) scale(1) rotate(0deg);
 }
 
-.checkbox-group input[type="checkbox"]:checked + label h3 {
+.checkbox-group input[type="checkbox"]:checked + label {
   color: #00bfa5;
   font-weight: 600;
 }
@@ -712,7 +721,7 @@ body {
     margin-bottom: 12px;
   }
   
-  .checkbox-group label h3 {
+  .checkbox-group label {
     font-size: 1rem;
   }
   
