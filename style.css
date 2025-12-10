@@ -357,7 +357,6 @@ body {
     width: 280px;
     max-width: 90%;
     border-radius: 12px;
-    box-shadow: 0 4px 25px rgba(255, 255, 255, 0.08);
     animation: scaleIn 0.8s ease-out 0.3s both;
     transition: transform 0.3s ease;
   }
