@@ -20,14 +20,22 @@
     </a>
   </div>
 
-  <section class="order-container">
-    <h1 class="order-title">CUSTOMISE YOUR CUP </h1>
+  <section class="customise-page">
+    <div class="premium-header">
+      <div class="header-decoration"></div>
+      <h1 class="premium-title">Customise Your Cup</h1>
+      <p class="premium-subtitle">Make it exactly how you like it</p>
+      <div class="header-decoration"></div>
+    </div>
 
-    <form id="orderForm" class="order-form" action="/submit-order" method="POST">
+    <form id="orderForm" class="premium-form" action="/submit-order" method="POST">
 
-      <div class="form-group">
-        <label for="flavour" class="section-title">Select Flavour</label>
-        <select id="flavour" name="flavour" required>
+      <div class="premium-section">
+        <div class="section-header">
+          <span class="section-icon">🥄</span>
+          <h2>Select Your Flavour</h2>
+        </div>
+        <select id="flavour" name="flavour" required class="premium-select">
           <option value="">-- Choose flavour --</option>
           <option value="brownie">Brownie Issues (CHOCOLATE)</option>
           <option value="powerMix">Power Mix (PEANUT BUTTER)</option>
@@ -36,64 +44,94 @@
         </select>
       </div>
 
-     
-
-      <div class="form-group toppings-section">
-        <h2 class="section-title">Toppings (choose one or more)</h2>
-        
-        <div class="checkbox-group">
-          <input type="checkbox" id="almonds" name="toppings" value="almonds">
-          <label for="almonds">Almonds</label>
+      <div class="premium-section">
+        <div class="section-header">
+          <span class="section-icon">🥜</span>
+          <h2>Add Toppings</h2>
+          <span class="free-badge">FREE</span>
         </div>
-        
-        <div class="checkbox-group">
-          <input type="checkbox" id="cashews" name="toppings" value="cashews">
-          <label for="cashews">Cashews</label>
-        </div>
-        
-        <div class="checkbox-group">
-          <input type="checkbox" id="peanuts" name="toppings" value="peanuts">
-          <label for="peanuts">Peanuts</label>
-        </div>
-        
-        <div class="checkbox-group">
-          <input type="checkbox" id="raisins" name="toppings" value="raisins">
-          <label for="raisins">Raisins</label>
-        </div>
-        
-        <div class="checkbox-group">
-          <input type="checkbox" id="walnut" name="toppings" value="walnut">
-          <label for="walnut">Walnut</label>
+        <div class="toppings-grid">
+          <div class="topping-card">
+            <input type="checkbox" id="almonds" name="toppings" value="almonds">
+            <label for="almonds">
+              <span class="topping-emoji">🌰</span>
+              <span class="topping-name">Almonds</span>
+            </label>
+          </div>
+          
+          <div class="topping-card">
+            <input type="checkbox" id="cashews" name="toppings" value="cashews">
+            <label for="cashews">
+              <span class="topping-emoji">🥜</span>
+              <span class="topping-name">Cashews</span>
+            </label>
+          </div>
+          
+          <div class="topping-card">
+            <input type="checkbox" id="peanuts" name="toppings" value="peanuts">
+            <label for="peanuts">
+              <span class="topping-emoji">🥜</span>
+              <span class="topping-name">Peanuts</span>
+            </label>
+          </div>
+          
+          <div class="topping-card">
+            <input type="checkbox" id="raisins" name="toppings" value="raisins">
+            <label for="raisins">
+              <span class="topping-emoji">🍇</span>
+              <span class="topping-name">Raisins</span>
+            </label>
+          </div>
+          
+          <div class="topping-card">
+            <input type="checkbox" id="walnut" name="toppings" value="walnut">
+            <label for="walnut">
+              <span class="topping-emoji">🌰</span>
+              <span class="topping-name">Walnut</span>
+            </label>
+          </div>
         </div>
       </div>
 
-      <div class="form-group fruits-section">
-        <h2 class="section-title">Add Fresh Fruits</h2>
-        
-        <div class="checkbox-group">
-          <input type="checkbox" id="apple" name="toppings" value="apple">
-          <label for="apple">Apple</label>
+      <div class="premium-section">
+        <div class="section-header">
+          <span class="section-icon">🍎</span>
+          <h2>Fresh Fruits</h2>
+          <span class="free-badge">FREE</span>
         </div>
-        
-        <div class="checkbox-group">
-          <input type="checkbox" id="blueberries" name="toppings" value="blueberries">
-          <label for="blueberries">Blueberries</label>
+        <div class="toppings-grid">
+          <div class="topping-card">
+            <input type="checkbox" id="apple" name="toppings" value="apple">
+            <label for="apple">
+              <span class="topping-emoji">🍏</span>
+              <span class="topping-name">Apple</span>
+            </label>
+          </div>
+          
+          <div class="topping-card">
+            <input type="checkbox" id="blueberries" name="toppings" value="blueberries">
+            <label for="blueberries">
+              <span class="topping-emoji">🫐</span>
+              <span class="topping-name">Blueberries</span>
+            </label>
+          </div>
         </div>
       </div>
-      
-      
 
-      <div class="form-group">
-        <label for="notes">Special Instructions or Allergies</label>
-        <textarea id="notes" name="notes" rows="3" placeholder="Optional"></textarea>
+      <div class="premium-section">
+        <div class="section-header">
+          <span class="section-icon">📝</span>
+          <h2>Special Notes</h2>
+        </div>
+        <textarea id="notes" name="notes" rows="3" placeholder="Any allergies or special requests?" class="premium-textarea"></textarea>
       </div>
 
-      <button type="submit" class="btn teal">Add to Cart</button>
+      <button type="submit" class="btn teal premium-submit">Add to Cart</button>
     </form>
 
     <a href="Html2.html" class="back-link">← Back to Flavours</a>
 
-    <footer>
+    <footer class="premium-footer">
       <a href="https://strongspoon.ca" target="_blank">strongspoon.ca</a>
     </footer>
   </section>

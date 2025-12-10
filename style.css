@@ -257,6 +257,374 @@ body {
   animation: slideInLeft 0.6s ease-out 0.75s both;
 }
 
+/* -------------------------------------------------
+   PREMIUM FLAVOURS PAGE
+-------------------------------------------------- */
+.flavours-page {
+  max-width: 600px;
+  width: 100%;
+  padding: 20px;
+}
+
+.premium-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header-decoration {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00bfa5, transparent);
+  margin: 0 auto;
+}
+
+.premium-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 15px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #fff 0%, #00bfa5 50%, #fff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+
+.premium-subtitle {
+  font-size: 1rem;
+  color: #888;
+  font-weight: 300;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.flavour-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.flavour-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.3) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 25px 15px;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.flavour-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0,191,165,0.1) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.flavour-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0,191,165,0.5);
+  box-shadow: 0 15px 40px rgba(0,191,165,0.2);
+}
+
+.flavour-card:hover::before {
+  opacity: 1;
+}
+
+.flavour-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+.flavour-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.flavour-desc {
+  font-size: 0.75rem;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.flavour-tag {
+  display: inline-block;
+  background: rgba(0,191,165,0.2);
+  color: #00bfa5;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+}
+
+.price-badge {
+  background: linear-gradient(135deg, rgba(0,191,165,0.15) 0%, rgba(0,0,0,0.5) 100%);
+  border: 1px solid rgba(0,191,165,0.3);
+  border-radius: 12px;
+  padding: 15px 25px;
+  margin-bottom: 25px;
+  display: inline-block;
+}
+
+.price-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #00bfa5;
+}
+
+.price-details {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 3px;
+}
+
+/* -------------------------------------------------
+   PREMIUM CUSTOMISE PAGE
+-------------------------------------------------- */
+.customise-page {
+  max-width: 550px;
+  width: 100%;
+  padding: 20px;
+}
+
+.premium-form {
+  text-align: left;
+}
+
+.premium-section {
+  background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.2) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.section-icon {
+  font-size: 1.3rem;
+}
+
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  flex: 1;
+}
+
+.free-badge {
+  background: linear-gradient(135deg, #00bfa5, #009688);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  letter-spacing: 1px;
+}
+
+.premium-select {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2300bfa5' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+}
+
+.premium-select:focus {
+  outline: none;
+  border-color: #00bfa5;
+  box-shadow: 0 0 15px rgba(0,191,165,0.2);
+}
+
+.premium-select option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.toppings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.topping-card {
+  position: relative;
+}
+
+.topping-card input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.topping-card label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.topping-card label:hover {
+  background: rgba(0,191,165,0.1);
+  border-color: rgba(0,191,165,0.3);
+  transform: translateY(-2px);
+}
+
+.topping-card input[type="checkbox"]:checked + label {
+  background: linear-gradient(135deg, rgba(0,191,165,0.2) 0%, rgba(0,150,136,0.3) 100%);
+  border-color: #00bfa5;
+  box-shadow: 0 0 15px rgba(0,191,165,0.2);
+}
+
+.topping-emoji {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.topping-name {
+  font-size: 0.8rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+.topping-card input[type="checkbox"]:checked + label .topping-name {
+  color: #00bfa5;
+}
+
+.premium-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+  resize: vertical;
+  min-height: 80px;
+  transition: all 0.3s ease;
+}
+
+.premium-textarea:focus {
+  outline: none;
+  border-color: #00bfa5;
+  box-shadow: 0 0 15px rgba(0,191,165,0.2);
+}
+
+.premium-textarea::placeholder {
+  color: #666;
+}
+
+.premium-submit {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 1.1rem;
+  padding: 16px;
+}
+
+.premium-footer {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.premium-footer a {
+  color: #666;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.premium-footer a:hover {
+  color: #00bfa5;
+}
+
+@media (max-width: 480px) {
+  .premium-title {
+    font-size: 2rem;
+  }
+  
+  .flavour-grid {
+    gap: 10px;
+  }
+  
+  .flavour-card {
+    padding: 20px 10px;
+  }
+  
+  .flavour-icon {
+    font-size: 2rem;
+  }
+  
+  .flavour-name {
+    font-size: 0.95rem;
+  }
+  
+  .toppings-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  .topping-card label {
+    padding: 12px 8px;
+  }
+  
+  .topping-emoji {
+    font-size: 1.3rem;
+  }
+  
+  .topping-name {
+    font-size: 0.75rem;
+  }
+}
+
 /* Buttons (shared across all pages) */
 .btn {
   border: none;
