@@ -335,6 +335,11 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static('.'));
 
+// Root endpoint for deployment health checks
+app.get('/', (req, res) => {
+  res.sendFile('index.html', { root: '.' });
+});
+
 // Health check endpoint for deployment verification
 app.get('/health', async (req, res) => {
   const health = {
