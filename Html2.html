@@ -58,7 +58,7 @@
       </a>
     </div>
 
-    <div class="price-badge">
+    <div class="price-badge" id="priceBadge">
       <span class="price-amount">$9.99</span>
       <span class="price-details">per cup · tax included</span>
     </div>
@@ -66,7 +66,55 @@
     <a href="index.html" class="back-link">← Back to Home</a>
   </section>
 
+  <div class="price-popup-overlay" id="pricePopupOverlay">
+    <div class="price-popup">
+      <button class="price-popup-close" id="pricePopupClose">&times;</button>
+      <div class="price-popup-icon">🎉</div>
+      <h2 class="price-popup-title">Limited Time Offer!</h2>
+      <div class="price-popup-content">
+        <div class="price-highlight">
+          <span class="current-price">$9.99</span>
+          <span class="price-label">All Inclusive</span>
+        </div>
+        <p class="price-popup-text">Enjoy our premium yogurt with all toppings and tax included at this special price!</p>
+        <div class="price-future">
+          <span class="future-label">Regular price:</span>
+          <span class="future-price">$11.99</span>
+        </div>
+        <div class="price-special">
+          <span class="special-icon">📅</span>
+          <span class="special-text">Every 13th of the month, enjoy $9.99 pricing!</span>
+        </div>
+      </div>
+      <button class="price-popup-btn" id="pricePopupBtn">Got it!</button>
+    </div>
+  </div>
+
   <script src="products.js"></script>
   <script src="script.js"></script>
+  <script>
+    const priceBadge = document.getElementById('priceBadge');
+    const pricePopupOverlay = document.getElementById('pricePopupOverlay');
+    const pricePopupClose = document.getElementById('pricePopupClose');
+    const pricePopupBtn = document.getElementById('pricePopupBtn');
+
+    priceBadge.addEventListener('click', () => {
+      pricePopupOverlay.classList.add('active');
+    });
+
+    pricePopupClose.addEventListener('click', () => {
+      pricePopupOverlay.classList.remove('active');
+    });
+
+    pricePopupBtn.addEventListener('click', () => {
+      pricePopupOverlay.classList.remove('active');
+    });
+
+    pricePopupOverlay.addEventListener('click', (e) => {
+      if (e.target === pricePopupOverlay) {
+        pricePopupOverlay.classList.remove('active');
+      }
+    });
+  </script>
 </body>
 </html>
