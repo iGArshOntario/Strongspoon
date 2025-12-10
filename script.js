@@ -1,4 +1,15 @@
 /* -----------------------------
+   LOCATION POPUP
+------------------------------ */
+function showLocationPopup() {
+  document.getElementById('locationPopup').classList.add('active');
+}
+
+function hideLocationPopup() {
+  document.getElementById('locationPopup').classList.remove('active');
+}
+
+/* -----------------------------
    SMOOTH SCROLL NAVIGATION
 ------------------------------ */
 document.querySelectorAll('a[href^="#"]').forEach(link => {

@@ -17,8 +17,20 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="location-badge">
-    📍 Regina, SK 
+  <div class="location-banner">
+    <button class="location-btn" onclick="showLocationPopup()">📍 Regina, SK Only</button>
+  </div>
+
+  <div id="locationPopup" class="location-popup" onclick="hideLocationPopup()">
+    <div class="popup-content" onclick="event.stopPropagation()">
+      <button class="popup-close" onclick="hideLocationPopup()">×</button>
+      <h3>We're in Regina, SK!</h3>
+      <p>Strong Spoon is officially serving <strong>Regina, Saskatchewan</strong> only.</p>
+      <p style="margin-top: 15px; color: #aaa;">Want us in your city? Follow us on social media and spread the word — the more love we get, the faster we grow!</p>
+      <div class="popup-social">
+        <span>🚀 Help us expand!</span>
+      </div>
+    </div>
   </div>
 
   <div class="cart-nav">
