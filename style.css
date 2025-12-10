@@ -112,8 +112,19 @@ body {
   margin-top: 20px;
   padding-top: 15px;
   border-top: 1px solid #333;
+}
+
+.social-link {
   color: #00bfa5;
   font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.social-link:hover {
+  color: #fff;
+  transform: scale(1.05);
 }
 
 /* -------------------------------------------------
