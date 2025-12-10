@@ -49,12 +49,29 @@ if (customiseForm) {
     cart.addItem(item);
     
     const toppingsText = selectedToppings.length > 0 
-      ? `\nToppings: ${selectedToppings.map(t => t.name).join(', ')}`
-      : '';
+      ? selectedToppings.map(t => t.name).join(', ')
+      : 'No toppings';
     
-    const total = product.price + selectedToppings.reduce((sum, t) => sum + t.price, 0);
+    const cartPopupOverlay = document.getElementById('cartPopupOverlay');
+    const cartItemName = document.getElementById('cartItemName');
+    const cartItemToppings = document.getElementById('cartItemToppings');
+    const continueBtn = document.getElementById('continueBtn');
     
-    alert(`✅ Added to cart!\n\n${product.name}${toppingsText}\n\nTotal: $${total.toFixed(2)}`);
+    if (cartPopupOverlay && cartItemName && cartItemToppings) {
+      cartItemName.textContent = product.name;
+      cartItemToppings.textContent = toppingsText;
+      cartPopupOverlay.classList.add('active');
+      
+      continueBtn.onclick = () => {
+        cartPopupOverlay.classList.remove('active');
+      };
+      
+      cartPopupOverlay.onclick = (e) => {
+        if (e.target === cartPopupOverlay) {
+          cartPopupOverlay.classList.remove('active');
+        }
+      };
+    }
     
     customiseForm.reset();
   });

@@ -37,10 +37,10 @@
         </div>
         <select id="flavour" name="flavour" required class="premium-select">
           <option value="">-- Choose flavour --</option>
-          <option value="brownie">Brownie Issues (CHOCOLATE)</option>
-          <option value="powerMix">Power Mix (PEANUT BUTTER)</option>
-          <option value="goldenScoop">Golden Scoop (VANILLA)</option>
-          <option value="spoonCrumble">Spoon Crumble (COOKIE)</option>
+          <option value="brownie">🍫 Brownie Issues</option>
+          <option value="powerMix">🥜 Power Mix</option>
+          <option value="goldenScoop">🍦 Golden Scoop</option>
+          <option value="spoonCrumble">🍪 Spoon Crumble</option>
         </select>
       </div>
 
@@ -135,6 +135,21 @@
       <a href="https://strongspoon.ca" target="_blank">strongspoon.ca</a>
     </footer>
   </section>
+
+  <div class="cart-popup-overlay" id="cartPopupOverlay">
+    <div class="cart-popup">
+      <div class="cart-popup-icon">✓</div>
+      <h2 class="cart-popup-title">Added to Cart!</h2>
+      <div class="cart-popup-details">
+        <p class="cart-item-name" id="cartItemName"></p>
+        <p class="cart-item-toppings" id="cartItemToppings"></p>
+      </div>
+      <div class="cart-popup-buttons">
+        <button class="cart-popup-btn secondary" id="continueBtn">Continue Shopping</button>
+        <a href="cart.html" class="cart-popup-btn primary">View Cart</a>
+      </div>
+    </div>
+  </div>
 
   <script src="products.js"></script>
   <script src="script.js"></script>
