@@ -1,5 +1,21 @@
 const customiseForm = document.getElementById('orderForm');
 
+const flavorMapping = {
+  'Brownie Issues': 'brownie',
+  'Power Mix': 'powerMix',
+  'Golden Scoop': 'goldenScoop',
+  'Spoon Crumble': 'spoonCrumble'
+};
+
+const urlParams = new URLSearchParams(window.location.search);
+const flavorFromUrl = urlParams.get('flavor');
+if (flavorFromUrl && flavorMapping[flavorFromUrl]) {
+  const flavourSelect = document.getElementById('flavour');
+  if (flavourSelect) {
+    flavourSelect.value = flavorMapping[flavorFromUrl];
+  }
+}
+
 if (customiseForm) {
   customiseForm.addEventListener('submit', e => {
     e.preventDefault();

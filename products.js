@@ -20,7 +20,23 @@ const PRODUCTS = {
     description: 'Peanut butter high-protein yogurt',
     price: PRODUCT_PRICE,
     size: PRODUCT_SIZE,
-    image: 'strongspoon-logo.jpeg'
+    image: 'Peanut.png'
+  },
+  'goldenScoop': {
+    id: 'goldenScoop',
+    name: 'Golden Scoop',
+    description: 'Vanilla high-protein yogurt',
+    price: PRODUCT_PRICE,
+    size: PRODUCT_SIZE,
+    image: 'vanilla.png'
+  },
+  'spoonCrumble': {
+    id: 'spoonCrumble',
+    name: 'Spoon Crumble',
+    description: 'Cookie high-protein yogurt',
+    price: PRODUCT_PRICE,
+    size: PRODUCT_SIZE,
+    image: 'cookie.png'
   }
 };
 

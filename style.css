@@ -358,13 +358,12 @@ body {
     max-width: 90%;
     border-radius: 12px;
     box-shadow: 0 4px 25px rgba(255, 255, 255, 0.08);
-    animation: scaleIn 0.8s ease-out 0.3s both, float 3s ease-in-out 1s infinite;
+    animation: scaleIn 0.8s ease-out 0.3s both;
     transition: transform 0.3s ease;
   }
   
   .cup-png:hover {
-    transform: scale(1.08);
-    animation: float 3s ease-in-out infinite;
+    transform: scale(1.05);
   }
 
   .ingredients {
@@ -391,8 +390,10 @@ body {
   /* Product page button */
   .product-container .btn.teal {
     margin-top: 10px;
-    max-width: 400px;
-    width: 100%;
+    max-width: 280px;
+    width: auto;
+    padding: 12px 30px;
+    font-size: 0.9rem;
   }
 
   .btn.teal:hover {
