@@ -143,56 +143,19 @@
 <body>
   <div class="bg-animation"></div>
   
-  <form class="access-form" id="accessForm">
-    <h2>Access Required</h2>
-    <input type="password" id="accessCode" placeholder="Enter access code" required>
-    <button type="submit">Continue</button>
-    <p>Contact owner for access code</p>
-  </form>
-
   <div class="countdown-container" id="countdownContainer">
     <div class="timer" id="countdown">00:00:00:00</div>
   </div>
 
   <script>
-    const COUNTDOWN_KEY = 'countdown_access_verified';
-    const EXPECTED_CODE = '3180';
-
-    function checkAccess() {
-      const verified = localStorage.getItem(COUNTDOWN_KEY);
-      if (verified === 'true') {
-        showCountdown();
-      }
-    }
-
-    function showCountdown() {
-      document.getElementById('accessForm').classList.add('hidden');
-      document.getElementById('countdownContainer').classList.add('active');
-      startCountdown();
-    }
-
-    document.getElementById('accessForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const code = document.getElementById('accessCode').value;
-      
-      if (code === EXPECTED_CODE) {
-        localStorage.setItem(COUNTDOWN_KEY, 'true');
-        showCountdown();
-      } else {
-        alert('Invalid access code');
-        document.getElementById('accessCode').value = '';
-      }
-    });
+    const targetDate = new Date('2026-04-10T08:00:00-05:00').getTime();
 
     function startCountdown() {
-      const targetDate = new Date('2026-04-10T08:00:00-05:00').getTime();
-
       function updateCountdown() {
         const now = new Date().getTime();
         const distance = targetDate - now;
 
         if (distance < 0) {
-          localStorage.removeItem(COUNTDOWN_KEY);
           window.location.href = '/';
           return;
         }
@@ -212,7 +175,7 @@
       setInterval(updateCountdown, 1000);
     }
 
-    checkAccess();
+    startCountdown();
   </script>
 </body>
 </html>
