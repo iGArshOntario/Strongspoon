@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strong Spoon</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .countdown-container {
+      text-align: center;
+      z-index: 10;
+      position: relative;
+      display: none;
+    }
+
+    .countdown-container.active {
+      display: block;
+    }
+
+    .timer {
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      font-family: 'Courier New', monospace;
+      margin-bottom: 20px;
+      text-shadow: 0 0 40px rgba(0, 191, 165, 0.5);
+      color: #00bfa5;
+      line-height: 1.2;
+    }
+
+    @media (max-width: 768px) {
+      .timer {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .timer {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* Animated background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 50%, rgba(0, 191, 165, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(0, 150, 136, 0.05) 0%, transparent 50%);
+      animation: shift 8s ease-in-out infinite;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    @keyframes shift {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.8; }
+    }
+
+    .access-form {
+      background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+      border: 1px solid rgba(0, 191, 165, 0.3);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 300px;
+      text-align: center;
+      z-index: 10;
+      position: relative;
+      display: block;
+    }
+
+    .access-form.hidden {
+      display: none;
+    }
+
+    .access-form h2 {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+
+    .access-form input {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 191, 165, 0.3);
+      border-radius: 8px;
+      color: #fff;
+      margin-bottom: 15px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+    }
+
+    .access-form input:focus {
+      outline: none;
+      border-color: #00bfa5;
+      box-shadow: 0 0 10px rgba(0, 191, 165, 0.2);
+    }
+
+    .access-form button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #00bfa5, #009688);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .access-form button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 191, 165, 0.4);
+    }
+
+    .access-form p {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+  
+  <form class="access-form" id="accessForm">
+    <h2>Access Required</h2>
+    <input type="password" id="accessCode" placeholder="Enter access code" required>
+    <button type="submit">Continue</button>
+    <p>Contact owner for access code</p>
+  </form>
+
+  <div class="countdown-container" id="countdownContainer">
+    <div class="timer" id="countdown">00:00:00:00</div>
+  </div>
+
+  <script>
+    const COUNTDOWN_KEY = 'countdown_access_verified';
+    const EXPECTED_CODE = '3180';
+
+    function checkAccess() {
+      const verified = localStorage.getItem(COUNTDOWN_KEY);
+      if (verified === 'true') {
+        showCountdown();
+      }
+    }
+
+    function showCountdown() {
+      document.getElementById('accessForm').classList.add('hidden');
+      document.getElementById('countdownContainer').classList.add('active');
+      startCountdown();
+    }
+
+    document.getElementById('accessForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = document.getElementById('accessCode').value;
+      
+      if (code === EXPECTED_CODE) {
+        localStorage.setItem(COUNTDOWN_KEY, 'true');
+        showCountdown();
+      } else {
+        alert('Invalid access code');
+        document.getElementById('accessCode').value = '';
+      }
+    });
+
+    function startCountdown() {
+      const targetDate = new Date('2026-04-10T08:00:00-05:00').getTime();
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance < 0) {
+          localStorage.removeItem(COUNTDOWN_KEY);
+          window.location.href = '/';
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const pad = (num) => String(num).padStart(2, '0');
+        
+        document.getElementById('countdown').textContent = 
+          `${pad(days)}:${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    checkAccess();
+  </script>
+</body>
+</html>
