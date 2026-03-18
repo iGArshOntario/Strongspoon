@@ -29,6 +29,7 @@
       z-index: 10;
       position: relative;
       display: none;
+      padding: 20px;
     }
 
     .countdown-container.active {
@@ -40,23 +41,166 @@
       font-weight: 800;
       letter-spacing: 2px;
       font-family: 'Courier New', monospace;
-      margin-bottom: 20px;
+      margin-bottom: 32px;
       text-shadow: 0 0 40px rgba(0, 191, 165, 0.5);
       color: #00bfa5;
       line-height: 1.2;
     }
 
-    @media (max-width: 768px) {
-      .timer {
-        font-size: 2.5rem;
-      }
+    .waitlist-btn {
+      display: inline-block;
+      padding: 14px 40px;
+      background: linear-gradient(135deg, #00bfa5, #009688);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 191, 165, 0.35);
     }
 
-    @media (max-width: 480px) {
-      .timer {
-        font-size: 1.8rem;
-      }
+    .waitlist-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 191, 165, 0.5);
     }
+
+    /* Modal overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: linear-gradient(145deg, #111 0%, #0a0a0a 100%);
+      border: 1px solid rgba(0, 191, 165, 0.3);
+      border-radius: 20px;
+      padding: 36px 32px;
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .modal p.sub {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 191, 165, 0.3);
+      border-radius: 10px;
+      color: #fff;
+      margin-bottom: 14px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+
+    .modal input:focus {
+      outline: none;
+      border-color: #00bfa5;
+      box-shadow: 0 0 10px rgba(0, 191, 165, 0.15);
+    }
+
+    .modal input::placeholder {
+      color: #555;
+    }
+
+    .modal .submit-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #00bfa5, #009688);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 4px;
+    }
+
+    .modal .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 20px rgba(0, 191, 165, 0.4);
+    }
+
+    .modal .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .modal .cancel-link {
+      display: block;
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: #555;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .modal .cancel-link:hover {
+      color: #888;
+    }
+
+    /* Thank you state */
+    .thank-you {
+      display: none;
+      animation: popIn 0.3s ease;
+    }
+
+    .thank-you.active {
+      display: block;
+    }
+
+    .thank-you-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    .thank-you h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .thank-you p {
+      font-size: 0.9rem;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    .form-content {}
 
     /* Animated background */
     .bg-animation {
@@ -77,81 +221,51 @@
       50% { opacity: 0.8; }
     }
 
-    .access-form {
-      background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
-      border: 1px solid rgba(0, 191, 165, 0.3);
-      border-radius: 16px;
-      padding: 30px;
-      max-width: 300px;
-      text-align: center;
-      z-index: 10;
-      position: relative;
-      display: block;
+    @media (max-width: 768px) {
+      .timer { font-size: 2.5rem; }
     }
 
-    .access-form.hidden {
-      display: none;
-    }
-
-    .access-form h2 {
-      margin-bottom: 20px;
-      font-size: 1.2rem;
-    }
-
-    .access-form input {
-      width: 100%;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(0, 191, 165, 0.3);
-      border-radius: 8px;
-      color: #fff;
-      margin-bottom: 15px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 1rem;
-    }
-
-    .access-form input:focus {
-      outline: none;
-      border-color: #00bfa5;
-      box-shadow: 0 0 10px rgba(0, 191, 165, 0.2);
-    }
-
-    .access-form button {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #00bfa5, #009688);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .access-form button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 20px rgba(0, 191, 165, 0.4);
-    }
-
-    .access-form p {
-      font-size: 0.75rem;
-      color: #666;
-      margin-top: 10px;
+    @media (max-width: 480px) {
+      .timer { font-size: 1.8rem; }
     }
   </style>
 </head>
 <body>
   <div class="bg-animation"></div>
-  
+
   <div class="countdown-container" id="countdownContainer">
     <div class="timer" id="countdown">00:00:00:00</div>
+    <button class="waitlist-btn" id="waitlistBtn">Join the Waitlist</button>
+  </div>
+
+  <!-- Waitlist Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+
+      <div class="form-content" id="formContent">
+        <h2>Join the Waitlist</h2>
+        <p class="sub">Be the first to know when we launch.</p>
+
+        <input type="text" id="waitlistName" placeholder="Your name" maxlength="100">
+        <input type="text" id="waitlistCity" placeholder="Your city" maxlength="100">
+
+        <button class="submit-btn" id="submitBtn">Submit</button>
+        <span class="cancel-link" id="cancelBtn">Cancel</span>
+      </div>
+
+      <div class="thank-you" id="thankYou">
+        <div class="thank-you-icon">💚</div>
+        <h2>Thank you for your interest!</h2>
+        <p>We'll be in touch when Strong Spoon launches.</p>
+      </div>
+
+    </div>
   </div>
 
   <script>
     const targetDate = new Date('2026-04-10T08:00:00-05:00').getTime();
 
     function startCountdown() {
-      // Show the countdown container
       document.getElementById('countdownContainer').classList.add('active');
 
       function updateCountdown() {
@@ -169,14 +283,56 @@
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         const pad = (num) => String(num).padStart(2, '0');
-        
-        document.getElementById('countdown').textContent = 
+        document.getElementById('countdown').textContent =
           `${pad(days)}:${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
       }
 
       updateCountdown();
       setInterval(updateCountdown, 1000);
     }
+
+    // Modal logic
+    const modal = document.getElementById('modalOverlay');
+    const formContent = document.getElementById('formContent');
+    const thankYou = document.getElementById('thankYou');
+
+    document.getElementById('waitlistBtn').addEventListener('click', () => {
+      modal.classList.add('active');
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+      const name = document.getElementById('waitlistName').value.trim();
+      const city = document.getElementById('waitlistCity').value.trim();
+
+      if (!name || !city) {
+        document.getElementById('waitlistName').style.borderColor = name ? 'rgba(0,191,165,0.3)' : '#e53935';
+        document.getElementById('waitlistCity').style.borderColor = city ? 'rgba(0,191,165,0.3)' : '#e53935';
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      try {
+        await fetch('/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, city })
+        });
+      } catch (e) {}
+
+      formContent.style.display = 'none';
+      thankYou.classList.add('active');
+    });
 
     startCountdown();
   </script>

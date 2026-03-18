@@ -335,6 +335,29 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static('.'));
 
+// Create waitlist table if it doesn't exist
+pool.query(`
+  CREATE TABLE IF NOT EXISTS waitlist (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    city TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )
+`).catch(err => console.error('Waitlist table error:', err));
+
+// Waitlist signup
+app.post('/waitlist', async (req, res) => {
+  try {
+    const { name, city } = req.body;
+    if (!name || !city) return res.status(400).json({ error: 'Name and city required' });
+    await pool.query('INSERT INTO waitlist (name, city) VALUES ($1, $2)', [name.trim(), city.trim()]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Waitlist error:', err);
+    res.status(500).json({ error: 'Failed to save' });
+  }
+});
+
 // Root endpoint for deployment health checks
 app.get('/', (req, res) => {
   res.sendFile('index.html', { root: '.' });
