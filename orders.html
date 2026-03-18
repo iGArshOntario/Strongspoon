@@ -6,15 +6,6 @@
   <title>Orders - Strong Spoon Admin</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
   <link rel="stylesheet" href="style.css">
-  <script>
-    // Check if website should be in countdown mode
-    const launchDate = new Date('2026-04-10T08:00:00-05:00').getTime();
-    const now = new Date().getTime();
-    
-    if (now < launchDate) {
-      window.location.href = '/countdown.html';
-    }
-  </script>
   <style>
     .admin-container {
       max-width: 1400px;
@@ -552,6 +543,13 @@
         <p style="color: #888; text-align: center;">Loading past deliveries...</p>
       </div>
     </div>
+
+    <h2 class="section-title">📋 Waitlist Signups</h2>
+    <div class="past-deliveries-section">
+      <div id="waitlistContainer">
+        <p style="color: #888; text-align: center;">Loading waitlist...</p>
+      </div>
+    </div>
   </div>
 
   <div id="deliveryProofModal" class="modal">
@@ -659,9 +657,10 @@
         
         const orders = data.orders || [];
         
-        // Load analytics and past deliveries after successful login
+        // Load analytics, past deliveries and waitlist after successful login
         loadAnalytics('all');
         loadPastDeliveries();
+        loadWaitlist();
         
         // Render orders table
         const container = document.getElementById('ordersContainer');
@@ -899,6 +898,44 @@
       }
     }
     
+    async function loadWaitlist() {
+      try {
+        const response = await fetch('/admin/waitlist', {
+          headers: { 'Authorization': 'Basic ' + adminCredentials }
+        });
+
+        if (!response.ok) throw new Error('Failed to load waitlist');
+        const data = await response.json();
+        const signups = data.signups || [];
+        const container = document.getElementById('waitlistContainer');
+
+        if (signups.length === 0) {
+          container.innerHTML = '<p style="color: #888; text-align: center;">No waitlist signups yet</p>';
+          return;
+        }
+
+        container.innerHTML = `
+          <div style="margin-bottom: 12px; color: #aaa; font-size: 0.9rem;">${signups.length} signup${signups.length !== 1 ? 's' : ''}</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            ${signups.map((s, i) => `
+              <div style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px 18px;">
+                <div style="color: #00bfa5; font-weight: 700; font-size: 1rem; min-width: 28px;">${i + 1}.</div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 600; font-size: 0.95rem;">${s.name}</div>
+                  <div style="color: #888; font-size: 0.82rem; margin-top: 2px;">📍 ${s.city}</div>
+                </div>
+                <div style="color: #555; font-size: 0.78rem; text-align: right;">
+                  ${new Date(s.created_at).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (error) {
+        document.getElementById('waitlistContainer').innerHTML = '<p style="color: #888; text-align: center;">Error loading waitlist</p>';
+      }
+    }
+
     // Note: loadAnalytics and loadPastDeliveries are now called from within loadOrders
     // after successful authentication to ensure credentials are available
     
@@ -909,6 +946,7 @@
                    document.querySelector('.range-tab.active')?.textContent.includes('24') ? '1d' :
                    document.querySelector('.range-tab.active')?.textContent.includes('7') ? '7d' : '14d');
       loadPastDeliveries();
+      loadWaitlist();
     }, 30000);
   </script>
 </body>

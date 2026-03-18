@@ -772,6 +772,35 @@ app.get('/admin/orders/past-deliveries', async (req, res) => {
   }
 });
 
+// Get waitlist signups (admin only)
+app.get('/admin/waitlist', async (req, res) => {
+  try {
+    if (!ADMIN_PASSWORD) {
+      return res.status(503).json({ error: 'Admin access not configured' });
+    }
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+
+    if (username !== 'admin' || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const result = await pool.query('SELECT id, name, city, created_at FROM waitlist ORDER BY created_at DESC');
+    res.json({ signups: result.rows, total: result.rows.length });
+  } catch (error) {
+    console.error('Error fetching waitlist:', error);
+    res.status(500).json({ error: 'Failed to fetch waitlist' });
+  }
+});
+
 // Get analytics with timeframes (admin endpoint)
 app.get('/admin/orders/analytics', async (req, res) => {
   try {
