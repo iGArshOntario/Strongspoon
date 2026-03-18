@@ -45,7 +45,11 @@
     const launchDate = new Date('2026-04-10T08:00:00-05:00').getTime();
     const now = new Date().getTime();
     
-    if (now < launchDate) {
+    if (new URLSearchParams(window.location.search).get('preview') === 'strongspoon') {
+      localStorage.setItem('ss_preview', 'true');
+    }
+    
+    if (now < launchDate && localStorage.getItem('ss_preview') !== 'true') {
       window.location.href = '/countdown.html';
     }
   </script>
