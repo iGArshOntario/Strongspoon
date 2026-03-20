@@ -36,6 +36,19 @@
       display: block;
     }
 
+    .logo-wrap {
+      margin-bottom: 28px;
+    }
+
+    .logo-wrap img {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 50%;
+      box-shadow: 0 0 40px rgba(0, 191, 165, 0.25), 0 0 80px rgba(0, 191, 165, 0.1);
+      border: 2px solid rgba(0, 191, 165, 0.2);
+    }
+
     .timer {
       font-size: 4rem;
       font-weight: 800;
@@ -234,6 +247,9 @@
   <div class="bg-animation"></div>
 
   <div class="countdown-container" id="countdownContainer">
+    <div class="logo-wrap">
+      <img src="/Ong.png" alt="Strong Spoon">
+    </div>
     <div class="timer" id="countdown">00:00:00:00</div>
     <button class="waitlist-btn" id="waitlistBtn">Join the Waitlist</button>
   </div>
