@@ -21,7 +21,7 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     .countdown-container {
@@ -37,7 +37,7 @@
     }
 
     .logo-wrap {
-      margin-bottom: 28px;
+      margin-bottom: 16px;
     }
 
     .logo-wrap img {
@@ -63,6 +63,30 @@
         width: 220px;
         height: 220px;
       }
+    }
+
+    .tagline {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.7;
+      max-width: 360px;
+      margin: 0 auto 14px;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    .location-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
     }
 
     .timer {
@@ -266,6 +290,8 @@
     <div class="logo-wrap">
       <img src="/Ong.png" alt="Strong Spoon">
     </div>
+    <p class="tagline">Strong Spoon — inspired by Ancient Greek traditions, a method of straining perfected over thousands of years to create thicker, stronger nutrition. Rebuilt for today, it transforms that timeless foundation into a high-performance dessert—delivering 46g of protein for a generation that demands more from what they eat.</p>
+    <div class="location-badge">📍 Regina, SK</div>
     <div class="timer" id="countdown">00:00:00:00</div>
     <button class="waitlist-btn" id="waitlistBtn">Join the Waitlist</button>
   </div>
