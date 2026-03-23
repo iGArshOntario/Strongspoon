@@ -1,12 +1,12 @@
 // OFFER MODE SWITCH: Set to true to show "Tax Included" message, false to hide it
-const OFFER_MODE = true;
+const OFFER_MODE = false;
 
 // Dynamic pricing: $7 launch special (Apr 10–11, 2026), $12 regular
 function getCurrentPrice() {
   const now = Date.now();
   const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
   const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
-  return (now >= launchStart && now < launchEnd) ? 7.00 : 12.00;
+  return (now >= launchStart && now < launchEnd) ? 7.00 : 11.99;
 }
 const PRODUCT_PRICE = getCurrentPrice();
 const PRODUCT_SIZE = '250g';

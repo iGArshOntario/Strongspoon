@@ -56,7 +56,7 @@ function getCurrentPrice() {
   const now = Date.now();
   const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
   const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
-  return (now >= launchStart && now < launchEnd) ? 7.00 : 12.00;
+  return (now >= launchStart && now < launchEnd) ? 7.00 : 11.99;
 }
 // PRODUCT_PRICE is called per-request via getCurrentPrice() to handle live pricing changes
 const PRODUCT_SIZE = '250g';
@@ -125,7 +125,6 @@ async function sendOrderConfirmation(orderData) {
       
       <div class="total">
         <strong>Total Paid: $${orderData.total_amount} CAD</strong><br>
-        <span style="font-size: 14px;">(Tax Included)</span>
       </div>
       
       <h3 style="color: #009688;">Delivery Information</h3>

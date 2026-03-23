@@ -59,8 +59,8 @@
     </div>
 
     <div class="price-badge" id="priceBadge">
-      <span class="price-amount" id="priceDisplay">$12</span>
-      <span class="price-details">per cup · tax included</span>
+      <span class="price-amount" id="priceDisplay">$11.99</span>
+      <span class="price-details">per cup</span>
     </div>
     
     <a href="index.html" class="back-link">← Back to Home</a>
@@ -73,13 +73,13 @@
       <h2 class="price-popup-title" id="popupTitle">All Toppings Included</h2>
       <div class="price-popup-content">
         <div class="price-highlight">
-          <span class="current-price" id="popupCurrentPrice">$12</span>
-          <span class="price-label">Tax Included</span>
+          <span class="current-price" id="popupCurrentPrice">$11.99</span>
+          <span class="price-label">Per Cup</span>
         </div>
-        <p class="price-popup-text" id="popupText">Enjoy our premium yogurt with all toppings and tax included at this special price!</p>
+        <p class="price-popup-text" id="popupText">Enjoy our premium yogurt with all toppings included at this special price!</p>
         <div class="price-future" id="popupRegular">
           <span class="future-label">Regular price:</span>
-          <span class="future-price">$12</span>
+          <span class="future-price">$11.99</span>
         </div>
       </div>
       <button class="price-popup-btn" id="pricePopupBtn">Got it!</button>
@@ -131,7 +131,7 @@
     const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
     const now = Date.now();
     const isLaunchDay = now >= launchStart && now < launchEnd;
-    const price = isLaunchDay ? '$7' : '$12';
+    const price = isLaunchDay ? '$7' : '$11.99';
 
     document.getElementById('priceDisplay').textContent = price;
     document.getElementById('popupCurrentPrice').textContent = price;
@@ -139,8 +139,8 @@
     if (isLaunchDay) {
       document.getElementById('popupIcon').textContent = '🚀';
       document.getElementById('popupTitle').textContent = 'Launch Day Special!';
-      document.getElementById('popupText').textContent = 'For the next 24 hours only — celebrate our launch with this exclusive price. All toppings and tax included!';
-      document.getElementById('popupRegular').innerHTML = '<span class="future-label">Regular price:</span><span class="future-price" style="text-decoration:line-through;">$12</span>';
+      document.getElementById('popupText').textContent = 'For the next 24 hours only — celebrate our launch with this exclusive price. All toppings included!';
+      document.getElementById('popupRegular').innerHTML = '<span class="future-label">Regular price:</span><span class="future-price" style="text-decoration:line-through;">$11.99</span>';
     } else {
       document.getElementById('popupRegular').style.display = 'none';
     }
