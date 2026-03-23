@@ -59,7 +59,7 @@
     </div>
 
     <div class="price-badge" id="priceBadge">
-      <span class="price-amount">$9.99</span>
+      <span class="price-amount" id="priceDisplay">$12</span>
       <span class="price-details">per cup · tax included</span>
     </div>
     
@@ -69,21 +69,17 @@
   <div class="price-popup-overlay" id="pricePopupOverlay">
     <div class="price-popup">
       <button class="price-popup-close" id="pricePopupClose">&times;</button>
-      <div class="price-popup-icon">🎉</div>
-      <h2 class="price-popup-title">Limited Time Offer!</h2>
+      <div class="price-popup-icon" id="popupIcon">🎉</div>
+      <h2 class="price-popup-title" id="popupTitle">All Toppings Included</h2>
       <div class="price-popup-content">
         <div class="price-highlight">
-          <span class="current-price">$9.99</span>
-          <span class="price-label">All Inclusive</span>
+          <span class="current-price" id="popupCurrentPrice">$12</span>
+          <span class="price-label">Tax Included</span>
         </div>
-        <p class="price-popup-text">Enjoy our premium yogurt with all toppings and tax included at this special price!</p>
-        <div class="price-future">
+        <p class="price-popup-text" id="popupText">Enjoy our premium yogurt with all toppings and tax included at this special price!</p>
+        <div class="price-future" id="popupRegular">
           <span class="future-label">Regular price:</span>
-          <span class="future-price">$11.99</span>
-        </div>
-        <div class="price-special">
-          <span class="special-icon">📅</span>
-          <span class="special-text">Every 13th of the month, enjoy $9.99 pricing!</span>
+          <span class="future-price">$12</span>
         </div>
       </div>
       <button class="price-popup-btn" id="pricePopupBtn">Got it!</button>
@@ -129,6 +125,25 @@
         pricePopupOverlay.classList.remove('active');
       }
     });
+
+    // Dynamic price display
+    const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
+    const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
+    const now = Date.now();
+    const isLaunchDay = now >= launchStart && now < launchEnd;
+    const price = isLaunchDay ? '$7' : '$12';
+
+    document.getElementById('priceDisplay').textContent = price;
+    document.getElementById('popupCurrentPrice').textContent = price;
+
+    if (isLaunchDay) {
+      document.getElementById('popupIcon').textContent = '🚀';
+      document.getElementById('popupTitle').textContent = 'Launch Day Special!';
+      document.getElementById('popupText').textContent = 'For the next 24 hours only — celebrate our launch with this exclusive price. All toppings and tax included!';
+      document.getElementById('popupRegular').innerHTML = '<span class="future-label">Regular price:</span><span class="future-price" style="text-decoration:line-through;">$12</span>';
+    } else {
+      document.getElementById('popupRegular').style.display = 'none';
+    }
   </script>
 </body>
 </html>

@@ -36,7 +36,7 @@
     </div>
 
     <div class="product-price">
-      <h2>$9.99 <span id="taxIncludedProduct" class="tax-note">(Tax Included)</span></h2>
+      <h2 id="productPrice">$12 <span id="taxIncludedProduct" class="tax-note">(Tax Included)</span></h2>
       <p class="product-size">Size: 250g</p>
     </div>
 
@@ -53,6 +53,12 @@
       if (taxNote) {
         taxNote.style.display = OFFER_MODE ? 'inline' : 'none';
       }
+    }
+    const priceEl = document.getElementById('productPrice');
+    if (priceEl && typeof PRODUCT_PRICE !== 'undefined') {
+      const taxSpan = priceEl.querySelector('#taxIncludedProduct');
+      const taxHTML = taxSpan ? taxSpan.outerHTML : '';
+      priceEl.innerHTML = '$' + (PRODUCT_PRICE % 1 === 0 ? PRODUCT_PRICE : PRODUCT_PRICE.toFixed(2)) + ' ' + taxHTML;
     }
   </script>
 </body>

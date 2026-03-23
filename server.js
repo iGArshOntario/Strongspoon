@@ -52,7 +52,13 @@ if (!process.env.RESEND_API_KEY) {
   console.log('✅ Resend email service initialized');
 }
 
-const PRODUCT_PRICE = 9.99;
+function getCurrentPrice() {
+  const now = Date.now();
+  const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
+  const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
+  return (now >= launchStart && now < launchEnd) ? 7.00 : 12.00;
+}
+// PRODUCT_PRICE is called per-request via getCurrentPrice() to handle live pricing changes
 const PRODUCT_SIZE = '250g';
 
 // Email sending function
@@ -75,7 +81,7 @@ async function sendOrderConfirmation(orderData) {
           </div>
         ` : ''}
         <div style="margin-top: 8px; color: #333;">
-          Quantity: ${item.quantity} × $${PRODUCT_PRICE} = $${(item.quantity * PRODUCT_PRICE).toFixed(2)}
+          Quantity: ${item.quantity} × $${getCurrentPrice().toFixed(2)} = $${(item.quantity * getCurrentPrice()).toFixed(2)}
         </div>
       </div>
     `).join('');
@@ -310,13 +316,13 @@ const PRODUCTS = {
   'brownie': {
     id: 'brownie',
     name: 'Brownie Issues',
-    price: PRODUCT_PRICE,
+    get price() { return getCurrentPrice(); },
     size: PRODUCT_SIZE
   },
   'powerMix': {
     id: 'powerMix',
     name: 'Power Mix',
-    price: PRODUCT_PRICE,
+    get price() { return getCurrentPrice(); },
     size: PRODUCT_SIZE
   }
 };
@@ -435,7 +441,7 @@ app.post('/create-payment-intent', async (req, res) => {
         }
       }
 
-      const itemTotal = PRODUCT_PRICE * item.quantity;
+      const itemTotal = getCurrentPrice() * item.quantity;
       serverTotal += itemTotal;
 
       validatedItems.push({
@@ -463,7 +469,7 @@ app.post('/create-payment-intent', async (req, res) => {
         delivery_time_slot: deliveryTimeSlot || '',
         items: JSON.stringify(validatedItems),
         total: serverTotal.toFixed(2),
-        pricing: 'Flat rate $9.99 per cup (tax included)'
+        pricing: `Flat rate $${getCurrentPrice().toFixed(2)} per cup (tax included)`
       },
     });
 
