@@ -440,14 +440,16 @@ app.post('/create-payment-intent', async (req, res) => {
         }
       }
 
-      const itemTotal = getCurrentPrice() * item.quantity;
+      const hasToppings = validatedToppings.length > 0;
+      const itemUnitPrice = getCurrentPrice() + (hasToppings ? 1 : 0);
+      const itemTotal = itemUnitPrice * item.quantity;
       serverTotal += itemTotal;
 
       validatedItems.push({
         name: product.name,
         size: product.size,
         quantity: item.quantity,
-        price: PRODUCT_PRICE,
+        price: itemUnitPrice,
         toppings: validatedToppings,
         itemTotal: itemTotal
       });

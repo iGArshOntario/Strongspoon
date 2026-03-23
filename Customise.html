@@ -35,20 +35,61 @@
           <span class="section-icon">🥄</span>
           <h2>Select Your Flavour</h2>
         </div>
-        <select id="flavour" name="flavour" required class="premium-select">
-          <option value="">-- Choose flavour --</option>
-          <option value="brownie">🍫 Brownie Issues</option>
-          <option value="powerMix">🥜 Power Mix</option>
-          <option value="goldenScoop">🍦 Golden Scoop</option>
-          <option value="spoonCrumble">🍪 Spoon Crumble</option>
-        </select>
+        <input type="hidden" id="flavour" name="flavour" required>
+        <div class="custom-flavour-select" id="flavourSelect">
+          <div class="flavour-trigger" id="flavourTrigger">
+            <span class="flavour-trigger-placeholder" id="flavourPlaceholder">Choose your flavour</span>
+            <div class="flavour-trigger-selected" id="flavourSelected" style="display:none;">
+              <span class="flavour-sel-emoji" id="flavourSelEmoji"></span>
+              <div class="flavour-sel-info">
+                <span class="flavour-sel-name" id="flavourSelName"></span>
+                <span class="flavour-sel-desc" id="flavourSelDesc"></span>
+              </div>
+            </div>
+            <span class="flavour-arrow" id="flavourArrow">▾</span>
+          </div>
+          <div class="flavour-dropdown" id="flavourDropdown">
+            <div class="flavour-option" data-value="brownie" data-emoji="🍫" data-name="Brownie Issues" data-desc="Dark chocolate brownie swirl">
+              <span class="flavour-opt-emoji">🍫</span>
+              <div class="flavour-opt-info">
+                <span class="flavour-opt-name">Brownie Issues</span>
+                <span class="flavour-opt-desc">Dark chocolate brownie swirl</span>
+              </div>
+              <span class="flavour-check">✓</span>
+            </div>
+            <div class="flavour-option" data-value="powerMix" data-emoji="🥜" data-name="Power Mix" data-desc="High-protein nut blend">
+              <span class="flavour-opt-emoji">🥜</span>
+              <div class="flavour-opt-info">
+                <span class="flavour-opt-name">Power Mix</span>
+                <span class="flavour-opt-desc">High-protein nut blend</span>
+              </div>
+              <span class="flavour-check">✓</span>
+            </div>
+            <div class="flavour-option" data-value="goldenScoop" data-emoji="🍦" data-name="Golden Scoop" data-desc="Smooth vanilla honey">
+              <span class="flavour-opt-emoji">🍦</span>
+              <div class="flavour-opt-info">
+                <span class="flavour-opt-name">Golden Scoop</span>
+                <span class="flavour-opt-desc">Smooth vanilla honey</span>
+              </div>
+              <span class="flavour-check">✓</span>
+            </div>
+            <div class="flavour-option" data-value="spoonCrumble" data-emoji="🍪" data-name="Spoon Crumble" data-desc="Cookie crumble crunch">
+              <span class="flavour-opt-emoji">🍪</span>
+              <div class="flavour-opt-info">
+                <span class="flavour-opt-name">Spoon Crumble</span>
+                <span class="flavour-opt-desc">Cookie crumble crunch</span>
+              </div>
+              <span class="flavour-check">✓</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="premium-section">
         <div class="section-header">
           <span class="section-icon">🥜</span>
           <h2>Add Toppings</h2>
-          <span class="free-badge">FREE</span>
+          <span class="free-badge">+$1</span>
         </div>
         <div class="toppings-grid">
           <div class="topping-card">
@@ -97,7 +138,7 @@
         <div class="section-header">
           <span class="section-icon">🍎</span>
           <h2>Fresh Fruits</h2>
-          <span class="free-badge">FREE</span>
+          <span class="free-badge">+$1</span>
         </div>
         <div class="toppings-grid">
           <div class="topping-card">

@@ -644,13 +644,184 @@ body {
 }
 
 .free-badge {
-  background: linear-gradient(135deg, #00bfa5, #009688);
+  background: linear-gradient(135deg, #c8963e, #a87630);
   color: #fff;
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 3px 10px;
   border-radius: 10px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+}
+
+/* ── Premium Custom Flavour Dropdown ── */
+.custom-flavour-select {
+  position: relative;
+  width: 100%;
+  user-select: none;
+}
+
+.flavour-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 58px;
+}
+
+.flavour-trigger:hover,
+.custom-flavour-select.open .flavour-trigger {
+  border-color: #00bfa5;
+  box-shadow: 0 0 18px rgba(0,191,165,0.18);
+}
+
+.flavour-trigger-placeholder {
+  flex: 1;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.flavour-trigger-selected {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.flavour-sel-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.flavour-sel-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.flavour-sel-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+}
+
+.flavour-sel-desc {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.45);
+  margin-top: 1px;
+}
+
+.flavour-arrow {
+  color: #00bfa5;
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.custom-flavour-select.open .flavour-arrow {
+  transform: rotate(180deg);
+}
+
+.flavour-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(18,18,18,0.97);
+  border: 1px solid rgba(0,191,165,0.3);
+  border-radius: 14px;
+  overflow: hidden;
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.custom-flavour-select.open .flavour-dropdown {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.flavour-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.flavour-option:last-child {
+  border-bottom: none;
+}
+
+.flavour-option:hover {
+  background: rgba(0,191,165,0.1);
+}
+
+.flavour-option.selected {
+  background: rgba(0,191,165,0.14);
+}
+
+.flavour-opt-emoji {
+  font-size: 1.7rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.flavour-opt-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.flavour-opt-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+}
+
+.flavour-opt-desc {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+
+.flavour-check {
+  color: #00bfa5;
+  font-size: 1rem;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.flavour-option.selected .flavour-check {
+  opacity: 1;
+}
+
+.topping-fee-note {
+  display: inline-block;
+  background: linear-gradient(135deg, #c8963e, #a87630);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 8px;
+  margin-left: 6px;
+  vertical-align: middle;
 }
 
 .premium-select {

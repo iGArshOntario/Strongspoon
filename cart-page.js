@@ -21,17 +21,19 @@ function renderCart() {
   checkoutBtn.style.display = 'inline-block';
 
   cartItemsContainer.innerHTML = cart.items.map((item, index) => {
-    const itemPrice = PRODUCT_PRICE;
+    const itemPrice = item.price !== undefined ? item.price : PRODUCT_PRICE;
     const itemTotal = itemPrice * item.quantity;
+    const hasToppings = item.toppings && item.toppings.length > 0;
 
     return `
       <div class="cart-item">
         <div class="item-info">
           <h3>${item.name}</h3>
           <p class="item-description">${item.description || ''} - ${PRODUCT_SIZE}</p>
-          ${item.toppings && item.toppings.length > 0 ? `
+          ${hasToppings ? `
             <p class="item-toppings">
               <strong>Toppings:</strong> ${item.toppings.map(t => t.name).join(', ')}
+              <span class="topping-fee-note">+$1</span>
             </p>
           ` : ''}
         </div>

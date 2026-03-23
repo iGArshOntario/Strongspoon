@@ -121,7 +121,7 @@ class ShoppingCart {
 
   getTotal() {
     return this.items.reduce((total, item) => {
-      const itemPrice = PRODUCT_PRICE;
+      const itemPrice = item.price !== undefined ? item.price : PRODUCT_PRICE;
       return total + (itemPrice * item.quantity);
     }, 0);
   }
