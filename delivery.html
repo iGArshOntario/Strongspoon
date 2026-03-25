@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Delivery - Strong Spoon</title>
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#009688">
+  <meta name="theme-color" content="#015A64">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Strong Spoon">
@@ -35,7 +35,7 @@
       font-weight: 800;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #00bfa5;
+      color: #017b86;
       margin-bottom: 10px;
     }
 
@@ -70,7 +70,7 @@
 
     .order-number {
       font-family: monospace;
-      color: #00bfa5;
+      color: #017b86;
       font-weight: 700;
       font-size: 1.1rem;
     }
@@ -100,7 +100,7 @@
     }
 
     .customer-address {
-      color: #00bfa5;
+      color: #017b86;
       margin-bottom: 5px;
       font-size: 0.95rem;
     }
@@ -123,7 +123,7 @@
     }
 
     .deliver-btn {
-      background: #00bfa5;
+      background: #017b86;
       color: white;
       border: none;
       padding: 12px 24px;
@@ -182,7 +182,7 @@
     .modal-title {
       font-family: 'Playfair Display', serif;
       font-size: 1.8rem;
-      color: #00bfa5;
+      color: #017b86;
       margin-bottom: 20px;
       text-align: center;
     }
@@ -211,7 +211,7 @@
 
     .form-input:focus {
       outline: none;
-      border-color: #00bfa5;
+      border-color: #017b86;
     }
 
     .camera-container {
@@ -250,7 +250,7 @@
     }
 
     .btn-primary {
-      background: #00bfa5;
+      background: #017b86;
       color: white;
     }
 
@@ -275,7 +275,7 @@
     }
 
     .submit-btn {
-      background: #00bfa5;
+      background: #017b86;
       color: white;
       border: none;
       padding: 15px;
@@ -301,7 +301,7 @@
       font-size: 1.5rem;
       font-weight: 700;
       margin: 40px 0 20px 0;
-      color: #00bfa5;
+      color: #017b86;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -381,7 +381,7 @@
       
       <div class="form-group">
         <label class="form-label">Order Number</label>
-        <div id="modalOrderNumber" style="color: #00bfa5; font-family: monospace; font-size: 1.2rem; font-weight: 700;"></div>
+        <div id="modalOrderNumber" style="color: #017b86; font-family: monospace; font-size: 1.2rem; font-weight: 700;"></div>
       </div>
 
       <div class="form-group">
@@ -500,7 +500,7 @@
               
               ${order.delivery_date ? `
                 <div style="background: rgba(0, 191, 165, 0.15); border: 2px solid rgba(0, 191, 165, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
-                  <div style="font-weight: 700; color: #00bfa5; margin-bottom: 5px;">🚚 Scheduled Delivery</div>
+                  <div style="font-weight: 700; color: #017b86; margin-bottom: 5px;">🚚 Scheduled Delivery</div>
                   <div style="font-size: 1rem; font-weight: 600;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>
                   <div style="color: #e0e0e0; margin-top: 4px;">⏰ ${order.delivery_time_slot}</div>
                 </div>
@@ -725,7 +725,7 @@
             <div class="past-delivery-card">
               <div class="past-delivery-info">
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                  <span style="color: #00bfa5; font-weight: 600; font-family: monospace;">${order.order_number}</span>
+                  <span style="color: #017b86; font-weight: 600; font-family: monospace;">${order.order_number}</span>
                   <span class="delivered-badge">Delivered</span>
                 </div>
                 <div><strong>${order.customer_name}</strong></div>
