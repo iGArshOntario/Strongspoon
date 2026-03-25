@@ -812,6 +812,106 @@ body {
   opacity: 1;
 }
 
+/* ── Product Page Button Group ── */
+.product-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.btn-customise {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 28px;
+  background: linear-gradient(135deg, #00bfa5 0%, #007a6e 100%);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 50px;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,191,165,0.35);
+  transition: all 0.3s ease;
+}
+
+.btn-customise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+}
+
+.btn-customise:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(0,191,165,0.5);
+  color: #fff;
+}
+
+.btn-customise:active {
+  transform: translateY(0);
+}
+
+.btn-customise-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.btn-quick-add {
+  padding: 13px 28px;
+  background: transparent;
+  color: rgba(255,255,255,0.75);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.3px;
+}
+
+.btn-quick-add:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.4);
+  color: #fff;
+}
+
+.btn-quick-add:active {
+  transform: scale(0.98);
+}
+
+.quick-add-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1a1a1a;
+  color: #00bfa5;
+  border: 1px solid rgba(0,191,165,0.4);
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  z-index: 9999;
+}
+
+.quick-add-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 .peanut-butter-note {
   margin-top: 10px;
   padding: 10px 14px;

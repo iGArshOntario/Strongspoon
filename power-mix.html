@@ -43,10 +43,18 @@
       <p class="product-size">Size: 250g</p>
     </div>
 
-    <a href="Customise.html?flavor=Power%20Mix" class="btn teal">Customise Your Cup</a>
-    
+    <div class="product-btn-group">
+      <a href="Customise.html?flavor=Power%20Mix" class="btn-customise">
+        <span class="btn-customise-icon">✦</span>
+        Customise Your Cup
+      </a>
+      <button class="btn-quick-add" id="quickAddBtn">🛒 Add to Cart</button>
+    </div>
+
     <a href="Html2.html" class="back-link">← Back to Flavours</a>
   </section>
+
+  <div class="quick-add-toast" id="quickAddToast">✓ Added to cart!</div>
 
   <script src="products.js"></script>
   <script src="script.js"></script>
@@ -63,6 +71,15 @@
       const taxHTML = taxSpan ? taxSpan.outerHTML : '';
       priceEl.innerHTML = '$' + (PRODUCT_PRICE % 1 === 0 ? PRODUCT_PRICE : PRODUCT_PRICE.toFixed(2)) + ' ' + taxHTML;
     }
+    document.getElementById('quickAddBtn').addEventListener('click', () => {
+      const product = PRODUCTS['powerMix'];
+      if (product) {
+        cart.addItem({ id: product.id, name: product.name, description: product.description, price: product.price, toppings: [], image: product.image });
+        const toast = document.getElementById('quickAddToast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+      }
+    });
   </script>
 </body>
 </html>
