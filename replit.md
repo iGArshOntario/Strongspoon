@@ -1,4 +1,4 @@
-# Strong Spoon - High-Protein Yogurt Ordering Platform
+# Strong Spoon - High-Protein Dessert Ordering Platform
 
 ## Overview
 Strong Spoon is a full-stack e-commerce platform for a Canadian health-focused yogurt brand **serving Regina, SK only**. It enables customers to browse high-protein yogurt flavors, customize orders with toppings, add items to a shopping cart, and complete purchases using Stripe. The platform features a responsive design, a complete shopping cart system, and a secure checkout flow, with a dynamic pricing model of $12 per 250g cup (tax-included), dropping to $7 during the 24-hour launch window (April 10–11, 2026), including all toppings and taxes. Customers can choose between **delivery** or **pickup** during checkout. The business vision is to provide a seamless and premium online ordering experience for health-conscious consumers.

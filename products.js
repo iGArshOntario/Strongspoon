@@ -38,7 +38,7 @@ const PRODUCTS = {
   'brownie': {
     id: 'brownie',
     name: 'Brownie Issues',
-    description: 'Chocolate high-protein yogurt',
+    description: 'Chocolate high-protein dessert',
     price: PRODUCT_PRICE,
     size: PRODUCT_SIZE,
     image: 'Chocolate.png'
@@ -46,7 +46,7 @@ const PRODUCTS = {
   'powerMix': {
     id: 'powerMix',
     name: 'Power Mix',
-    description: 'Peanut butter high-protein yogurt',
+    description: 'Peanut butter high-protein dessert',
     price: PRODUCT_PRICE,
     size: PRODUCT_SIZE,
     image: 'Peanut.png'
@@ -54,7 +54,7 @@ const PRODUCTS = {
   'goldenScoop': {
     id: 'goldenScoop',
     name: 'Golden Scoop',
-    description: 'Vanilla high-protein yogurt',
+    description: 'Vanilla high-protein dessert',
     price: PRODUCT_PRICE,
     size: PRODUCT_SIZE,
     image: 'vanilla.png'
@@ -62,7 +62,7 @@ const PRODUCTS = {
   'spoonCrumble': {
     id: 'spoonCrumble',
     name: 'Spoon Crumble',
-    description: 'Cookie high-protein yogurt',
+    description: 'Cookie high-protein dessert',
     price: PRODUCT_PRICE,
     size: PRODUCT_SIZE,
     image: 'cookie.png'

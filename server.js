@@ -137,7 +137,7 @@ async function sendOrderConfirmation(orderData) {
     </div>
     
     <div class="footer">
-      <p><strong>Strong Spoon - High-Protein Yogurt</strong></p>
+      <p><strong>Strong Spoon - High-Protein Dessert</strong></p>
       <p>Questions about your order? Reply to this email or contact us.</p>
       <p style="font-size: 12px; color: #999;">This is an automated confirmation email.</p>
     </div>
@@ -255,7 +255,7 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
       </div>
       
       <h2 style="color: #166534; margin-top: 0;">Hi ${orderData.customer_name}!</h2>
-      <p>Great news! Your order has been delivered. We hope you enjoy your high-protein yogurt!</p>
+      <p>Great news! Your order has been delivered. We hope you enjoy your high-protein dessert!</p>
       
       <div class="info-box">
         <strong>📦 Order:</strong> ${orderData.order_number}<br>
@@ -276,7 +276,7 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
     
     <div class="footer">
       <p style="margin: 0;"><strong>💪 Strong Spoon</strong></p>
-      <p style="margin: 5px 0 0 0;">High-Protein Yogurt for Champions</p>
+      <p style="margin: 5px 0 0 0;">High-Protein Dessert for Champions</p>
       <p style="font-size: 12px; color: #9ca3af; margin-top: 15px;">Thank you for choosing Strong Spoon!</p>
     </div>
   </div>

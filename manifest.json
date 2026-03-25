@@ -1,7 +1,7 @@
 {
-  "name": "Strong Spoon - High-Protein Yogurt",
+  "name": "Strong Spoon - High-Protein Dessert",
   "short_name": "Strong Spoon",
-  "description": "Order premium high-protein yogurt with custom toppings. $9.99 CAD per cup, all toppings included.",
+  "description": "Order premium high-protein dessert with custom toppings. $11.99 CAD per cup, all toppings included.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
