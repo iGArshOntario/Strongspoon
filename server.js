@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { Pool } = require('pg');
 const { Resend } = require('resend');
+const PDFDocument = require('pdfkit');
 
 // Cache brand logo for email embedding
 let LOGO_BASE64 = '';
@@ -13,7 +14,148 @@ try {
 } catch (e) {
   console.error('⚠️  Could not load brand logo for emails:', e.message);
 }
-const LOGO_IMG_TAG = `<div style="font-family:'Playfair Display',Georgia,serif;font-size:30px;font-weight:700;color:#ffffff;letter-spacing:2px;margin-bottom:6px;">💪 Strong Spoon</div>`;
+const LOGO_IMG_TAG = `
+  <div style="font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:36px;font-weight:900;color:#ffffff;letter-spacing:-0.5px;line-height:1;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,0.25);">Strong Spoon</div>
+  <div style="font-family:Arial,sans-serif;font-size:11px;font-weight:600;color:rgba(255,255,255,0.75);letter-spacing:4px;text-transform:uppercase;margin-bottom:0;">High-Protein Dessert</div>
+`;
+
+// ─── PDF Invoice Generator ──────────────────────────────────────────────────
+function generateInvoicePDF(orderData) {
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = new PDFDocument({ margin: 50, size: 'LETTER' });
+      const buffers = [];
+      doc.on('data', chunk => buffers.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(buffers)));
+      doc.on('error', reject);
+
+      const TEAL   = '#009688';
+      const DARK   = '#1a1a1a';
+      const GREY   = '#666666';
+      const LGREY  = '#f5f5f5';
+      const WHITE  = '#ffffff';
+
+      let items = [];
+      try { items = JSON.parse(orderData.items || '[]'); } catch(e) {}
+
+      const orderDate = new Date(orderData.created_at).toLocaleString('en-CA', {
+        timeZone: 'America/Toronto', dateStyle: 'long', timeStyle: 'short'
+      });
+
+      // ── Header bar ──────────────────────────────────────────────────────
+      doc.rect(0, 0, doc.page.width, 110).fill(TEAL);
+
+      doc.fillColor(WHITE)
+         .font('Helvetica-Bold')
+         .fontSize(30)
+         .text('Strong Spoon', 50, 28, { align: 'left' });
+
+      doc.fillColor('rgba(255,255,255,0.75)')
+         .font('Helvetica')
+         .fontSize(10)
+         .text('HIGH-PROTEIN DESSERT · REGINA, SK', 50, 64);
+
+      // INVOICE label on the right
+      doc.fillColor(WHITE)
+         .font('Helvetica-Bold')
+         .fontSize(26)
+         .text('INVOICE', 0, 32, { align: 'right', width: doc.page.width - 50 });
+
+      doc.fillColor('rgba(255,255,255,0.85)')
+         .font('Helvetica')
+         .fontSize(10)
+         .text(`# ${orderData.order_number}`, 0, 64, { align: 'right', width: doc.page.width - 50 });
+
+      // ── Invoice meta info ────────────────────────────────────────────────
+      doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('DATE', 50, 132);
+      doc.fillColor(GREY).font('Helvetica').fontSize(9).text(orderDate, 50, 145);
+
+      doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('ORDER TYPE', 200, 132);
+      doc.fillColor(GREY).font('Helvetica').fontSize(9)
+         .text((orderData.order_type || 'pickup').toUpperCase(), 200, 145);
+
+      if (orderData.delivery_date) {
+        doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('DELIVERY DATE', 350, 132);
+        doc.fillColor(GREY).font('Helvetica').fontSize(9)
+           .text(`${orderData.delivery_date}  ${orderData.delivery_time_slot || ''}`, 350, 145);
+      }
+
+      // ── Divider ──────────────────────────────────────────────────────────
+      doc.moveTo(50, 170).lineTo(doc.page.width - 50, 170).strokeColor('#e0e0e0').lineWidth(1).stroke();
+
+      // ── Bill To ──────────────────────────────────────────────────────────
+      doc.fillColor(TEAL).font('Helvetica-Bold').fontSize(9).text('BILL TO', 50, 185);
+      doc.fillColor(DARK).font('Helvetica-Bold').fontSize(11).text(orderData.customer_name || '', 50, 200);
+      doc.fillColor(GREY).font('Helvetica').fontSize(9);
+      let billY = 215;
+      if (orderData.customer_email)   { doc.text(orderData.customer_email, 50, billY);   billY += 13; }
+      if (orderData.customer_phone)   { doc.text(orderData.customer_phone, 50, billY);   billY += 13; }
+      if (orderData.customer_address) { doc.text(orderData.customer_address, 50, billY); billY += 13; }
+
+      // ── Items Table ──────────────────────────────────────────────────────
+      const tableTop = Math.max(billY + 30, 285);
+      const colItem  = 50;
+      const colTopp  = 260;
+      const colQty   = 380;
+      const colPrice = 430;
+      const colTotal = 490;
+
+      // Table header
+      doc.rect(50, tableTop, doc.page.width - 100, 22).fill(TEAL);
+      doc.fillColor(WHITE).font('Helvetica-Bold').fontSize(9);
+      doc.text('ITEM',     colItem,  tableTop + 7, { width: 200 });
+      doc.text('TOPPINGS', colTopp,  tableTop + 7, { width: 110 });
+      doc.text('QTY',      colQty,   tableTop + 7, { width: 44, align: 'center' });
+      doc.text('PRICE',    colPrice, tableTop + 7, { width: 54, align: 'right' });
+      doc.text('TOTAL',    colTotal, tableTop + 7, { width: 60, align: 'right' });
+
+      // Table rows
+      let rowY = tableTop + 28;
+      items.forEach((item, i) => {
+        const toppings = (item.toppings || []).map(t => t.name || t).join(', ') || 'None';
+        const price    = typeof item.price === 'number' ? item.price : parseFloat(item.price || 0);
+        const qty      = item.quantity || 1;
+        const lineTotal = (price * qty).toFixed(2);
+
+        const bg = i % 2 === 0 ? WHITE : LGREY;
+        doc.rect(50, rowY - 4, doc.page.width - 100, 26).fill(bg);
+
+        doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text(item.name || 'Item', colItem, rowY, { width: 200 });
+        doc.fillColor(GREY).font('Helvetica').fontSize(8).text(toppings, colTopp, rowY, { width: 110 });
+        doc.fillColor(DARK).font('Helvetica').fontSize(9).text(String(qty), colQty, rowY, { width: 44, align: 'center' });
+        doc.text(`$${price.toFixed(2)}`, colPrice, rowY, { width: 54, align: 'right' });
+        doc.font('Helvetica-Bold').text(`$${lineTotal}`, colTotal, rowY, { width: 60, align: 'right' });
+
+        rowY += 30;
+      });
+
+      // ── Totals ───────────────────────────────────────────────────────────
+      rowY += 10;
+      doc.rect(50, rowY, doc.page.width - 100, 1).fill('#e0e0e0');
+      rowY += 14;
+
+      doc.rect(doc.page.width - 210, rowY - 4, 160, 34).fill(TEAL);
+      doc.fillColor(WHITE).font('Helvetica').fontSize(10)
+         .text('TOTAL PAID (CAD)', doc.page.width - 210, rowY, { width: 160, align: 'center' });
+      doc.font('Helvetica-Bold').fontSize(16)
+         .text(`$${orderData.total_amount}`, doc.page.width - 210, rowY + 14, { width: 160, align: 'center' });
+
+      // ── Footer ───────────────────────────────────────────────────────────
+      const footerY = doc.page.height - 70;
+      doc.rect(0, footerY, doc.page.width, 70).fill(DARK);
+      doc.fillColor(WHITE).font('Helvetica-Bold').fontSize(9)
+         .text('Strong Spoon', 50, footerY + 18);
+      doc.fillColor(GREY).font('Helvetica').fontSize(8)
+         .text('Regina, SK · strongspoon.ca · orders@resend.dev', 50, footerY + 32)
+         .text('Thank you for your order!', 50, footerY + 46);
+
+      doc.end();
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+// ────────────────────────────────────────────────────────────────────────────
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -163,11 +305,26 @@ async function sendOrderConfirmation(orderData) {
 </html>
     `;
 
+    // Generate PDF invoice
+    let pdfAttachments = [];
+    try {
+      const pdfBuffer = await generateInvoicePDF(orderData);
+      pdfAttachments = [{
+        filename: `StrongSpoon-Invoice-${orderData.order_number}.pdf`,
+        content: pdfBuffer,
+        contentType: 'application/pdf',
+      }];
+      console.log('✅ PDF invoice generated');
+    } catch (pdfErr) {
+      console.error('⚠️ PDF generation failed (sending email without PDF):', pdfErr.message);
+    }
+
     const { data, error } = await resend.emails.send({
       from: 'Strong Spoon <orders@resend.dev>',
       to: [orderData.customer_email],
       subject: `Order Confirmed ✓ — ${orderData.order_number}`,
       html: emailHTML,
+      attachments: pdfAttachments,
     });
 
     if (error) {
@@ -1270,11 +1427,35 @@ async function startServer() {
     <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Questions? Reply to this email · Regina, SK</span>
   </div>
 </div></div></body></html>`;
+    // Generate sample PDF invoice
+    const sampleOrder = {
+      order_number: 'SS-SAMPLE-001',
+      customer_name: 'Arsh',
+      customer_email: to,
+      customer_phone: '+1 (306) 555-0199',
+      customer_address: '123 Wascana St, Regina, SK',
+      items: JSON.stringify([
+        { name: 'Brownie Issues', quantity: 2, price: 11.99, toppings: [{ name: 'Almonds' }, { name: 'Cashews' }] },
+        { name: 'Golden Scoop', quantity: 1, price: 11.99, toppings: [] },
+      ]),
+      total_amount: '35.97',
+      created_at: new Date().toISOString(),
+      order_type: 'delivery',
+      delivery_date: 'April 10, 2026',
+      delivery_time_slot: 'Morning 8AM–12PM',
+    };
+    let pdfAttachments = [];
+    try {
+      const pdfBuffer = await generateInvoicePDF(sampleOrder);
+      pdfAttachments = [{ filename: 'StrongSpoon-Invoice-SS-SAMPLE-001.pdf', content: pdfBuffer, contentType: 'application/pdf' }];
+    } catch(e) { console.error('Test PDF error:', e.message); }
+
     const { data, error } = await resend.emails.send({
       from: 'Strong Spoon <orders@resend.dev>',
       to: [to],
       subject: '📧 Strong Spoon — Sample Email Design',
       html,
+      attachments: pdfAttachments,
     });
     if (error) return res.status(500).json({ error });
     res.json({ success: true, message: `Test email sent to ${to}`, id: data?.id });
