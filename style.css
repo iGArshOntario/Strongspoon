@@ -1206,14 +1206,44 @@ body {
   box-shadow: none;
 }
 
-.qty-tier-card.qty-card-selected {
-  border: 2px solid #00bfa5 !important;
-  background: rgba(0,191,165,0.15) !important;
-  box-shadow: 0 0 0 4px rgba(0,191,165,0.18), 0 8px 24px rgba(0,191,165,0.25) !important;
-  transform: scale(1.04);
+/* Qty picker action row — Cancel left, Add to Cart right */
+.qty-picker-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.qty-picker-actions .cart-popup-btn {
+  flex: 1;
 }
 
-.qty-tier-card.qty-card-selected::after {
+/* ── Selected tier card glow — colour per tier ── */
+
+/* 1 cup → white */
+.qty-tier-card[data-qty="1"].qty-card-selected {
+  border: 2px solid rgba(255,255,255,0.85) !important;
+  background: rgba(255,255,255,0.09) !important;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.12), 0 8px 28px rgba(255,255,255,0.18) !important;
+  transform: scale(1.04);
+}
+.qty-tier-card[data-qty="1"].qty-card-selected::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+/* 2 cups → teal (brand) */
+.qty-tier-card[data-qty="2"].qty-card-selected {
+  border: 2px solid #00bfa5 !important;
+  background: rgba(0,191,165,0.15) !important;
+  box-shadow: 0 0 0 4px rgba(0,191,165,0.18), 0 8px 28px rgba(0,191,165,0.3) !important;
+  transform: scale(1.04);
+}
+.qty-tier-card[data-qty="2"].qty-card-selected::after {
   content: '✓';
   position: absolute;
   top: 8px;
@@ -1221,6 +1251,24 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
   color: #00bfa5;
+  line-height: 1;
+}
+
+/* 4 cups → gold */
+.qty-tier-card[data-qty="4"].qty-card-selected {
+  border: 2px solid #e8b84b !important;
+  background: rgba(232,184,75,0.13) !important;
+  box-shadow: 0 0 0 4px rgba(232,184,75,0.18), 0 8px 28px rgba(232,184,75,0.3) !important;
+  transform: scale(1.04);
+}
+.qty-tier-card[data-qty="4"].qty-card-selected::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e8b84b;
   line-height: 1;
 }
 
