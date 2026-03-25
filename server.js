@@ -13,7 +13,7 @@ try {
 } catch (e) {
   console.error('⚠️  Could not load brand logo for emails:', e.message);
 }
-const LOGO_IMG_TAG = `<div style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:2px;margin-bottom:6px;">💪 Strong Spoon</div>`;
+const LOGO_IMG_TAG = `<div style="font-family:'Playfair Display',Georgia,serif;font-size:30px;font-weight:700;color:#ffffff;letter-spacing:2px;margin-bottom:6px;">💪 Strong Spoon</div>`;
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -101,12 +101,14 @@ async function sendOrderConfirmation(orderData) {
 <!DOCTYPE html>
 <html>
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
     .wrapper { background: #f5f5f5; padding: 30px 15px; }
     .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
     .header { background: linear-gradient(135deg, #009688 0%, #00796b 100%); color: white; padding: 36px 30px 28px; text-align: center; }
-    .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+    .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; }
     .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
     .content { background: #ffffff; padding: 32px 30px; }
     .greeting { font-size: 20px; font-weight: 700; color: #009688; margin: 0 0 8px; }
@@ -247,12 +249,14 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
 <!DOCTYPE html>
 <html>
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
     .wrapper { background: #f5f5f5; padding: 30px 15px; }
     .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
     .header { background: linear-gradient(135deg, #009688 0%, #00796b 100%); color: white; padding: 36px 30px 28px; text-align: center; }
-    .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+    .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; }
     .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
     .content { background: #ffffff; padding: 32px 30px; }
     .greeting { font-size: 20px; font-weight: 700; color: #009688; margin: 0 0 8px; }
@@ -1220,12 +1224,15 @@ async function startServer() {
     if (!resend) return res.status(503).json({ error: 'Email service not configured' });
     const to = req.query.to || 'arsh99591@gmail.com';
     const html = `
-<!DOCTYPE html><html><head><style>
+<!DOCTYPE html><html><head>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
   body{font-family:Arial,sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5;}
   .wrapper{background:#f5f5f5;padding:30px 15px;}
   .container{max-width:580px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);}
   .header{background:linear-gradient(135deg,#009688 0%,#00796b 100%);color:white;padding:36px 30px 28px;text-align:center;}
-  .header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:0.5px;}
+  .header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:0.5px;font-family:'Playfair Display',Georgia,serif;}
   .header p{margin:6px 0 0;font-size:14px;opacity:.88;}
   .content{background:#fff;padding:32px 30px;}
   .greeting{font-size:20px;font-weight:700;color:#009688;margin:0 0 8px;}
