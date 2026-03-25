@@ -17,10 +17,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="location-banner">
-    <button class="location-btn" onclick="showLocationPopup()">📍 Regina, SK</button>
-  </div>
-
   <div id="locationPopup" class="location-popup" onclick="hideLocationPopup()">
     <div class="popup-content" onclick="event.stopPropagation()">
       <button class="popup-close" onclick="hideLocationPopup()">×</button>
@@ -44,6 +40,7 @@
       <img src="strongspoon-logo.jpeg" alt="Strong Spoon Logo" class="logo">
     </a>
     <h3 class="tagline">FUEL YOUR STRENGTH</h3>
+    <button class="location-btn hero-location-btn" onclick="showLocationPopup()">📍 Regina, SK</button>
   </section>
 
   <section class="about">
