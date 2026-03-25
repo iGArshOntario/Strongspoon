@@ -48,7 +48,7 @@ function generateInvoicePDF(orderData) {
       // Embed PNG logo in header — big logo, compact header
       const logoPath = path.join(__dirname, 'Ong.png');
       if (fs.existsSync(logoPath)) {
-        doc.image(logoPath, 40, 8, { height: 94, fit: [300, 94] });
+        doc.image(logoPath, 50, 20, { height: 70, fit: [200, 70] });
       } else {
         doc.fillColor(WHITE).font('Helvetica-Bold').fontSize(30)
            .text('Strong Spoon', 50, 28, { align: 'left' });
