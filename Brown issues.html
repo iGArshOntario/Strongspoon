@@ -112,8 +112,10 @@
         if (product) {
           cart.addItem({ id: product.id, name: product.name, description: product.description, price: product.price, toppings: [], image: product.image, quantity: qty });
           document.getElementById('cartItemQty').textContent = qty + (qty > 1 ? ' cups' : ' cup') + ' — no toppings';
-          qtyOverlay.classList.remove('active');
-          confirmOverlay.classList.add('active');
+          triggerQtyCardAnimation(card, () => {
+            qtyOverlay.classList.remove('active');
+            confirmOverlay.classList.add('active');
+          });
         }
       });
     });

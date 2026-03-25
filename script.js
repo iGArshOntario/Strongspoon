@@ -147,6 +147,15 @@ class ShoppingCart {
   }
 }
 
+// Shared animation utility for qty tier card selection
+function triggerQtyCardAnimation(card, callback) {
+  card.classList.add('qty-selected-anim');
+  setTimeout(() => {
+    card.classList.remove('qty-selected-anim');
+    callback();
+  }, 420);
+}
+
 const cart = new ShoppingCart();
 
 /* -----------------------------
