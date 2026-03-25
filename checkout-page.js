@@ -35,19 +35,17 @@ function renderCheckoutItems() {
     return;
   }
 
-  checkoutItemsContainer.innerHTML = cart.items.map(item => {
-    const itemPrice = PRODUCT_PRICE;
-    const itemTotal = itemPrice * item.quantity;
+  const totalCups = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+  const savings = getBundleSavings(totalCups);
 
+  checkoutItemsContainer.innerHTML = cart.items.map(item => {
+    const hasToppings = item.toppings && item.toppings.length > 0;
     return `
       <div class="checkout-item">
         <div class="checkout-item-details">
           <strong>${item.name}</strong> (${PRODUCT_SIZE}) × ${item.quantity}
-          ${item.toppings && item.toppings.length > 0 ? `
-            <br><small>+ ${item.toppings.map(t => t.name).join(', ')}</small>
-          ` : ''}
+          ${hasToppings ? `<br><small>+ ${item.toppings.map(t => t.name).join(', ')} <span style="color:#00bfa5">+$${item.quantity}.00</span></small>` : ''}
         </div>
-        <div class="checkout-item-price">$${itemTotal.toFixed(2)}</div>
       </div>
     `;
   }).join('');
@@ -55,6 +53,16 @@ function renderCheckoutItems() {
   const total = cart.getTotal();
 
   totalEl.textContent = `$${total.toFixed(2)}`;
+
+  const checkoutSavingsEl = document.getElementById('checkoutSavingsBanner');
+  if (checkoutSavingsEl) {
+    if (savings > 0) {
+      checkoutSavingsEl.innerHTML = `🎉 Bundle savings applied: <strong>$${savings.toFixed(2)} off</strong>`;
+      checkoutSavingsEl.style.display = 'block';
+    } else {
+      checkoutSavingsEl.style.display = 'none';
+    }
+  }
   
   if (taxIncludedEl) {
     taxIncludedEl.style.display = OFFER_MODE ? 'block' : 'none';

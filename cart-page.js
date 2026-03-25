@@ -15,25 +15,28 @@ function renderCart() {
     totalEl.textContent = '$0.00';
     if (taxIncludedEl) taxIncludedEl.style.display = 'none';
     checkoutBtn.style.display = 'none';
+    const savingsEl = document.getElementById('bundleSavingsBanner');
+    if (savingsEl) savingsEl.style.display = 'none';
     return;
   }
 
   checkoutBtn.style.display = 'inline-block';
 
+  const totalCups = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+  const savings = getBundleSavings(totalCups);
+
   cartItemsContainer.innerHTML = cart.items.map((item, index) => {
-    const itemPrice = item.price !== undefined ? item.price : PRODUCT_PRICE;
-    const itemTotal = itemPrice * item.quantity;
     const hasToppings = item.toppings && item.toppings.length > 0;
 
     return `
       <div class="cart-item">
         <div class="item-info">
           <h3>${item.name}</h3>
-          <p class="item-description">${item.description || ''} - ${PRODUCT_SIZE}</p>
+          <p class="item-description">${item.description || ''} — ${PRODUCT_SIZE}</p>
           ${hasToppings ? `
             <p class="item-toppings">
               <strong>Toppings:</strong> ${item.toppings.map(t => t.name).join(', ')}
-              <span class="topping-fee-note">+$1</span>
+              <span class="topping-fee-note">+$1/cup</span>
             </p>
           ` : ''}
         </div>
@@ -43,15 +46,24 @@ function renderCart() {
             <span class="quantity">${item.quantity}</span>
             <button class="qty-btn" onclick="updateItemQuantity(${index}, ${item.quantity + 1})">+</button>
           </div>
-          <div class="item-price">$${itemTotal.toFixed(2)}</div>
           <button class="remove-btn" onclick="removeCartItem(${index})">✕</button>
         </div>
       </div>
     `;
   }).join('');
 
-  const total = cart.getTotal();
+  // Bundle savings banner
+  const savingsEl = document.getElementById('bundleSavingsBanner');
+  if (savingsEl) {
+    if (savings > 0) {
+      savingsEl.innerHTML = `🎉 Bundle deal applied — you're saving <strong>$${savings.toFixed(2)}</strong>!`;
+      savingsEl.style.display = 'block';
+    } else {
+      savingsEl.style.display = 'none';
+    }
+  }
 
+  const total = cart.getTotal();
   totalEl.textContent = `$${total.toFixed(2)}`;
   
   if (taxIncludedEl) {

@@ -120,10 +120,12 @@ class ShoppingCart {
   }
 
   getTotal() {
-    return this.items.reduce((total, item) => {
-      const itemPrice = item.price !== undefined ? item.price : PRODUCT_PRICE;
-      return total + (itemPrice * item.quantity);
+    const totalCups = this.items.reduce((sum, item) => sum + item.quantity, 0);
+    const bundleBase = getBundleBaseTotal(totalCups);
+    const toppingsFee = this.items.reduce((sum, item) => {
+      return sum + (item.toppings && item.toppings.length > 0 ? item.quantity : 0);
     }, 0);
+    return Math.round((bundleBase + toppingsFee) * 100) / 100;
   }
 
   getItemCount() {

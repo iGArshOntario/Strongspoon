@@ -412,8 +412,9 @@ app.post('/create-payment-intent', async (req, res) => {
       return res.status(400).json({ error: 'Cart is empty' });
     }
 
-    let serverTotal = 0;
     const validatedItems = [];
+    let totalCups = 0;
+    let toppingsFee = 0;
 
     for (const item of items) {
       const product = PRODUCTS[item.id];
@@ -440,21 +441,31 @@ app.post('/create-payment-intent', async (req, res) => {
         }
       }
 
-      const hasToppings = validatedToppings.length > 0;
-      const itemUnitPrice = getCurrentPrice() + (hasToppings ? 1 : 0);
-      const itemTotal = itemUnitPrice * item.quantity;
-      serverTotal += itemTotal;
+      totalCups += item.quantity;
+      if (validatedToppings.length > 0) toppingsFee += item.quantity;
 
       validatedItems.push({
         name: product.name,
         size: product.size,
         quantity: item.quantity,
-        price: itemUnitPrice,
-        toppings: validatedToppings,
-        itemTotal: itemTotal
+        toppings: validatedToppings
       });
     }
 
+    // Bundle pricing: 1 cup $11.99 | 2 cups $19.99 | 4 cups $35.99
+    function getBundleBaseTotal(cups) {
+      const isLaunchDay = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
+                          Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
+      if (isLaunchDay) return cups * getCurrentPrice();
+      let c = cups, total = 0;
+      while (c >= 4) { total += 35.99; c -= 4; }
+      if (c >= 2)    { total += 19.99; c -= 2; }
+      total += c * 11.99;
+      return Math.round(total * 100) / 100;
+    }
+
+    const bundleBase = getBundleBaseTotal(totalCups);
+    const serverTotal = Math.round((bundleBase + toppingsFee) * 100) / 100;
     const amountInCents = Math.round(serverTotal * 100);
 
     const paymentIntent = await stripe.paymentIntents.create({

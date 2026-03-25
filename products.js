@@ -1,7 +1,7 @@
 // OFFER MODE SWITCH: Set to true to show "Tax Included" message, false to hide it
 const OFFER_MODE = false;
 
-// Dynamic pricing: $7 launch special (Apr 10–11, 2026), $12 regular
+// Dynamic pricing: $7 launch special (Apr 10–11, 2026), $11.99 regular
 function getCurrentPrice() {
   const now = Date.now();
   const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
@@ -10,6 +10,29 @@ function getCurrentPrice() {
 }
 const PRODUCT_PRICE = getCurrentPrice();
 const PRODUCT_SIZE = '250g';
+
+// Bundle pricing tiers (base cups only, toppings added separately)
+// 1 cup: $11.99 | 2 cups: $19.99 | 4 cups: $35.99
+function getBundleBaseTotal(totalCups) {
+  let cups = totalCups;
+  let total = 0;
+  const singlePrice = getCurrentPrice();
+  // Launch day has no bundle discount — bundles only apply at regular price
+  const isLaunchDay = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
+                      Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
+  if (isLaunchDay) return cups * singlePrice;
+  while (cups >= 4) { total += 35.99; cups -= 4; }
+  if (cups >= 2)    { total += 19.99; cups -= 2; }
+  total += cups * 11.99;
+  return Math.round(total * 100) / 100;
+}
+
+function getBundleSavings(totalCups) {
+  const singlePrice = getCurrentPrice();
+  const regular = Math.round(totalCups * singlePrice * 100) / 100;
+  const bundle  = getBundleBaseTotal(totalCups);
+  return Math.round((regular - bundle) * 100) / 100;
+}
 
 const PRODUCTS = {
   'brownie': {
