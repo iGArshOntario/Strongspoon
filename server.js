@@ -45,15 +45,19 @@ function generateInvoicePDF(orderData) {
       // ── Header bar ──────────────────────────────────────────────────────
       doc.rect(0, 0, doc.page.width, 110).fill(TEAL);
 
-      doc.fillColor(WHITE)
-         .font('Helvetica-Bold')
-         .fontSize(30)
-         .text('Strong Spoon', 50, 28, { align: 'left' });
+      // Embed PNG logo in header
+      const logoPath = path.join(__dirname, 'Ong.png');
+      if (fs.existsSync(logoPath)) {
+        doc.image(logoPath, 50, 20, { height: 70, fit: [200, 70] });
+      } else {
+        doc.fillColor(WHITE).font('Helvetica-Bold').fontSize(30)
+           .text('Strong Spoon', 50, 28, { align: 'left' });
+      }
 
       doc.fillColor('rgba(255,255,255,0.75)')
          .font('Helvetica')
          .fontSize(10)
-         .text('HIGH-PROTEIN DESSERT · REGINA, SK', 50, 64);
+         .text('HIGH-PROTEIN DESSERT · REGINA, SK', 50, 88);
 
       // INVOICE label on the right
       doc.fillColor(WHITE)
