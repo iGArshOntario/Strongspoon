@@ -74,6 +74,7 @@
           <span class="qty-tier-save">Save $12</span>
         </button>
       </div>
+      <button class="cart-popup-btn primary qty-add-btn" id="qtyAddBtn" disabled>Add to Cart</button>
       <button class="cart-popup-btn secondary" id="cancelQtyBtn">Cancel</button>
     </div>
   </div>
@@ -102,24 +103,41 @@
     document.getElementById('quickAddBtn').addEventListener('click', () => {
       qtyOverlay.classList.add('active');
     });
-    document.getElementById('cancelQtyBtn').onclick = () => qtyOverlay.classList.remove('active');
-    qtyOverlay.addEventListener('click', e => { if (e.target === qtyOverlay) qtyOverlay.classList.remove('active'); });
+    let selectedQtyCard = null;
+    const qtyAddBtn = document.getElementById('qtyAddBtn');
+
+    function resetQtyPicker() {
+      document.querySelectorAll('.qty-tier-card').forEach(c => c.classList.remove('qty-card-selected'));
+      selectedQtyCard = null;
+      qtyAddBtn.disabled = true;
+    }
 
     document.querySelectorAll('.qty-tier-card').forEach(card => {
       card.addEventListener('click', () => {
-        const qty = parseInt(card.dataset.qty);
-        const product = PRODUCTS['spoonCrumble'];
-        if (product) {
-          cart.addItem({ id: product.id, name: product.name, description: product.description, price: product.price, toppings: [], image: product.image, quantity: qty });
-          document.getElementById('cartItemQty').textContent = qty + (qty > 1 ? ' cups' : ' cup') + ' — no toppings';
-          triggerQtyCardAnimation(card, () => {
-            qtyOverlay.classList.remove('active');
-            confirmOverlay.classList.add('active');
-          });
-        }
+        document.querySelectorAll('.qty-tier-card').forEach(c => c.classList.remove('qty-card-selected'));
+        card.classList.add('qty-card-selected');
+        selectedQtyCard = card;
+        qtyAddBtn.disabled = false;
       });
     });
 
+    qtyAddBtn.addEventListener('click', () => {
+      if (!selectedQtyCard) return;
+      const qty = parseInt(selectedQtyCard.dataset.qty);
+      const product = PRODUCTS['spoonCrumble'];
+      if (product) {
+        cart.addItem({ id: product.id, name: product.name, description: product.description, price: product.price, toppings: [], image: product.image, quantity: qty });
+        document.getElementById('cartItemQty').textContent = qty + (qty > 1 ? ' cups' : ' cup') + ' — no toppings';
+        triggerQtyCardAnimation(selectedQtyCard, () => {
+          resetQtyPicker();
+          qtyOverlay.classList.remove('active');
+          confirmOverlay.classList.add('active');
+        });
+      }
+    });
+
+    document.getElementById('cancelQtyBtn').onclick = () => { resetQtyPicker(); qtyOverlay.classList.remove('active'); };
+    qtyOverlay.addEventListener('click', e => { if (e.target === qtyOverlay) { resetQtyPicker(); qtyOverlay.classList.remove('active'); } });
     document.getElementById('continueBtn').onclick = () => confirmOverlay.classList.remove('active');
     confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) confirmOverlay.classList.remove('active'); });
   </script>

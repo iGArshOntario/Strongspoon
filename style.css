@@ -1197,6 +1197,33 @@ body {
   color: #fff;
 }
 
+.cart-popup-btn.primary:disabled,
+.cart-popup-btn.qty-add-btn:disabled {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.3);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.qty-tier-card.qty-card-selected {
+  border: 2px solid #00bfa5 !important;
+  background: rgba(0,191,165,0.15) !important;
+  box-shadow: 0 0 0 4px rgba(0,191,165,0.18), 0 8px 24px rgba(0,191,165,0.25) !important;
+  transform: scale(1.04);
+}
+
+.qty-tier-card.qty-card-selected::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #00bfa5;
+  line-height: 1;
+}
+
 @media (max-width: 480px) {
   .premium-title {
     font-size: 2rem;

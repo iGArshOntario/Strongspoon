@@ -79,33 +79,52 @@ let pendingToppingsText = '';
 const qtyPickerOverlay = document.getElementById('qtyPickerOverlay');
 const cartPopupOverlay = document.getElementById('cartPopupOverlay');
 const cancelQtyBtn     = document.getElementById('cancelQtyBtn');
+const qtyAddBtn        = document.getElementById('qtyAddBtn');
 const cartItemName     = document.getElementById('cartItemName');
 const cartItemToppings = document.getElementById('cartItemToppings');
 const continueBtn      = document.getElementById('continueBtn');
 
+let selectedQtyCard = null;
+
+function resetQtyPicker() {
+  document.querySelectorAll('#qtyPickerOverlay .qty-tier-card').forEach(c => c.classList.remove('qty-card-selected'));
+  selectedQtyCard = null;
+  if (qtyAddBtn) qtyAddBtn.disabled = true;
+}
+
 if (cancelQtyBtn) {
-  cancelQtyBtn.onclick = () => qtyPickerOverlay.classList.remove('active');
+  cancelQtyBtn.onclick = () => { resetQtyPicker(); qtyPickerOverlay.classList.remove('active'); };
 }
 if (qtyPickerOverlay) {
   qtyPickerOverlay.addEventListener('click', ev => {
-    if (ev.target === qtyPickerOverlay) qtyPickerOverlay.classList.remove('active');
+    if (ev.target === qtyPickerOverlay) { resetQtyPicker(); qtyPickerOverlay.classList.remove('active'); }
   });
 }
 
 document.querySelectorAll('#qtyPickerOverlay .qty-tier-card').forEach(card => {
   card.addEventListener('click', () => {
-    if (!pendingItem) return;
-    const qty = parseInt(card.dataset.qty);
-    triggerQtyCardAnimation(card, () => {
+    document.querySelectorAll('#qtyPickerOverlay .qty-tier-card').forEach(c => c.classList.remove('qty-card-selected'));
+    card.classList.add('qty-card-selected');
+    selectedQtyCard = card;
+    if (qtyAddBtn) qtyAddBtn.disabled = false;
+  });
+});
+
+if (qtyAddBtn) {
+  qtyAddBtn.addEventListener('click', () => {
+    if (!selectedQtyCard || !pendingItem) return;
+    const qty = parseInt(selectedQtyCard.dataset.qty);
+    triggerQtyCardAnimation(selectedQtyCard, () => {
       cart.addItem({ ...pendingItem, quantity: qty });
       if (cartItemName)     cartItemName.textContent = pendingItem.name;
       if (cartItemToppings) cartItemToppings.textContent = qty + (qty > 1 ? ' cups' : ' cup') + (pendingToppingsText ? ' · ' + pendingToppingsText : ' — no toppings');
+      resetQtyPicker();
       qtyPickerOverlay.classList.remove('active');
       cartPopupOverlay.classList.add('active');
       pendingItem = null;
     });
   });
-});
+}
 
 if (continueBtn) {
   continueBtn.onclick = () => cartPopupOverlay.classList.remove('active');
