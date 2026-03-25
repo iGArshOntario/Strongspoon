@@ -13,9 +13,7 @@ try {
 } catch (e) {
   console.error('⚠️  Could not load brand logo for emails:', e.message);
 }
-const LOGO_IMG_TAG = LOGO_BASE64
-  ? `<img src="cid:brandlogo" alt="Strong Spoon" style="height:80px;width:auto;border-radius:10px;display:block;margin:0 auto 16px;">`
-  : '';
+const LOGO_IMG_TAG = `<div style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:2px;margin-bottom:6px;">💪 Strong Spoon</div>`;
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -99,13 +97,6 @@ async function sendOrderConfirmation(orderData) {
       </div>
     `).join('');
 
-    const logoAttachment = LOGO_BASE64 ? [{
-      filename: 'logo.png',
-      content: Buffer.from(LOGO_BASE64, 'base64'),
-      contentType: 'image/png',
-      cid: 'brandlogo'
-    }] : [];
-
     const emailHTML = `
 <!DOCTYPE html>
 <html>
@@ -175,7 +166,6 @@ async function sendOrderConfirmation(orderData) {
       to: [orderData.customer_email],
       subject: `Order Confirmed ✓ — ${orderData.order_number}`,
       html: emailHTML,
-      attachments: logoAttachment,
     });
 
     if (error) {
@@ -251,16 +241,6 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
           </div>
         `;
       }
-    }
-
-    // Add logo to attachments alongside any proof photo
-    if (LOGO_BASE64) {
-      attachments.push({
-        filename: 'logo.png',
-        content: Buffer.from(LOGO_BASE64, 'base64'),
-        contentType: 'image/png',
-        cid: 'brandlogo'
-      });
     }
 
     const emailHTML = `
@@ -1239,12 +1219,6 @@ async function startServer() {
   app.get('/api/send-test-email', async (req, res) => {
     if (!resend) return res.status(503).json({ error: 'Email service not configured' });
     const to = req.query.to || 'arsh99591@gmail.com';
-    const logoAttachment = LOGO_BASE64 ? [{
-      filename: 'logo.png',
-      content: Buffer.from(LOGO_BASE64, 'base64'),
-      contentType: 'image/png',
-      cid: 'brandlogo'
-    }] : [];
     const html = `
 <!DOCTYPE html><html><head><style>
   body{font-family:Arial,sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5;}
@@ -1294,7 +1268,6 @@ async function startServer() {
       to: [to],
       subject: '📧 Strong Spoon — Sample Email Design',
       html,
-      attachments: logoAttachment,
     });
     if (error) return res.status(500).json({ error });
     res.json({ success: true, message: `Test email sent to ${to}`, id: data?.id });
