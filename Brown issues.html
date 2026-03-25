@@ -16,7 +16,7 @@
 <body>
   <div class="cart-nav">
     <a href="cart.html" class="cart-icon">
-      🛒 <span class="cart-count">0</span>
+      <span class="cart-emoji">🛒</span><span class="cart-count">0</span>
     </a>
   </div>
 
@@ -51,7 +51,20 @@
     <a href="Html2.html" class="back-link">← Back to Flavours</a>
   </section>
 
-  <div class="quick-add-toast" id="quickAddToast">✓ Added to cart!</div>
+  <div class="cart-popup-overlay" id="cartPopupOverlay">
+    <div class="cart-popup">
+      <div class="cart-popup-icon">✓</div>
+      <h2 class="cart-popup-title">Added to Cart!</h2>
+      <div class="cart-popup-details">
+        <p class="cart-item-name" id="cartItemName">Brownie Issues</p>
+        <p class="cart-item-toppings">No toppings — plain cup</p>
+      </div>
+      <div class="cart-popup-buttons">
+        <button class="cart-popup-btn secondary" id="continueBtn">Continue Shopping</button>
+        <a href="cart.html" class="cart-popup-btn primary">View Cart</a>
+      </div>
+    </div>
+  </div>
 
   <script src="products.js"></script>
   <script src="script.js"></script>
@@ -68,15 +81,16 @@
       const taxHTML = taxSpan ? taxSpan.outerHTML : '';
       priceEl.innerHTML = '$' + (PRODUCT_PRICE % 1 === 0 ? PRODUCT_PRICE : PRODUCT_PRICE.toFixed(2)) + ' ' + taxHTML;
     }
+    const overlay = document.getElementById('cartPopupOverlay');
     document.getElementById('quickAddBtn').addEventListener('click', () => {
       const product = PRODUCTS['brownie'];
       if (product) {
         cart.addItem({ id: product.id, name: product.name, description: product.description, price: product.price, toppings: [], image: product.image });
-        const toast = document.getElementById('quickAddToast');
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2200);
+        overlay.classList.add('active');
       }
     });
+    document.getElementById('continueBtn').onclick = () => overlay.classList.remove('active');
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
   </script>
 </body>
 </html>
