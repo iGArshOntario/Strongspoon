@@ -43,61 +43,56 @@ function generateInvoicePDF(orderData) {
       });
 
       // ── Header bar ──────────────────────────────────────────────────────
-      doc.rect(0, 0, doc.page.width, 140).fill(TEAL);
+      doc.rect(0, 0, doc.page.width, 110).fill(TEAL);
 
-      // Embed PNG logo in header
+      // Embed PNG logo in header — big logo, compact header
       const logoPath = path.join(__dirname, 'Ong.png');
       if (fs.existsSync(logoPath)) {
-        doc.image(logoPath, 50, 18, { height: 100, fit: [260, 100] });
+        doc.image(logoPath, 40, 8, { height: 94, fit: [300, 94] });
       } else {
-        doc.fillColor(WHITE).font('Helvetica-Bold').fontSize(34)
-           .text('Strong Spoon', 50, 38, { align: 'left' });
+        doc.fillColor(WHITE).font('Helvetica-Bold').fontSize(30)
+           .text('Strong Spoon', 50, 28, { align: 'left' });
       }
-
-      doc.fillColor('rgba(255,255,255,0.72)')
-         .font('Helvetica')
-         .fontSize(9)
-         .text('HIGH-PROTEIN DESSERT · REGINA, SK', 50, 122);
 
       // INVOICE label on the right
       doc.fillColor(WHITE)
          .font('Helvetica-Bold')
-         .fontSize(28)
-         .text('INVOICE', 0, 42, { align: 'right', width: doc.page.width - 50 });
+         .fontSize(26)
+         .text('INVOICE', 0, 32, { align: 'right', width: doc.page.width - 50 });
 
       doc.fillColor('rgba(255,255,255,0.85)')
          .font('Helvetica')
          .fontSize(10)
-         .text(`# ${orderData.order_number}`, 0, 78, { align: 'right', width: doc.page.width - 50 });
+         .text(`# ${orderData.order_number}`, 0, 64, { align: 'right', width: doc.page.width - 50 });
 
       // ── Invoice meta info ────────────────────────────────────────────────
-      doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('DATE', 50, 162);
-      doc.fillColor(GREY).font('Helvetica').fontSize(9).text(orderDate, 50, 175);
+      doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('DATE', 50, 132);
+      doc.fillColor(GREY).font('Helvetica').fontSize(9).text(orderDate, 50, 145);
 
-      doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('ORDER TYPE', 220, 162);
+      doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('ORDER TYPE', 200, 132);
       doc.fillColor(GREY).font('Helvetica').fontSize(9)
-         .text((orderData.order_type || 'pickup').toUpperCase(), 220, 175);
+         .text((orderData.order_type || 'pickup').toUpperCase(), 200, 145);
 
       if (orderData.delivery_date) {
-        doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('DELIVERY DATE', 380, 162);
+        doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('DELIVERY DATE', 350, 132);
         doc.fillColor(GREY).font('Helvetica').fontSize(9)
-           .text(`${orderData.delivery_date}  ${orderData.delivery_time_slot || ''}`, 380, 175);
+           .text(`${orderData.delivery_date}  ${orderData.delivery_time_slot || ''}`, 350, 145);
       }
 
       // ── Divider ──────────────────────────────────────────────────────────
-      doc.moveTo(50, 200).lineTo(doc.page.width - 50, 200).strokeColor('#e0e0e0').lineWidth(1).stroke();
+      doc.moveTo(50, 170).lineTo(doc.page.width - 50, 170).strokeColor('#e0e0e0').lineWidth(1).stroke();
 
       // ── Bill To ──────────────────────────────────────────────────────────
-      doc.fillColor(TEAL).font('Helvetica-Bold').fontSize(9).text('BILL TO', 50, 215);
-      doc.fillColor(DARK).font('Helvetica-Bold').fontSize(11).text(orderData.customer_name || '', 50, 230);
+      doc.fillColor(TEAL).font('Helvetica-Bold').fontSize(9).text('BILL TO', 50, 185);
+      doc.fillColor(DARK).font('Helvetica-Bold').fontSize(11).text(orderData.customer_name || '', 50, 200);
       doc.fillColor(GREY).font('Helvetica').fontSize(9);
-      let billY = 245;
+      let billY = 215;
       if (orderData.customer_email)   { doc.text(orderData.customer_email, 50, billY);   billY += 13; }
       if (orderData.customer_phone)   { doc.text(orderData.customer_phone, 50, billY);   billY += 13; }
       if (orderData.customer_address) { doc.text(orderData.customer_address, 50, billY); billY += 13; }
 
       // ── Items Table ──────────────────────────────────────────────────────
-      const tableTop = Math.max(billY + 30, 320);
+      const tableTop = Math.max(billY + 30, 285);
       const colItem  = 50;
       const colTopp  = 260;
       const colQty   = 380;
