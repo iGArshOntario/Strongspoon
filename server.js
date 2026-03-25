@@ -1,8 +1,21 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const { Pool } = require('pg');
 const { Resend } = require('resend');
+
+// Cache brand logo for email embedding
+let LOGO_BASE64 = '';
+try {
+  LOGO_BASE64 = fs.readFileSync(path.join(__dirname, 'Ong.png')).toString('base64');
+  console.log('✅ Brand logo loaded for emails');
+} catch (e) {
+  console.error('⚠️  Could not load brand logo for emails:', e.message);
+}
+const LOGO_IMG_TAG = LOGO_BASE64
+  ? `<img src="cid:brandlogo" alt="Strong Spoon" style="height:80px;width:auto;border-radius:10px;display:block;margin:0 auto 16px;">`
+  : '';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -86,61 +99,72 @@ async function sendOrderConfirmation(orderData) {
       </div>
     `).join('');
 
+    const logoAttachment = LOGO_BASE64 ? [{
+      filename: 'logo.png',
+      content: Buffer.from(LOGO_BASE64, 'base64'),
+      contentType: 'image/png',
+      cid: 'brandlogo'
+    }] : [];
+
     const emailHTML = `
 <!DOCTYPE html>
 <html>
 <head>
   <style>
-    body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #009688; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-    .content { background: white; padding: 30px; border: 1px solid #ddd; border-top: none; }
-    .footer { background: #f4f4f4; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; font-size: 14px; color: #666; }
-    .order-number { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0; }
-    .total { background: #009688; color: white; padding: 15px; text-align: center; font-size: 20px; border-radius: 8px; margin: 20px 0; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
+    .wrapper { background: #f5f5f5; padding: 30px 15px; }
+    .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+    .header { background: linear-gradient(135deg, #009688 0%, #00796b 100%); color: white; padding: 36px 30px 28px; text-align: center; }
+    .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+    .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
+    .content { background: #ffffff; padding: 32px 30px; }
+    .greeting { font-size: 20px; font-weight: 700; color: #009688; margin: 0 0 8px; }
+    .section-title { color: #009688; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #e0f2f1; padding-bottom: 6px; }
+    .order-badge { background: #e0f2f1; border-left: 4px solid #009688; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 18px 0; font-size: 14px; }
+    .total-box { background: linear-gradient(135deg, #009688 0%, #00796b 100%); color: white; padding: 16px; text-align: center; font-size: 20px; font-weight: 700; border-radius: 10px; margin: 20px 0; }
+    .info-row { background: #f8fffe; padding: 14px 16px; border-radius: 8px; font-size: 14px; line-height: 1.8; }
+    .footer { background: #1a1a1a; color: #aaa; padding: 24px 30px; text-align: center; font-size: 13px; }
+    .footer strong { color: #00bfa5; }
+    .item-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px; margin: 10px 0; background: #fafafa; font-size: 14px; }
   </style>
 </head>
 <body>
+  <div class="wrapper">
   <div class="container">
     <div class="header">
-      <h1 style="margin: 0; font-size: 28px;">💪 Strong Spoon</h1>
-      <p style="margin: 10px 0 0 0; font-size: 16px;">Order Confirmation</p>
+      ${LOGO_IMG_TAG}
+      <h1>Order Confirmed ✓</h1>
+      <p>Your Strong Spoon order is on its way!</p>
     </div>
-    
     <div class="content">
-      <h2 style="color: #009688;">Thank You, ${orderData.customer_name}!</h2>
-      <p>Your order has been confirmed and will be prepared shortly.</p>
-      
-      <div class="order-number">
-        <strong>Order Number:</strong> ${orderData.order_number}<br>
-        <strong>Date:</strong> ${new Date(orderData.created_at).toLocaleString('en-CA', { 
-          timeZone: 'America/Toronto',
-          dateStyle: 'long',
-          timeStyle: 'short'
-        })}
+      <p class="greeting">Hi ${orderData.customer_name}!</p>
+      <p style="color:#555;margin:0 0 4px;">Your order has been confirmed and will be prepared shortly.</p>
+
+      <p class="section-title">Order Reference</p>
+      <div class="order-badge">
+        <strong>Order #${orderData.order_number}</strong><br>
+        📅 ${new Date(orderData.created_at).toLocaleString('en-CA', { timeZone: 'America/Toronto', dateStyle: 'long', timeStyle: 'short' })}
       </div>
-      
-      <h3 style="color: #009688;">Order Details</h3>
+
+      <p class="section-title">Items Ordered</p>
       ${itemsHTML}
-      
-      <div class="total">
-        <strong>Total Paid: $${orderData.total_amount} CAD</strong><br>
-      </div>
-      
-      <h3 style="color: #009688;">Delivery Information</h3>
-      <div style="background: #f8f8f8; padding: 15px; border-radius: 8px;">
-        <strong>Name:</strong> ${orderData.customer_name}<br>
-        <strong>Email:</strong> ${orderData.customer_email}<br>
-        ${orderData.customer_phone ? `<strong>Phone:</strong> ${orderData.customer_phone}<br>` : ''}
-        ${orderData.customer_address ? `<strong>Address:</strong> ${orderData.customer_address}` : ''}
+
+      <div class="total-box">Total Paid: $${orderData.total_amount} CAD</div>
+
+      <p class="section-title">Your Details</p>
+      <div class="info-row">
+        👤 ${orderData.customer_name}<br>
+        📧 ${orderData.customer_email}<br>
+        ${orderData.customer_phone ? `📞 ${orderData.customer_phone}<br>` : ''}
+        ${orderData.customer_address ? `📍 ${orderData.customer_address}` : ''}
       </div>
     </div>
-    
     <div class="footer">
-      <p><strong>Strong Spoon - High-Protein Dessert</strong></p>
-      <p>Questions about your order? Reply to this email or contact us.</p>
-      <p style="font-size: 12px; color: #999;">This is an automated confirmation email.</p>
+      <strong>💪 Strong Spoon</strong><br>
+      High-Protein Dessert for Champions<br>
+      <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Questions? Reply to this email · Regina, SK</span>
     </div>
+  </div>
   </div>
 </body>
 </html>
@@ -149,8 +173,9 @@ async function sendOrderConfirmation(orderData) {
     const { data, error } = await resend.emails.send({
       from: 'Strong Spoon <orders@resend.dev>',
       to: [orderData.customer_email],
-      subject: `Order Confirmation - ${orderData.order_number}`,
+      subject: `Order Confirmed ✓ — ${orderData.order_number}`,
       html: emailHTML,
+      attachments: logoAttachment,
     });
 
     if (error) {
@@ -228,57 +253,75 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
       }
     }
 
+    // Add logo to attachments alongside any proof photo
+    if (LOGO_BASE64) {
+      attachments.push({
+        filename: 'logo.png',
+        content: Buffer.from(LOGO_BASE64, 'base64'),
+        contentType: 'image/png',
+        cid: 'brandlogo'
+      });
+    }
+
     const emailHTML = `
 <!DOCTYPE html>
 <html>
 <head>
   <style>
-    body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0; }
-    .content { background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
-    .footer { background: #f9fafb; padding: 20px; text-align: center; border-radius: 0 0 12px 12px; font-size: 14px; color: #6b7280; border: 1px solid #e5e7eb; border-top: none; }
-    .success-badge { display: inline-block; background: #dcfce7; color: #166534; padding: 8px 16px; border-radius: 20px; font-weight: bold; margin: 10px 0; }
-    .info-box { background: #f8fafc; padding: 15px; border-radius: 8px; margin: 15px 0; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
+    .wrapper { background: #f5f5f5; padding: 30px 15px; }
+    .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+    .header { background: linear-gradient(135deg, #009688 0%, #00796b 100%); color: white; padding: 36px 30px 28px; text-align: center; }
+    .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+    .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
+    .content { background: #ffffff; padding: 32px 30px; }
+    .greeting { font-size: 20px; font-weight: 700; color: #009688; margin: 0 0 8px; }
+    .section-title { color: #009688; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #e0f2f1; padding-bottom: 6px; }
+    .delivered-badge { display: inline-block; background: #e0f2f1; color: #00695c; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 15px; margin-bottom: 20px; }
+    .info-box { background: #f8fffe; border-left: 4px solid #009688; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 14px; line-height: 1.9; }
+    .footer { background: #1a1a1a; color: #aaa; padding: 24px 30px; text-align: center; font-size: 13px; }
+    .footer strong { color: #00bfa5; }
+    .item-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px; margin: 10px 0; background: #fafafa; font-size: 14px; }
   </style>
 </head>
 <body>
+  <div class="wrapper">
   <div class="container">
     <div class="header">
-      <h1 style="margin: 0; font-size: 28px;">✅ Order Delivered!</h1>
-      <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Your Strong Spoon order has arrived</p>
+      ${LOGO_IMG_TAG}
+      <h1>✅ Your Order Has Arrived!</h1>
+      <p>Strong Spoon delivered — enjoy every spoonful</p>
     </div>
-    
     <div class="content">
-      <div style="text-align: center; margin-bottom: 25px;">
-        <span class="success-badge">🎉 Successfully Delivered</span>
+      <div style="text-align:center;">
+        <span class="delivered-badge">🎉 Successfully Delivered</span>
       </div>
-      
-      <h2 style="color: #166534; margin-top: 0;">Hi ${orderData.customer_name}!</h2>
-      <p>Great news! Your order has been delivered. We hope you enjoy your high-protein dessert!</p>
-      
+      <p class="greeting">Hi ${orderData.customer_name}!</p>
+      <p style="color:#555;margin:0 0 4px;">Great news! Your order has been delivered. We hope you enjoy your high-protein dessert!</p>
+
+      <p class="section-title">Delivery Info</p>
       <div class="info-box">
-        <strong>📦 Order:</strong> ${orderData.order_number}<br>
-        <strong>🕐 Delivered:</strong> ${deliveredAt}<br>
-        <strong>🚚 Delivered by:</strong> ${deliveryPerson}
+        📦 <strong>Order:</strong> ${orderData.order_number}<br>
+        🕐 <strong>Delivered:</strong> ${deliveredAt}<br>
+        🚚 <strong>Delivered by:</strong> ${deliveryPerson}
       </div>
-      
-      <h3 style="color: #166534;">Your Items</h3>
+
+      <p class="section-title">Your Items</p>
       ${itemsHTML}
-      
+
       ${proofImageHTML}
-      
-      <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
-        <strong style="color: #92400e;">💡 Questions about your delivery?</strong>
-        <p style="margin: 5px 0 0 0; color: #78350f; font-size: 14px;">Simply reply to this email and we'll get back to you as soon as possible.</p>
+
+      <div style="background:#fff8e1;padding:14px 16px;border-radius:8px;margin-top:20px;border-left:4px solid #f59e0b;font-size:14px;">
+        <strong style="color:#7c4f00;">💡 Questions about your delivery?</strong><br>
+        <span style="color:#78350f;">Simply reply to this email and we'll get back to you.</span>
       </div>
     </div>
-    
     <div class="footer">
-      <p style="margin: 0;"><strong>💪 Strong Spoon</strong></p>
-      <p style="margin: 5px 0 0 0;">High-Protein Dessert for Champions</p>
-      <p style="font-size: 12px; color: #9ca3af; margin-top: 15px;">Thank you for choosing Strong Spoon!</p>
+      <strong>💪 Strong Spoon</strong><br>
+      High-Protein Dessert for Champions<br>
+      <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Thank you for choosing Strong Spoon · Regina, SK</span>
     </div>
+  </div>
   </div>
 </body>
 </html>
@@ -1192,6 +1235,71 @@ async function startServer() {
     }
   }
   
+  // Test email route — sends a sample order confirmation
+  app.get('/api/send-test-email', async (req, res) => {
+    if (!resend) return res.status(503).json({ error: 'Email service not configured' });
+    const to = req.query.to || 'arsh99591@gmail.com';
+    const logoAttachment = LOGO_BASE64 ? [{
+      filename: 'logo.png',
+      content: Buffer.from(LOGO_BASE64, 'base64'),
+      contentType: 'image/png',
+      cid: 'brandlogo'
+    }] : [];
+    const html = `
+<!DOCTYPE html><html><head><style>
+  body{font-family:Arial,sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5;}
+  .wrapper{background:#f5f5f5;padding:30px 15px;}
+  .container{max-width:580px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);}
+  .header{background:linear-gradient(135deg,#009688 0%,#00796b 100%);color:white;padding:36px 30px 28px;text-align:center;}
+  .header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:0.5px;}
+  .header p{margin:6px 0 0;font-size:14px;opacity:.88;}
+  .content{background:#fff;padding:32px 30px;}
+  .greeting{font-size:20px;font-weight:700;color:#009688;margin:0 0 8px;}
+  .section-title{color:#009688;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #e0f2f1;padding-bottom:6px;}
+  .order-badge{background:#e0f2f1;border-left:4px solid #009688;padding:14px 16px;border-radius:0 8px 8px 0;margin:18px 0;font-size:14px;}
+  .total-box{background:linear-gradient(135deg,#009688 0%,#00796b 100%);color:white;padding:16px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;margin:20px 0;}
+  .info-row{background:#f8fffe;padding:14px 16px;border-radius:8px;font-size:14px;line-height:1.8;}
+  .footer{background:#1a1a1a;color:#aaa;padding:24px 30px;text-align:center;font-size:13px;}
+  .footer strong{color:#00bfa5;}
+  .item-card{border:1px solid #e8e8e8;border-radius:8px;padding:14px;margin:10px 0;background:#fafafa;font-size:14px;}
+</style></head>
+<body><div class="wrapper"><div class="container">
+  <div class="header">
+    ${LOGO_IMG_TAG}
+    <h1>Order Confirmed ✓</h1>
+    <p>Your Strong Spoon order is on its way!</p>
+  </div>
+  <div class="content">
+    <p class="greeting">Hi Arsh!</p>
+    <p style="color:#555;margin:0 0 4px;">This is a sample order confirmation email showing the new design with your logo.</p>
+    <p class="section-title">Order Reference</p>
+    <div class="order-badge"><strong>Order #SS-SAMPLE-001</strong><br>📅 March 25, 2026 at 10:30 AM</div>
+    <p class="section-title">Items Ordered</p>
+    <div class="item-card"><strong>Brownie Issues</strong> — Chocolate high-protein dessert<br>
+      <span style="color:#777;font-size:13px;">Toppings: Almonds, Cashews</span><br>
+      <span style="margin-top:6px;display:block;">Quantity: 2 × $11.99 = $23.98</span>
+    </div>
+    <div class="total-box">Total Paid: $23.98 CAD</div>
+    <p class="section-title">Your Details</p>
+    <div class="info-row">👤 Arsh<br>📧 ${to}<br>📍 Regina, SK</div>
+  </div>
+  <div class="footer">
+    <strong>💪 Strong Spoon</strong><br>
+    High-Protein Dessert for Champions<br>
+    <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Questions? Reply to this email · Regina, SK</span>
+  </div>
+</div></div></body></html>`;
+    const { data, error } = await resend.emails.send({
+      from: 'Strong Spoon <orders@resend.dev>',
+      to: [to],
+      subject: '📧 Strong Spoon — Sample Email Design',
+      html,
+      attachments: logoAttachment,
+    });
+    if (error) return res.status(500).json({ error });
+    res.json({ success: true, message: `Test email sent to ${to}`, id: data?.id });
+  });
+
   // Start the server
   const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Strong Spoon server running on port ${PORT}`);
