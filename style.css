@@ -1274,7 +1274,9 @@ body {
 
 @media (max-width: 480px) {
   .premium-title {
-    font-size: 2rem;
+    font-size: clamp(1.25rem, 6.5vw, 1.9rem);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
   }
   
   .flavour-grid {
@@ -3141,4 +3143,116 @@ a.pricing-tier {
 .qty-tier-card.popular.qty-selected-anim {
   animation: qtyCardPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
   box-shadow: 0 0 0 10px rgba(0,191,165,0.3), 0 16px 40px rgba(0,191,165,0.55) !important;
+}
+
+/* ============================================
+   BRAND COLOR ENHANCEMENTS — FULL SITE
+   ============================================ */
+
+/* Back navigation link — soft teal */
+.back-link {
+  color: rgba(0, 191, 165, 0.72) !important;
+  letter-spacing: 0.3px;
+}
+.back-link:hover {
+  color: #00bfa5 !important;
+}
+
+/* Ingredients heading — teal with left accent */
+.ingredients h3 {
+  color: #00bfa5 !important;
+  border-left: 3px solid rgba(0, 191, 165, 0.6);
+  padding-left: 10px;
+  letter-spacing: 1.5px;
+}
+
+/* Qty picker popup note text */
+.qty-picker-note {
+  color: rgba(0, 191, 165, 0.8) !important;
+  font-size: 0.8rem;
+  letter-spacing: 0.2px;
+}
+
+/* Popup title — white-to-teal gradient */
+.cart-popup-title {
+  background: linear-gradient(120deg, #fff 30%, #00bfa5 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Popup sub-message in confirmation */
+.cart-popup-message {
+  color: rgba(255, 255, 255, 0.65);
+}
+.cart-popup-item-detail {
+  color: #00bfa5;
+  font-weight: 600;
+}
+
+/* Topping card selected border glow */
+.topping-card.selected,
+.topping-card.active {
+  border-color: #00bfa5 !important;
+  box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.2) !important;
+}
+
+/* Form inputs & selects — teal focus ring */
+select:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+textarea:focus {
+  border-color: #00bfa5 !important;
+  box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.18) !important;
+  outline: none !important;
+}
+
+/* Section sub-heading decorative bar */
+.section-label,
+.form-section-title,
+.cart-section-title {
+  color: #00bfa5;
+  letter-spacing: 1.5px;
+}
+
+/* Flavour card teal hover glow (stronger) */
+.flavour-card:hover {
+  border-color: rgba(0, 191, 165, 0.55) !important;
+  box-shadow: 0 8px 32px rgba(0, 191, 165, 0.18) !important;
+}
+
+/* Savings badge on tier cards */
+.qty-tier-save {
+  color: #00bfa5;
+  font-weight: 700;
+}
+
+/* Cart page & checkout section dividers */
+.cart-section-divider {
+  border-color: rgba(0, 191, 165, 0.25) !important;
+}
+
+/* Price/total text in cart */
+.cart-total-amount,
+.checkout-total {
+  color: #00bfa5;
+}
+
+/* Order type radio buttons when selected */
+input[type="radio"]:checked + label,
+.order-type-btn.active {
+  border-color: #00bfa5 !important;
+  color: #00bfa5 !important;
+}
+
+/* Teal decorative rule under page subtitles */
+.premium-subtitle::after {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 2px;
+  background: linear-gradient(90deg, #00bfa5, rgba(0,191,165,0));
+  margin: 10px auto 0;
+  border-radius: 2px;
 }
