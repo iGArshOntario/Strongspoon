@@ -2916,3 +2916,25 @@ footer a:hover {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* Clickable pricing tier cards */
+a.pricing-tier {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.pricing-tier:hover {
+  border-color: rgba(0, 191, 165, 0.6);
+  background: rgba(0, 191, 165, 0.12);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0, 191, 165, 0.15);
+}
+
+a.pricing-tier.best:hover {
+  border-color: rgba(0, 191, 165, 0.8);
+  box-shadow: 0 10px 28px rgba(0, 191, 165, 0.25);
+}
+
+a.pricing-tier {
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
