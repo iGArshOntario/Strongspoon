@@ -54,13 +54,40 @@
     <a href="Html2.html" class="back-link">← Back to Flavours</a>
   </section>
 
+  <div class="cart-popup-overlay" id="qtyPickerOverlay">
+    <div class="cart-popup qty-picker-popup">
+      <div class="cart-popup-icon">🛒</div>
+      <h2 class="cart-popup-title">How many cups?</h2>
+      <p class="qty-picker-note">Bundle price applies to your total cart</p>
+      <div class="qty-tier-cards">
+        <button class="qty-tier-card" data-qty="1">
+          <span class="qty-tier-qty">1 cup</span>
+          <span class="qty-tier-price">$11.99</span>
+        </button>
+        <button class="qty-tier-card popular" data-qty="2">
+          <div class="qty-tier-badge">Most popular</div>
+          <span class="qty-tier-qty">2 cups</span>
+          <span class="qty-tier-price">$19.99</span>
+          <span class="qty-tier-save">Save $4</span>
+        </button>
+        <button class="qty-tier-card best-val" data-qty="4">
+          <div class="qty-tier-badge best">Best value</div>
+          <span class="qty-tier-qty">4 cups</span>
+          <span class="qty-tier-price">$35.99</span>
+          <span class="qty-tier-save">Save $12</span>
+        </button>
+      </div>
+      <button class="cart-popup-btn secondary" id="cancelQtyBtn">Cancel</button>
+    </div>
+  </div>
+
   <div class="cart-popup-overlay" id="cartPopupOverlay">
     <div class="cart-popup">
       <div class="cart-popup-icon">✓</div>
       <h2 class="cart-popup-title">Added to Cart!</h2>
       <div class="cart-popup-details">
-        <p class="cart-item-name" id="cartItemName">Power Mix</p>
-        <p class="cart-item-toppings">No toppings — plain cup</p>
+        <p class="cart-item-name">Power Mix</p>
+        <p class="cart-item-toppings" id="cartItemQty">1 cup — no toppings</p>
       </div>
       <div class="cart-popup-buttons">
         <button class="cart-popup-btn secondary" id="continueBtn">Continue Shopping</button>
@@ -72,28 +99,30 @@
   <script src="products.js"></script>
   <script src="script.js"></script>
   <script>
-    if (typeof OFFER_MODE !== 'undefined') {
-      const taxNote = document.getElementById('taxIncludedProduct');
-      if (taxNote) {
-        taxNote.style.display = OFFER_MODE ? 'inline' : 'none';
-      }
-    }
-    const priceEl = document.getElementById('productPrice');
-    if (priceEl && typeof PRODUCT_PRICE !== 'undefined') {
-      const taxSpan = priceEl.querySelector('#taxIncludedProduct');
-      const taxHTML = taxSpan ? taxSpan.outerHTML : '';
-      priceEl.innerHTML = '$' + (PRODUCT_PRICE % 1 === 0 ? PRODUCT_PRICE : PRODUCT_PRICE.toFixed(2)) + ' ' + taxHTML;
-    }
-    const overlay = document.getElementById('cartPopupOverlay');
+    const qtyOverlay = document.getElementById('qtyPickerOverlay');
+    const confirmOverlay = document.getElementById('cartPopupOverlay');
+
     document.getElementById('quickAddBtn').addEventListener('click', () => {
-      const product = PRODUCTS['powerMix'];
-      if (product) {
-        cart.addItem({ id: product.id, name: product.name, description: product.description, price: product.price, toppings: [], image: product.image });
-        overlay.classList.add('active');
-      }
+      qtyOverlay.classList.add('active');
     });
-    document.getElementById('continueBtn').onclick = () => overlay.classList.remove('active');
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
+    document.getElementById('cancelQtyBtn').onclick = () => qtyOverlay.classList.remove('active');
+    qtyOverlay.addEventListener('click', e => { if (e.target === qtyOverlay) qtyOverlay.classList.remove('active'); });
+
+    document.querySelectorAll('.qty-tier-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const qty = parseInt(card.dataset.qty);
+        const product = PRODUCTS['powerMix'];
+        if (product) {
+          cart.addItem({ id: product.id, name: product.name, description: product.description, price: product.price, toppings: [], image: product.image, quantity: qty });
+          document.getElementById('cartItemQty').textContent = qty + (qty > 1 ? ' cups' : ' cup') + ' — no toppings';
+          qtyOverlay.classList.remove('active');
+          confirmOverlay.classList.add('active');
+        }
+      });
+    });
+
+    document.getElementById('continueBtn').onclick = () => confirmOverlay.classList.remove('active');
+    confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) confirmOverlay.classList.remove('active'); });
   </script>
 </body>
 </html>
