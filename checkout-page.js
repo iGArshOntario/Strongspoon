@@ -44,7 +44,7 @@ function renderCheckoutItems() {
       <div class="checkout-item">
         <div class="checkout-item-details">
           <strong>${item.name}</strong> (${PRODUCT_SIZE}) × ${item.quantity}
-          ${hasToppings ? `<br><small>+ ${item.toppings.map(t => t.name).join(', ')} <span style="color:#017b86">+$${item.quantity}.00</span></small>` : ''}
+          ${hasToppings ? `<br><small>+ ${item.toppings.map(t => t.name).join(', ')} <span style="color:#00bfa5">+$${item.quantity}.00</span></small>` : ''}
         </div>
       </div>
     `;

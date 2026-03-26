@@ -58,7 +58,7 @@
     .stat-value {
       font-size: 2rem;
       font-weight: 700;
-      color: #017b86;
+      color: #00bfa5;
     }
 
     .orders-table {
@@ -77,7 +77,7 @@
 
     .orders-table th {
       background: rgba(0, 191, 165, 0.1);
-      color: #017b86;
+      color: #00bfa5;
       padding: 15px 12px;
       text-align: left;
       font-weight: 600;
@@ -98,7 +98,7 @@
 
     .order-number {
       font-weight: 600;
-      color: #017b86;
+      color: #00bfa5;
       font-family: monospace;
     }
 
@@ -113,7 +113,7 @@
 
     .order-type-badge.delivery {
       background: rgba(0, 150, 136, 0.2);
-      color: #017b86;
+      color: #00bfa5;
     }
 
     .order-type-badge.pickup {
@@ -178,8 +178,8 @@
 
     .delivery-proof-btn {
       background: rgba(0, 191, 165, 0.2);
-      border: 1px solid #017b86;
-      color: #017b86;
+      border: 1px solid #00bfa5;
+      color: #00bfa5;
       padding: 4px 8px;
       border-radius: 6px;
       font-size: 0.75rem;
@@ -225,7 +225,7 @@
       position: absolute;
       top: -40px;
       right: 0;
-      background: #017b86;
+      background: #00bfa5;
       border: none;
       color: white;
       padding: 10px 20px;
@@ -252,7 +252,7 @@
       font-size: 1.8rem;
       font-weight: 700;
       margin: 40px 0 20px 0;
-      color: #017b86;
+      color: #00bfa5;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -289,8 +289,8 @@
     }
 
     .range-tab.active {
-      background: #017b86;
-      border-color: #017b86;
+      background: #00bfa5;
+      border-color: #00bfa5;
     }
 
     .analytics-grid {
@@ -316,7 +316,7 @@
     .analytics-card .value {
       font-size: 1.8rem;
       font-weight: 700;
-      color: #017b86;
+      color: #00bfa5;
     }
 
     .analytics-card .value.yellow { color: #ffc107; }
@@ -331,7 +331,7 @@
     }
 
     .top-products h4 {
-      color: #017b86;
+      color: #00bfa5;
       margin-bottom: 15px;
     }
 
@@ -354,7 +354,7 @@
     }
 
     .daily-revenue h4 {
-      color: #017b86;
+      color: #00bfa5;
       margin-bottom: 15px;
     }
 
@@ -381,7 +381,7 @@
 
     .revenue-bar .bar-fill {
       height: 100%;
-      background: #017b86;
+      background: #00bfa5;
       border-radius: 4px;
     }
 
@@ -737,7 +737,7 @@
                     </td>
                     <td>
                       ${order.delivery_date ? `
-                        <div style="font-weight: 600; color: #017b86;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                        <div style="font-weight: 600; color: #00bfa5;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}</div>
                         <div style="color: #aaa; font-size: 0.85rem;">⏰ ${order.delivery_time_slot || 'Not specified'}</div>
                       ` : '<span style="color: #666; font-size: 0.85rem;">Not scheduled</span>'}
                     </td>
@@ -803,7 +803,7 @@
           ? data.topProducts.map(p => `
               <div class="product-item">
                 <span>${p.name}</span>
-                <span style="color: #017b86; font-weight: 600;">${p.count} orders</span>
+                <span style="color: #00bfa5; font-weight: 600;">${p.count} orders</span>
               </div>
             `).join('')
           : '<p style="color: #888;">No data yet</p>';
@@ -875,7 +875,7 @@
           return `
             <div class="past-delivery-card">
               <div class="past-delivery-info">
-                <div style="color: #017b86; font-weight: 600; font-family: monospace;">${order.order_number}</div>
+                <div style="color: #00bfa5; font-weight: 600; font-family: monospace;">${order.order_number}</div>
                 <div style="margin-top: 5px;"><strong>${order.customer_name}</strong></div>
                 <div style="color: #aaa; font-size: 0.85rem;">${order.customer_address || ''}</div>
                 <div style="margin-top: 8px; font-size: 0.85rem;">
@@ -919,7 +919,7 @@
           <div style="display: flex; flex-direction: column; gap: 10px;">
             ${signups.map((s, i) => `
               <div style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px 18px;">
-                <div style="color: #017b86; font-weight: 700; font-size: 1rem; min-width: 28px;">${i + 1}.</div>
+                <div style="color: #00bfa5; font-weight: 700; font-size: 1rem; min-width: 28px;">${i + 1}.</div>
                 <div style="flex: 1;">
                   <div style="font-weight: 600; font-size: 0.95rem;">${s.name}</div>
                   <div style="color: #888; font-size: 0.82rem; margin-top: 2px;">📍 ${s.city}</div>
