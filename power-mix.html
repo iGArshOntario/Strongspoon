@@ -115,8 +115,15 @@
 
     function resetQtyPicker() {
       document.querySelectorAll('.qty-tier-card').forEach(c => c.classList.remove('qty-card-selected'));
-      selectedQtyCard = null;
-      qtyAddBtn.disabled = true;
+      const defaultCard = document.querySelector('.qty-tier-card[data-qty="2"]');
+      if (defaultCard) {
+        defaultCard.classList.add('qty-card-selected');
+        selectedQtyCard = defaultCard;
+        qtyAddBtn.disabled = false;
+      } else {
+        selectedQtyCard = null;
+        qtyAddBtn.disabled = true;
+      }
     }
 
     document.querySelectorAll('.qty-tier-card').forEach(card => {

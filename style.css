@@ -3061,8 +3061,6 @@ a.pricing-tier {
 }
 
 .qty-tier-card.popular {
-  background: rgba(0,191,165,0.1);
-  border-color: rgba(0,191,165,0.5);
   transform: translateY(-6px);
 }
 

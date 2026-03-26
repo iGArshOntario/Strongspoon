@@ -88,8 +88,15 @@ let selectedQtyCard = null;
 
 function resetQtyPicker() {
   document.querySelectorAll('#qtyPickerOverlay .qty-tier-card').forEach(c => c.classList.remove('qty-card-selected'));
-  selectedQtyCard = null;
-  if (qtyAddBtn) qtyAddBtn.disabled = true;
+  const defaultCard = document.querySelector('#qtyPickerOverlay .qty-tier-card[data-qty="2"]');
+  if (defaultCard) {
+    defaultCard.classList.add('qty-card-selected');
+    selectedQtyCard = defaultCard;
+    if (qtyAddBtn) qtyAddBtn.disabled = false;
+  } else {
+    selectedQtyCard = null;
+    if (qtyAddBtn) qtyAddBtn.disabled = true;
+  }
 }
 
 if (cancelQtyBtn) {
