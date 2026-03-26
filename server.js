@@ -222,11 +222,11 @@ async function sendOrderConfirmation(orderData) {
       <div style="background: #f8f8f8; padding: 15px; margin: 10px 0; border-radius: 8px;">
         <strong style="color: #015A64; font-size: 16px;">${item.name}</strong>
         ${item.toppings && item.toppings.length > 0 ? `
-          <div style="margin-top: 8px; color: #666;">
+          <div style="margin-top: 8px; color: #aaaaaa;">
             <strong>Toppings:</strong> ${item.toppings.map(t => t.name).join(', ')}
           </div>
         ` : ''}
-        <div style="margin-top: 8px; color: #333;">
+        <div style="margin-top: 8px; color: #f0f0f0;">
           Quantity: ${item.quantity} × $${getCurrentPrice().toFixed(2)} = $${(item.quantity * getCurrentPrice()).toFixed(2)}
         </div>
       </div>
@@ -239,21 +239,21 @@ async function sendOrderConfirmation(orderData) {
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
-    .wrapper { background: #f5f5f5; padding: 30px 15px; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #f0f0f0; margin: 0; padding: 0; background: #111111; }
+    .wrapper { background: #111111; padding: 30px 15px; }
     .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
     .header { background: linear-gradient(135deg, #015A64 0%, #013d44 100%); color: white; padding: 36px 30px 28px; text-align: center; }
     .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; }
     .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
-    .content { background: #ffffff; padding: 32px 30px; }
+    .content { background: #1c1c1c; padding: 32px 30px; }
     .greeting { font-size: 20px; font-weight: 700; color: #015A64; margin: 0 0 8px; }
-    .section-title { color: #015A64; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #deeef0; padding-bottom: 6px; }
-    .order-badge { background: #deeef0; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 18px 0; font-size: 14px; }
+    .section-title { color: #01a0ae; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #2a2a2a; padding-bottom: 6px; }
+    .order-badge { background: #252525; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 18px 0; font-size: 14px; color: #f0f0f0; }
     .total-box { background: linear-gradient(135deg, #015A64 0%, #013d44 100%); color: white; padding: 16px; text-align: center; font-size: 20px; font-weight: 700; border-radius: 10px; margin: 20px 0; }
-    .info-row { background: #f5fafb; padding: 14px 16px; border-radius: 8px; font-size: 14px; line-height: 1.8; }
+    .info-row { background: #252525; padding: 14px 16px; border-radius: 8px; font-size: 14px; line-height: 1.8; color: #f0f0f0; }
     .footer { background: #1a1a1a; color: #aaa; padding: 24px 30px; text-align: center; font-size: 13px; }
     .footer strong { color: #017b86; }
-    .item-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px; margin: 10px 0; background: #fafafa; font-size: 14px; }
+    .item-card { border: 1px solid #333333; border-radius: 8px; padding: 14px; margin: 10px 0; background: #252525; font-size: 14px; color: #f0f0f0; }
   </style>
 </head>
 <body>
@@ -266,7 +266,7 @@ async function sendOrderConfirmation(orderData) {
     </div>
     <div class="content">
       <p class="greeting">Hi ${orderData.customer_name}!</p>
-      <p style="color:#555;margin:0 0 4px;">Your order has been confirmed and will be prepared shortly.</p>
+      <p style="color:#cccccc;margin:0 0 4px;">Your order has been confirmed and will be prepared shortly.</p>
 
       <p class="section-title">Order Reference</p>
       <div class="order-badge">
@@ -290,7 +290,7 @@ async function sendOrderConfirmation(orderData) {
     <div class="footer">
       <strong>💪 Strong Spoon</strong><br>
       High-Protein Dessert for Champions<br>
-      <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Questions? Reply to this email · Regina, SK</span>
+      <span style="font-size:12px;color:#aaaaaa;margin-top:10px;display:block;">Questions? Reply to this email · Regina, SK</span>
     </div>
   </div>
   </div>
@@ -360,7 +360,7 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
     const itemsHTML = items.map(item => `
       <div style="background: #f0fdf4; padding: 12px; margin: 8px 0; border-radius: 6px; border-left: 3px solid #22c55e;">
         <strong style="color: #166534;">${item.name || 'Item'}</strong>
-        <span style="color: #666; margin-left: 10px;">× ${item.quantity || 1}</span>
+        <span style="color: #aaaaaa; margin-left: 10px;">× ${item.quantity || 1}</span>
       </div>
     `).join('');
 
@@ -388,7 +388,7 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
         
         proofImageHTML = `
           <div style="margin: 20px 0; text-align: center;">
-            <p style="color: #666; margin-bottom: 10px; font-size: 14px;">📷 Proof of Delivery</p>
+            <p style="color: #aaaaaa; margin-bottom: 10px; font-size: 14px;">📷 Proof of Delivery</p>
             <img src="cid:deliveryproof" alt="Delivery Proof" style="max-width: 100%; max-height: 400px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
           </div>
         `;
@@ -402,20 +402,20 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
-    .wrapper { background: #f5f5f5; padding: 30px 15px; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #f0f0f0; margin: 0; padding: 0; background: #111111; }
+    .wrapper { background: #111111; padding: 30px 15px; }
     .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
     .header { background: linear-gradient(135deg, #015A64 0%, #013d44 100%); color: white; padding: 36px 30px 28px; text-align: center; }
     .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; }
     .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
-    .content { background: #ffffff; padding: 32px 30px; }
+    .content { background: #1c1c1c; padding: 32px 30px; }
     .greeting { font-size: 20px; font-weight: 700; color: #015A64; margin: 0 0 8px; }
-    .section-title { color: #015A64; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #deeef0; padding-bottom: 6px; }
-    .delivered-badge { display: inline-block; background: #deeef0; color: #00695c; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 15px; margin-bottom: 20px; }
-    .info-box { background: #f5fafb; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 14px; line-height: 1.9; }
+    .section-title { color: #01a0ae; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #2a2a2a; padding-bottom: 6px; }
+    .delivered-badge { display: inline-block; background: #1e3a2e; color: #4cde9a; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 15px; margin-bottom: 20px; }
+    .info-box { background: #252525; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 14px; line-height: 1.9; color: #f0f0f0; }
     .footer { background: #1a1a1a; color: #aaa; padding: 24px 30px; text-align: center; font-size: 13px; }
     .footer strong { color: #017b86; }
-    .item-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px; margin: 10px 0; background: #fafafa; font-size: 14px; }
+    .item-card { border: 1px solid #333333; border-radius: 8px; padding: 14px; margin: 10px 0; background: #252525; font-size: 14px; color: #f0f0f0; }
   </style>
 </head>
 <body>
@@ -431,7 +431,7 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
         <span class="delivered-badge">🎉 Successfully Delivered</span>
       </div>
       <p class="greeting">Hi ${orderData.customer_name}!</p>
-      <p style="color:#555;margin:0 0 4px;">Great news! Your order has been delivered. We hope you enjoy your high-protein dessert!</p>
+      <p style="color:#cccccc;margin:0 0 4px;">Great news! Your order has been delivered. We hope you enjoy your high-protein dessert!</p>
 
       <p class="section-title">Delivery Info</p>
       <div class="info-box">
@@ -453,7 +453,7 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
     <div class="footer">
       <strong>💪 Strong Spoon</strong><br>
       High-Protein Dessert for Champions<br>
-      <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Thank you for choosing Strong Spoon · Regina, SK</span>
+      <span style="font-size:12px;color:#aaaaaa;margin-top:10px;display:block;">Thank you for choosing Strong Spoon · Regina, SK</span>
     </div>
   </div>
   </div>
@@ -1378,21 +1378,21 @@ async function startServer() {
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
-  body{font-family:Arial,sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5;}
-  .wrapper{background:#f5f5f5;padding:30px 15px;}
-  .container{max-width:580px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);}
+  body{font-family:Arial,sans-serif;line-height:1.6;color:#f0f0f0;margin:0;padding:0;background:#111111;}
+  .wrapper{background:#111111;padding:30px 15px;}
+  .container{max-width:580px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.5);}
   .header{background:linear-gradient(135deg,#015A64 0%,#013d44 100%);color:white;padding:36px 30px 28px;text-align:center;}
   .header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:0.5px;font-family:'Playfair Display',Georgia,serif;}
   .header p{margin:6px 0 0;font-size:14px;opacity:.88;}
-  .content{background:#fff;padding:32px 30px;}
-  .greeting{font-size:20px;font-weight:700;color:#015A64;margin:0 0 8px;}
-  .section-title{color:#015A64;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #deeef0;padding-bottom:6px;}
-  .order-badge{background:#deeef0;border-left:4px solid #015A64;padding:14px 16px;border-radius:0 8px 8px 0;margin:18px 0;font-size:14px;}
+  .content{background:#1c1c1c;padding:32px 30px;}
+  .greeting{font-size:20px;font-weight:700;color:#01a0ae;margin:0 0 8px;}
+  .section-title{color:#01a0ae;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #2a2a2a;padding-bottom:6px;}
+  .order-badge{background:#252525;border-left:4px solid #015A64;padding:14px 16px;border-radius:0 8px 8px 0;margin:18px 0;font-size:14px;color:#f0f0f0;}
   .total-box{background:linear-gradient(135deg,#015A64 0%,#013d44 100%);color:white;padding:16px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;margin:20px 0;}
-  .info-row{background:#f5fafb;padding:14px 16px;border-radius:8px;font-size:14px;line-height:1.8;}
+  .info-row{background:#252525;padding:14px 16px;border-radius:8px;font-size:14px;line-height:1.8;color:#f0f0f0;}
   .footer{background:#1a1a1a;color:#aaa;padding:24px 30px;text-align:center;font-size:13px;}
   .footer strong{color:#017b86;}
-  .item-card{border:1px solid #e8e8e8;border-radius:8px;padding:14px;margin:10px 0;background:#fafafa;font-size:14px;}
+  .item-card{border:1px solid #333333;border-radius:8px;padding:14px;margin:10px 0;background:#252525;font-size:14px;color:#f0f0f0;}
 </style></head>
 <body><div class="wrapper"><div class="container">
   <div class="header">
@@ -1402,7 +1402,7 @@ async function startServer() {
   </div>
   <div class="content">
     <p class="greeting">Hi Arsh!</p>
-    <p style="color:#555;margin:0 0 4px;">This is a sample order confirmation email showing the new design with your logo.</p>
+    <p style="color:#cccccc;margin:0 0 4px;">This is a sample order confirmation email showing the new design with your logo.</p>
     <p class="section-title">Order Reference</p>
     <div class="order-badge"><strong>Order #SS-SAMPLE-001</strong><br>📅 March 25, 2026 at 10:30 AM</div>
     <p class="section-title">Items Ordered</p>
@@ -1417,7 +1417,7 @@ async function startServer() {
   <div class="footer">
     <strong>💪 Strong Spoon</strong><br>
     High-Protein Dessert for Champions<br>
-    <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Questions? Reply to this email · Regina, SK</span>
+    <span style="font-size:12px;color:#aaaaaa;margin-top:10px;display:block;">Questions? Reply to this email · Regina, SK</span>
   </div>
 </div></div></body></html>`;
     // Generate sample PDF invoice
