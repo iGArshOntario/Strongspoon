@@ -29,7 +29,7 @@ function generateInvoicePDF(orderData) {
       doc.on('end', () => resolve(Buffer.concat(buffers)));
       doc.on('error', reject);
 
-      const TEAL   = '#009688';
+      const TEAL   = '#015A64';
       const DARK   = '#1a1a1a';
       const GREY   = '#666666';
       const LGREY  = '#f5f5f5';
@@ -227,7 +227,7 @@ async function sendOrderConfirmation(orderData) {
     // Build items list HTML
     const itemsHTML = items.map(item => `
       <div style="background: #f8f8f8; padding: 15px; margin: 10px 0; border-radius: 8px;">
-        <strong style="color: #009688; font-size: 16px;">${item.name}</strong>
+        <strong style="color: #015A64; font-size: 16px;">${item.name}</strong>
         ${item.toppings && item.toppings.length > 0 ? `
           <div style="margin-top: 8px; color: #666;">
             <strong>Toppings:</strong> ${item.toppings.map(t => t.name).join(', ')}
@@ -249,17 +249,17 @@ async function sendOrderConfirmation(orderData) {
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
     .wrapper { background: #f5f5f5; padding: 30px 15px; }
     .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
-    .header { background: linear-gradient(135deg, #009688 0%, #00796b 100%); color: white; padding: 36px 30px 28px; text-align: center; }
+    .header { background: linear-gradient(135deg, #015A64 0%, #013e4a 100%); color: white; padding: 36px 30px 28px; text-align: center; }
     .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; }
     .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
     .content { background: #ffffff; padding: 32px 30px; }
-    .greeting { font-size: 20px; font-weight: 700; color: #009688; margin: 0 0 8px; }
-    .section-title { color: #009688; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #e0f2f1; padding-bottom: 6px; }
-    .order-badge { background: #e0f2f1; border-left: 4px solid #009688; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 18px 0; font-size: 14px; }
-    .total-box { background: linear-gradient(135deg, #009688 0%, #00796b 100%); color: white; padding: 16px; text-align: center; font-size: 20px; font-weight: 700; border-radius: 10px; margin: 20px 0; }
-    .info-row { background: #f8fffe; padding: 14px 16px; border-radius: 8px; font-size: 14px; line-height: 1.8; }
+    .greeting { font-size: 20px; font-weight: 700; color: #015A64; margin: 0 0 8px; }
+    .section-title { color: #015A64; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #d0eaed; padding-bottom: 6px; }
+    .order-badge { background: #d0eaed; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 18px 0; font-size: 14px; }
+    .total-box { background: linear-gradient(135deg, #015A64 0%, #013e4a 100%); color: white; padding: 16px; text-align: center; font-size: 20px; font-weight: 700; border-radius: 10px; margin: 20px 0; }
+    .info-row { background: #f0f8f9; padding: 14px 16px; border-radius: 8px; font-size: 14px; line-height: 1.8; }
     .footer { background: #1a1a1a; color: #aaa; padding: 24px 30px; text-align: center; font-size: 13px; }
-    .footer strong { color: #00bfa5; }
+    .footer strong { color: #017d8e; }
     .item-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px; margin: 10px 0; background: #fafafa; font-size: 14px; }
   </style>
 </head>
@@ -412,16 +412,16 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
     .wrapper { background: #f5f5f5; padding: 30px 15px; }
     .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
-    .header { background: linear-gradient(135deg, #009688 0%, #00796b 100%); color: white; padding: 36px 30px 28px; text-align: center; }
+    .header { background: linear-gradient(135deg, #015A64 0%, #013e4a 100%); color: white; padding: 36px 30px 28px; text-align: center; }
     .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; }
     .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
     .content { background: #ffffff; padding: 32px 30px; }
-    .greeting { font-size: 20px; font-weight: 700; color: #009688; margin: 0 0 8px; }
-    .section-title { color: #009688; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #e0f2f1; padding-bottom: 6px; }
-    .delivered-badge { display: inline-block; background: #e0f2f1; color: #00695c; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 15px; margin-bottom: 20px; }
-    .info-box { background: #f8fffe; border-left: 4px solid #009688; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 14px; line-height: 1.9; }
+    .greeting { font-size: 20px; font-weight: 700; color: #015A64; margin: 0 0 8px; }
+    .section-title { color: #015A64; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #d0eaed; padding-bottom: 6px; }
+    .delivered-badge { display: inline-block; background: #d0eaed; color: #00695c; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 15px; margin-bottom: 20px; }
+    .info-box { background: #f0f8f9; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 14px; line-height: 1.9; }
     .footer { background: #1a1a1a; color: #aaa; padding: 24px 30px; text-align: center; font-size: 13px; }
-    .footer strong { color: #00bfa5; }
+    .footer strong { color: #017d8e; }
     .item-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px; margin: 10px 0; background: #fafafa; font-size: 14px; }
   </style>
 </head>
@@ -1388,17 +1388,17 @@ async function startServer() {
   body{font-family:Arial,sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5;}
   .wrapper{background:#f5f5f5;padding:30px 15px;}
   .container{max-width:580px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);}
-  .header{background:linear-gradient(135deg,#009688 0%,#00796b 100%);color:white;padding:36px 30px 28px;text-align:center;}
+  .header{background:linear-gradient(135deg,#015A64 0%,#013e4a 100%);color:white;padding:36px 30px 28px;text-align:center;}
   .header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:0.5px;font-family:'Playfair Display',Georgia,serif;}
   .header p{margin:6px 0 0;font-size:14px;opacity:.88;}
   .content{background:#fff;padding:32px 30px;}
-  .greeting{font-size:20px;font-weight:700;color:#009688;margin:0 0 8px;}
-  .section-title{color:#009688;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #e0f2f1;padding-bottom:6px;}
-  .order-badge{background:#e0f2f1;border-left:4px solid #009688;padding:14px 16px;border-radius:0 8px 8px 0;margin:18px 0;font-size:14px;}
-  .total-box{background:linear-gradient(135deg,#009688 0%,#00796b 100%);color:white;padding:16px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;margin:20px 0;}
-  .info-row{background:#f8fffe;padding:14px 16px;border-radius:8px;font-size:14px;line-height:1.8;}
+  .greeting{font-size:20px;font-weight:700;color:#015A64;margin:0 0 8px;}
+  .section-title{color:#015A64;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #d0eaed;padding-bottom:6px;}
+  .order-badge{background:#d0eaed;border-left:4px solid #015A64;padding:14px 16px;border-radius:0 8px 8px 0;margin:18px 0;font-size:14px;}
+  .total-box{background:linear-gradient(135deg,#015A64 0%,#013e4a 100%);color:white;padding:16px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;margin:20px 0;}
+  .info-row{background:#f0f8f9;padding:14px 16px;border-radius:8px;font-size:14px;line-height:1.8;}
   .footer{background:#1a1a1a;color:#aaa;padding:24px 30px;text-align:center;font-size:13px;}
-  .footer strong{color:#00bfa5;}
+  .footer strong{color:#017d8e;}
   .item-card{border:1px solid #e8e8e8;border-radius:8px;padding:14px;margin:10px 0;background:#fafafa;font-size:14px;}
 </style></head>
 <body><div class="wrapper"><div class="container">
