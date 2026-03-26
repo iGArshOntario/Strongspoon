@@ -11,7 +11,7 @@
 
 body {
   background-color: #000;
-  color: #fff;
+  color: #EFE8D8;
   font-family: 'Poppins', sans-serif;
   line-height: 1.6;
   text-align: center;
@@ -105,7 +105,7 @@ body {
 }
 
 .popup-close:hover {
-  color: #fff;
+  color: #EFE8D8;
 }
 
 .popup-social {
@@ -123,7 +123,7 @@ body {
 }
 
 .social-link:hover {
-  color: #fff;
+  color: #EFE8D8;
   transform: scale(1.05);
 }
 
@@ -175,7 +175,7 @@ body {
   letter-spacing: 2px;
   margin-top: 30px;
   text-transform: uppercase;
-  color: #fff;
+  color: #EFE8D8;
   animation: slideUp 1s ease-out 0.3s both;
   background: linear-gradient(135deg, #fff, #017d8e, #fff);
   background-size: 200% 200%;
@@ -206,7 +206,7 @@ body {
   margin-bottom: 30px;
   font-size: 0.85rem;
   font-weight: 300;
-  color: #fff;
+  color: #EFE8D8;
   line-height: 1.6;
   animation: fadeIn 1s ease-out 0.5s both;
 }
@@ -247,7 +247,7 @@ body {
 .subtitle {
   font-size: 0.85rem;
   font-weight: 300;
-  color: #fff;
+  color: #EFE8D8;
   line-height: 1.6;
   margin-bottom: 40px;
   animation: fadeIn 0.8s ease-out 0.2s both;
@@ -303,7 +303,7 @@ body {
   font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
   font-weight: 800;
-  color: #fff;
+  color: #EFE8D8;
   margin: 15px 0;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -379,7 +379,7 @@ body {
   font-family: 'Playfair Display', serif;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #fff;
+  color: #EFE8D8;
   margin-bottom: 5px;
 }
 
@@ -471,7 +471,7 @@ body {
 }
 
 .price-popup-close:hover {
-  color: #fff;
+  color: #EFE8D8;
 }
 
 .price-popup-icon {
@@ -638,14 +638,14 @@ body {
   font-family: 'Playfair Display', serif;
   font-size: 1.2rem;
   font-weight: 700;
-  color: #fff;
+  color: #EFE8D8;
   margin: 0;
   flex: 1;
 }
 
 .free-badge {
   background: linear-gradient(135deg, #c8963e, #a87630);
-  color: #fff;
+  color: #EFE8D8;
   font-size: 0.65rem;
   font-weight: 700;
   padding: 3px 10px;
@@ -706,7 +706,7 @@ body {
 .flavour-sel-name {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #fff;
+  color: #EFE8D8;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -789,7 +789,7 @@ body {
 .flavour-opt-name {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #fff;
+  color: #EFE8D8;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -851,7 +851,7 @@ body {
 .btn-customise:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 32px rgba(0,191,165,0.5);
-  color: #fff;
+  color: #EFE8D8;
 }
 
 .btn-customise:active {
@@ -880,7 +880,7 @@ body {
 .btn-quick-add:hover {
   background: rgba(255,255,255,0.07);
   border-color: rgba(255,255,255,0.4);
-  color: #fff;
+  color: #EFE8D8;
 }
 
 .btn-quick-add:active {
@@ -926,7 +926,7 @@ body {
 .topping-fee-note {
   display: inline-block;
   background: linear-gradient(135deg, #c8963e, #a87630);
-  color: #fff;
+  color: #EFE8D8;
   font-size: 0.65rem;
   font-weight: 700;
   padding: 1px 7px;
@@ -941,7 +941,7 @@ body {
   background: rgba(0,0,0,0.4);
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 10px;
-  color: #fff;
+  color: #EFE8D8;
   font-size: 1rem;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
@@ -960,7 +960,7 @@ body {
 
 .premium-select option {
   background: #1a1a1a;
-  color: #fff;
+  color: #EFE8D8;
 }
 
 .toppings-grid {
@@ -1012,7 +1012,7 @@ body {
 
 .topping-name {
   font-size: 0.8rem;
-  color: #fff;
+  color: #EFE8D8;
   font-weight: 500;
 }
 
@@ -1026,7 +1026,7 @@ body {
   background: rgba(0,0,0,0.4);
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 10px;
-  color: #fff;
+  color: #EFE8D8;
   font-size: 0.9rem;
   font-family: 'Poppins', sans-serif;
   resize: vertical;
@@ -1118,7 +1118,7 @@ body {
   justify-content: center;
   margin: 0 auto 20px;
   font-size: 2rem;
-  color: #fff;
+  color: #EFE8D8;
   box-shadow: 0 10px 30px rgba(0,191,165,0.4);
   animation: popIn 0.5s ease 0.2s both;
 }
@@ -1133,7 +1133,7 @@ body {
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem;
   font-weight: 800;
-  color: #fff;
+  color: #EFE8D8;
   margin-bottom: 20px;
 }
 
@@ -1194,7 +1194,7 @@ body {
 
 .cart-popup-btn.secondary:hover {
   background: rgba(255,255,255,0.05);
-  color: #fff;
+  color: #EFE8D8;
 }
 
 .cart-popup-btn.primary:disabled,
@@ -1232,7 +1232,7 @@ body {
   right: 10px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #fff;
+  color: #EFE8D8;
   line-height: 1;
 }
 
@@ -1322,7 +1322,7 @@ body {
   padding: 18px 40px;
   border-radius: 12px;
   cursor: pointer;
-  color: #fff;
+  color: #EFE8D8;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1393,7 +1393,7 @@ body {
     font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
     font-weight: 800;
-    color: #fff;
+    color: #EFE8D8;
     margin-bottom: 40px;
     letter-spacing: 1.5px;
     animation: slideUp 0.8s ease-out;
@@ -1422,7 +1422,7 @@ body {
   }
 
   .ingredients {
-    color: #fff;
+    color: #EFE8D8;
     font-size: 0.85rem;
     font-weight: 300;
     line-height: 1.6;
@@ -1434,7 +1434,7 @@ body {
   }
 
   .ingredients h3 {
-    color: #fff;
+    color: #EFE8D8;
     margin-bottom: 12px;
     font-size: 1rem;
     font-weight: 600;
@@ -1515,7 +1515,7 @@ body {
   font-size: 2.8rem;
   font-weight: 800;
   letter-spacing: 2px;
-  color: #fff;
+  color: #EFE8D8;
   margin-bottom: 40px;
   text-transform: uppercase;
   animation: slideUp 0.8s ease-out;
@@ -1553,7 +1553,7 @@ body {
   font-size: 1rem;
   font-family: 'Poppins', sans-serif;
   background-color: rgba(255, 255, 255, 0.03);
-  color: #fff;
+  color: #EFE8D8;
   transition: all 0.3s ease;
 }
 
@@ -1569,7 +1569,7 @@ body {
   padding: 12px 20px;
   border: 2px solid #333;
   background: transparent;
-  color: #fff;
+  color: #EFE8D8;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 8px;
@@ -1656,7 +1656,7 @@ body {
   font-family: 'Playfair Display', serif;
   font-size: 1.8rem;
   font-weight: 700;
-  color: #fff;
+  color: #EFE8D8;
   margin-bottom: 25px;
   margin-top: 30px;
   text-align: left;
@@ -1700,7 +1700,7 @@ body {
   display: block;
   font-weight: 500;
   font-size: 1.1rem;
-  color: #fff;
+  color: #EFE8D8;
   transition: color 0.3s ease;
 }
 
@@ -1729,7 +1729,7 @@ body {
   transform: translateY(-50%) scale(0) rotate(-10deg);
   font-size: 20px;
   font-weight: bold;
-  color: #fff;
+  color: #EFE8D8;
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
@@ -1864,7 +1864,7 @@ body {
   border-radius: 10px;
   border: none;
   background: #111;
-  color: #fff;
+  color: #EFE8D8;
   font-size: 1rem;
   outline: none;
 }
@@ -1941,7 +1941,7 @@ footer a {
 }
 
 footer a:hover {
-  color: #fff;
+  color: #EFE8D8;
 }
 
 /* -------------------------------------------------
@@ -1966,7 +1966,7 @@ footer a:hover {
 
 .cart-icon {
   background: rgba(15, 15, 15, 0.85);
-  color: #fff;
+  color: #EFE8D8;
   border: 1.5px solid rgba(0, 191, 165, 0.35);
   width: 58px;
   height: 58px;
@@ -2107,7 +2107,7 @@ footer a:hover {
 }
 
 .btn-link:hover {
-  color: #fff;
+  color: #EFE8D8;
 }
 
 .cart-items {
@@ -2176,7 +2176,7 @@ footer a:hover {
 .qty-btn {
   background: #006d6d;
   border: none;
-  color: white;
+  color: #EFE8D8;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -2221,7 +2221,7 @@ footer a:hover {
 
 .remove-btn:hover {
   background: #ff5722;
-  color: white;
+  color: #EFE8D8;
   transform: scale(1.1);
 }
 
@@ -2381,7 +2381,7 @@ footer a:hover {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   padding: 12px;
-  color: #fff;
+  color: #EFE8D8;
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
 }
@@ -2415,7 +2415,7 @@ footer a:hover {
   height: 20px;
   border: 3px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border-top-color: #fff;
+  border-top-color: #EFE8D8;
   animation: spin 1s ease-in-out infinite;
 }
 
@@ -2946,7 +2946,7 @@ footer a:hover {
 .tier-price {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #fff;
+  color: #EFE8D8;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -2986,7 +2986,7 @@ footer a:hover {
 
 .bundle-savings-banner strong {
   font-weight: 800;
-  color: #fff;
+  color: #EFE8D8;
 }
 
 @keyframes fadeInUp {
@@ -3106,7 +3106,7 @@ a.pricing-tier {
 .qty-tier-price {
   font-size: 1.1rem;
   font-weight: 800;
-  color: #fff;
+  color: #EFE8D8;
 }
 
 .qty-tier-card.popular .qty-tier-price {
