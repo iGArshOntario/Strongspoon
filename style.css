@@ -34,7 +34,7 @@ body {
 
 .location-btn {
   background: linear-gradient(135deg, #015A64, #013e4a);
-  color: #fff;
+  color: #EFE8D8;
   padding: 8px 14px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -573,7 +573,7 @@ body {
 
 .price-popup-btn {
   background: linear-gradient(135deg, #017d8e, #015A64);
-  color: #fff;
+  color: #EFE8D8;
   border: none;
   padding: 14px 40px;
   border-radius: 25px;
@@ -828,7 +828,7 @@ body {
   gap: 10px;
   padding: 16px 28px;
   background: linear-gradient(135deg, #017d8e 0%, #007a6e 100%);
-  color: #fff;
+  color: #EFE8D8;
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
   font-weight: 600;
@@ -1178,7 +1178,7 @@ body {
 
 .cart-popup-btn.primary {
   background: linear-gradient(135deg, #017d8e, #015A64);
-  color: #fff;
+  color: #EFE8D8;
 }
 
 .cart-popup-btn.primary:hover {
