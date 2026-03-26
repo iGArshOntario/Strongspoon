@@ -338,55 +338,13 @@ body {
 .flavour-card {
   background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.3) 100%);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 22px;
-  padding: 28px 18px 22px;
+  border-radius: 16px;
+  padding: 25px 15px;
   text-decoration: none;
   text-align: center;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.18),
-    0 8px 32px rgba(0,0,0,0.45);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* ── Per-flavour theme backgrounds ── */
-.flavour-card[data-flavour="brownie"] {
-  background: linear-gradient(145deg, #1e0e04 0%, #965929 100%);
-  border-color: rgba(150,89,41,0.35);
-}
-.flavour-card[data-flavour="powerMix"] {
-  background: linear-gradient(145deg, #2a1a08 0%, #D88543 100%);
-  border-color: rgba(216,133,67,0.35);
-}
-.flavour-card[data-flavour="goldenScoop"] {
-  background: linear-gradient(145deg, #2c1e06 0%, #EDA434 100%);
-  border-color: rgba(237,164,52,0.35);
-}
-.flavour-card[data-flavour="spoonCrumble"] {
-  background: linear-gradient(145deg, #1e1a10 0%, #D1BB89 100%);
-  border-color: rgba(209,187,137,0.35);
-}
-
-/* Per-flavour hover glow */
-.flavour-card[data-flavour="brownie"]:hover {
-  border-color: rgba(150,89,41,0.8);
-  box-shadow: 0 15px 40px rgba(150,89,41,0.3);
-}
-.flavour-card[data-flavour="powerMix"]:hover {
-  border-color: rgba(216,133,67,0.8);
-  box-shadow: 0 15px 40px rgba(216,133,67,0.3);
-}
-.flavour-card[data-flavour="goldenScoop"]:hover {
-  border-color: rgba(237,164,52,0.8);
-  box-shadow: 0 15px 40px rgba(237,164,52,0.3);
-}
-.flavour-card[data-flavour="spoonCrumble"]:hover {
-  border-color: rgba(209,187,137,0.8);
-  box-shadow: 0 15px 40px rgba(209,187,137,0.3);
 }
 
 .flavour-card::before {
@@ -395,97 +353,51 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 55%;
-  background: linear-gradient(175deg, rgba(255,255,255,0.14) 0%, transparent 100%);
-  border-radius: 22px 22px 60% 60% / 22px 22px 40% 40%;
-  pointer-events: none;
-}
-
-/* Subtle bottom-right darkening for depth */
-.flavour-card::after {
-  content: '';
-  position: absolute;
   bottom: 0;
-  right: 0;
-  width: 60%;
-  height: 40%;
-  background: radial-gradient(ellipse at bottom right, rgba(0,0,0,0.25) 0%, transparent 70%);
-  pointer-events: none;
+  background: linear-gradient(135deg, rgba(0,191,165,0.1) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .flavour-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-5px);
+  border-color: rgba(0,191,165,0.5);
+  box-shadow: 0 15px 40px rgba(0,191,165,0.2);
 }
 
-/* Frosted glass emoji bubble */
-.flavour-icon-wrap {
-  width: 68px;
-  height: 68px;
-  background: rgba(255,255,255,0.13);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.3),
-    0 6px 18px rgba(0,0,0,0.3);
-  position: relative;
-  z-index: 1;
-  flex-shrink: 0;
+.flavour-card:hover::before {
+  opacity: 1;
 }
 
 .flavour-icon {
-  font-size: 2.2rem;
-  line-height: 1;
-  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.35));
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
 }
 
 .flavour-name {
   font-family: 'Playfair Display', serif;
-  font-size: 1.15rem;
-  font-weight: 800;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #EFE8D8;
-  margin-bottom: 6px;
-  position: relative;
-  z-index: 1;
+  margin-bottom: 5px;
 }
 
 .flavour-desc {
   font-size: 0.75rem;
-  color: rgba(239,232,216,0.6);
-  margin-bottom: 14px;
-  position: relative;
-  z-index: 1;
+  color: #aaa;
+  margin-bottom: 10px;
 }
 
 .flavour-tag {
   display: inline-block;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(239,232,216,0.85);
-  font-size: 0.58rem;
-  font-weight: 700;
-  padding: 4px 11px;
+  background: rgba(0,191,165,0.2);
+  color: #017d8e;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 4px 10px;
   border-radius: 20px;
-  letter-spacing: 1.5px;
-  position: relative;
-  z-index: 1;
-}
-
-.flavour-arrow {
-  display: block;
-  font-size: 1rem;
-  color: rgba(239,232,216,0.3);
-  margin-top: 14px;
-  transition: transform 0.3s ease, color 0.3s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.flavour-card:hover .flavour-arrow {
-  transform: translateX(5px);
-  color: rgba(239,232,216,0.75);
+  letter-spacing: 1px;
 }
 
 .price-badge {
