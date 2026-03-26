@@ -25,6 +25,14 @@ function setOrderType(type) {
 
 window.setOrderType = setOrderType;
 
+function selectTimeSlot(card) {
+  document.querySelectorAll('.timeslot-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  const select = document.getElementById('deliveryTimeSlot');
+  select.value = card.dataset.slot;
+}
+window.selectTimeSlot = selectTimeSlot;
+
 const ITEM_ICONS = { brownie: '🍫', powerMix: '⚡', goldenScoop: '✨', spoonCrumble: '🌾' };
 
 function renderCheckoutItems() {

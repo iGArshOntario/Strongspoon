@@ -177,8 +177,130 @@
       font-size: 0.9rem !important;
     }
 
+    /* Premium date input */
+    .date-input-wrapper {
+      position: relative;
+    }
+    .date-input-wrapper input[type="date"] {
+      width: 100%;
+      padding: 14px 42px 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: #EFE8D8;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+    }
+    .date-input-wrapper input[type="date"]:focus {
+      outline: none;
+      border-color: #015A64;
+      background: rgba(1,90,100,0.06);
+      box-shadow: 0 0 0 3px rgba(1,90,100,0.12);
+    }
+    .date-input-wrapper::after {
+      content: '📅';
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    /* Fix date placeholder color */
+    .date-input-wrapper input[type="date"]::-webkit-datetime-edit-text,
+    .date-input-wrapper input[type="date"]::-webkit-datetime-edit-month-field,
+    .date-input-wrapper input[type="date"]::-webkit-datetime-edit-day-field,
+    .date-input-wrapper input[type="date"]::-webkit-datetime-edit-year-field {
+      color: #EFE8D8;
+    }
+    .date-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      width: 48px;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    /* Premium time slot cards */
+    .timeslot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .timeslot-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+    }
+    .timeslot-card:hover {
+      border-color: rgba(1,90,100,0.5);
+      background: rgba(1,90,100,0.06);
+    }
+    .timeslot-card.active {
+      background: linear-gradient(135deg, rgba(1,90,100,0.3), rgba(1,62,74,0.3));
+      border-color: #015A64;
+      box-shadow: 0 0 0 1px rgba(1,90,100,0.25);
+    }
+    .timeslot-icon { font-size: 1.5rem; line-height: 1; }
+    .timeslot-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #EFE8D8;
+      letter-spacing: 0.3px;
+    }
+    .timeslot-range {
+      font-size: 0.68rem;
+      color: rgba(239,232,216,0.4);
+      line-height: 1.3;
+    }
+    .timeslot-card.active .timeslot-range { color: rgba(239,232,216,0.65); }
+
+    /* Spacious pickup card */
+    .pickup-location-info {
+      padding: 22px 20px !important;
+      border-radius: 12px !important;
+    }
+    .pickup-detail-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: rgba(239,232,216,0.7);
+    }
+    .pickup-detail-icon {
+      width: 30px;
+      height: 30px;
+      background: rgba(1,90,100,0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
     @media (max-width: 600px) {
       .form-row-2 { grid-template-columns: 1fr; gap: 0; }
+      .timeslot-grid { grid-template-columns: repeat(3, 1fr); gap: 7px; }
+      .timeslot-card { padding: 12px 6px; }
+      .timeslot-icon { font-size: 1.2rem; }
     }
   </style>
 </head>
@@ -270,8 +392,14 @@
           <div id="pickupFields" style="display:none;">
             <div class="pickup-location-info">
               <strong>📍 Pickup Location</strong>
-              <p>Regina, SK</p>
-              <p style="color:rgba(239,232,216,0.4);font-size:0.85rem;">Exact address sent via email after order confirmation.</p>
+              <div class="pickup-detail-row">
+                <div class="pickup-detail-icon">📍</div>
+                <span>Regina, SK</span>
+              </div>
+              <div class="pickup-detail-row">
+                <div class="pickup-detail-icon">✉️</div>
+                <span>Exact address sent via email after your order is confirmed.</span>
+              </div>
             </div>
           </div>
 
@@ -283,20 +411,38 @@
             </div>
           </div>
 
-          <div class="form-row-2">
-            <div class="form-group">
-              <label for="deliveryDate">Preferred Date *</label>
+          <div class="form-group">
+            <label for="deliveryDate">Preferred Date *</label>
+            <div class="date-input-wrapper">
               <input type="date" id="deliveryDate" name="deliveryDate" required>
             </div>
-            <div class="form-group">
-              <label for="deliveryTimeSlot">Time Slot *</label>
-              <select id="deliveryTimeSlot" name="deliveryTimeSlot" required>
-                <option value="">Select time</option>
-                <option value="Morning (8 AM - 12 PM)">Morning 8AM–12PM</option>
-                <option value="Afternoon (12 PM - 4 PM)">Afternoon 12PM–4PM</option>
-                <option value="Evening (4 PM - 8 PM)">Evening 4PM–8PM</option>
-              </select>
+          </div>
+
+          <div class="form-group">
+            <label>Time Slot *</label>
+            <div class="timeslot-grid">
+              <div class="timeslot-card" data-slot="Morning (8 AM - 12 PM)" onclick="selectTimeSlot(this)">
+                <div class="timeslot-icon">☀️</div>
+                <div class="timeslot-name">Morning</div>
+                <div class="timeslot-range">8 AM – 12 PM</div>
+              </div>
+              <div class="timeslot-card" data-slot="Afternoon (12 PM - 4 PM)" onclick="selectTimeSlot(this)">
+                <div class="timeslot-icon">🌤</div>
+                <div class="timeslot-name">Afternoon</div>
+                <div class="timeslot-range">12 PM – 4 PM</div>
+              </div>
+              <div class="timeslot-card" data-slot="Evening (4 PM - 8 PM)" onclick="selectTimeSlot(this)">
+                <div class="timeslot-icon">🌙</div>
+                <div class="timeslot-name">Evening</div>
+                <div class="timeslot-range">4 PM – 8 PM</div>
+              </div>
             </div>
+            <select id="deliveryTimeSlot" name="deliveryTimeSlot" required style="display:none;">
+              <option value="">Select time</option>
+              <option value="Morning (8 AM - 12 PM)">Morning</option>
+              <option value="Afternoon (12 PM - 4 PM)">Afternoon</option>
+              <option value="Evening (4 PM - 8 PM)">Evening</option>
+            </select>
           </div>
 
           <!-- Step 3: Payment -->
