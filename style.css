@@ -347,6 +347,42 @@ body {
   overflow: hidden;
 }
 
+/* ── Per-flavour theme backgrounds ── */
+.flavour-card[data-flavour="brownie"] {
+  background: linear-gradient(145deg, #1e0e04 0%, #965929 100%);
+  border-color: rgba(150,89,41,0.35);
+}
+.flavour-card[data-flavour="powerMix"] {
+  background: linear-gradient(145deg, #2a1a08 0%, #D88543 100%);
+  border-color: rgba(216,133,67,0.35);
+}
+.flavour-card[data-flavour="goldenScoop"] {
+  background: linear-gradient(145deg, #2c1e06 0%, #EDA434 100%);
+  border-color: rgba(237,164,52,0.35);
+}
+.flavour-card[data-flavour="spoonCrumble"] {
+  background: linear-gradient(145deg, #1e1a10 0%, #D1BB89 100%);
+  border-color: rgba(209,187,137,0.35);
+}
+
+/* Per-flavour hover glow */
+.flavour-card[data-flavour="brownie"]:hover {
+  border-color: rgba(150,89,41,0.8);
+  box-shadow: 0 15px 40px rgba(150,89,41,0.3);
+}
+.flavour-card[data-flavour="powerMix"]:hover {
+  border-color: rgba(216,133,67,0.8);
+  box-shadow: 0 15px 40px rgba(216,133,67,0.3);
+}
+.flavour-card[data-flavour="goldenScoop"]:hover {
+  border-color: rgba(237,164,52,0.8);
+  box-shadow: 0 15px 40px rgba(237,164,52,0.3);
+}
+.flavour-card[data-flavour="spoonCrumble"]:hover {
+  border-color: rgba(209,187,137,0.8);
+  box-shadow: 0 15px 40px rgba(209,187,137,0.3);
+}
+
 .flavour-card::before {
   content: '';
   position: absolute;
@@ -354,19 +390,13 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(0,191,165,0.1) 0%, transparent 50%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+  opacity: 1;
+  pointer-events: none;
 }
 
 .flavour-card:hover {
   transform: translateY(-5px);
-  border-color: rgba(0,191,165,0.5);
-  box-shadow: 0 15px 40px rgba(0,191,165,0.2);
-}
-
-.flavour-card:hover::before {
-  opacity: 1;
 }
 
 .flavour-icon {
