@@ -45,16 +45,16 @@ function renderCheckoutItems() {
     const icon = ITEM_ICONS[item.id] || '💪';
     const itemTotal = (cart.getPricePerCup() * item.quantity).toFixed(2);
     return `
-      <div class="co-item" style="animation-delay:${i * 0.08}s">
-        <div class="co-item-left">
-          <div class="co-item-icon">${icon}</div>
-          <div class="co-item-info">
-            <div class="co-item-name">${item.name}</div>
-            <div class="co-item-meta">${PRODUCT_SIZE} &nbsp;·&nbsp; Qty ${item.quantity}</div>
-            ${hasToppings ? `<div class="co-item-toppings">+ ${item.toppings.map(t => t.name).join(', ')}</div>` : ''}
+      <div class="checkout-item" style="animation-delay:${i * 0.07}s">
+        <div class="checkout-item-inner">
+          <div class="checkout-item-icon">${icon}</div>
+          <div class="checkout-item-text">
+            <div class="item-name">${item.name}</div>
+            <div class="item-sub">${PRODUCT_SIZE} · Qty ${item.quantity}</div>
+            ${hasToppings ? `<div class="item-toppings">+ ${item.toppings.map(t => t.name).join(', ')}</div>` : ''}
           </div>
         </div>
-        <div class="co-item-price">$${itemTotal}</div>
+        <div class="checkout-item-price-col">$${itemTotal}</div>
       </div>
     `;
   }).join('');
@@ -81,7 +81,6 @@ function renderCheckoutItems() {
 
 const amounts = renderCheckoutItems();
 
-// Set minimum delivery date to 12 hours from now
 function setMinimumDeliveryDate() {
   const deliveryDateInput = document.getElementById('deliveryDate');
   const now = new Date();
@@ -141,11 +140,9 @@ async function initializeStripe() {
           fontFamily: '"Poppins", sans-serif',
           fontSize: '15px',
           fontWeight: '400',
-          letterSpacing: '0.3px',
-          '::placeholder': { color: 'rgba(239,232,216,0.25)' },
+          '::placeholder': { color: 'rgba(239,232,216,0.3)' },
         },
-        invalid: { color: '#ff9b9b', iconColor: '#ff9b9b' },
-        complete: { color: '#EFE8D8' },
+        invalid: { color: '#ff5722' },
       },
     });
 
@@ -165,10 +162,11 @@ async function initializeStripe() {
 function initializeTestMode() {
   const cardElementDiv = document.getElementById('card-element');
   cardElementDiv.innerHTML = `
-    <input type="text" placeholder="4242 4242 4242 4242" style="width:100%;background:transparent;border:none;color:#EFE8D8;font-family:'Poppins',sans-serif;font-size:15px;outline:none;box-sizing:border-box;" id="testCardNumber">
-    <div style="display:flex;gap:10px;margin-top:12px;">
-      <input type="text" placeholder="MM / YY" style="flex:1;background:transparent;border:none;color:#EFE8D8;font-family:'Poppins',sans-serif;font-size:15px;outline:none;" id="testExpiry">
-      <input type="text" placeholder="CVC" style="flex:1;background:transparent;border:none;color:#EFE8D8;font-family:'Poppins',sans-serif;font-size:15px;outline:none;" id="testCvc">
+    <input type="text" placeholder="4242 4242 4242 4242 (Test Card)"
+           class="test-card-input" id="testCardNumber" required>
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <input type="text" placeholder="MM/YY" class="test-card-input" style="flex:1;" id="testExpiry" required>
+      <input type="text" placeholder="CVC"   class="test-card-input" style="flex:1;" id="testCvc" required>
     </div>
   `;
 }
@@ -184,7 +182,7 @@ form.addEventListener('submit', async (e) => {
 
   submitButton.disabled = true;
   buttonText.style.display = 'none';
-  spinner.style.display = 'block';
+  spinner.style.display = 'inline-block';
 
   const customerName = document.getElementById('customerName').value;
   const customerEmail = document.getElementById('customerEmail').value;
@@ -198,7 +196,7 @@ form.addEventListener('submit', async (e) => {
   const dateValidation = validateDeliveryDate();
   if (!dateValidation.valid) {
     messageDiv.textContent = dateValidation.error;
-    messageDiv.className = 'co-payment-message error';
+    messageDiv.className = 'payment-message error';
     submitButton.disabled = false;
     buttonText.style.display = 'inline';
     spinner.style.display = 'none';
@@ -234,7 +232,7 @@ form.addEventListener('submit', async (e) => {
 
     if (result.error) {
       messageDiv.textContent = result.error.message;
-      messageDiv.className = 'co-payment-message error';
+      messageDiv.className = 'payment-message error';
     } else {
       try {
         const saveResponse = await fetch('/save-order', {
@@ -247,19 +245,19 @@ form.addEventListener('submit', async (e) => {
 
         const saveData = await saveResponse.json();
         messageDiv.textContent = `✅ Payment successful! Order #${saveData.orderNumber} confirmed. Redirecting…`;
-        messageDiv.className = 'co-payment-message success';
+        messageDiv.className = 'payment-message success';
         cart.clear();
         setTimeout(() => { window.location.href = 'index.html'; }, 3000);
       } catch (saveError) {
         console.error('Error saving order:', saveError);
-        messageDiv.textContent = '⚠️ Payment succeeded but order save failed. Please contact support with payment ID: ' + result.paymentIntent.id;
-        messageDiv.className = 'co-payment-message error';
+        messageDiv.textContent = '⚠️ Payment succeeded but order save failed. Contact support with payment ID: ' + result.paymentIntent.id;
+        messageDiv.className = 'payment-message error';
       }
     }
   } catch (error) {
     console.error('Payment error:', error);
     messageDiv.textContent = 'Payment failed. Please check your card details and try again.';
-    messageDiv.className = 'co-payment-message error';
+    messageDiv.className = 'payment-message error';
   }
 
   submitButton.disabled = false;
