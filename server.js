@@ -226,16 +226,10 @@ async function sendOrderConfirmation(orderData) {
     
     // Build items list HTML
     const itemsHTML = items.map(item => `
-      <div style="background: #f8f8f8; padding: 15px; margin: 10px 0; border-radius: 8px;">
-        <strong style="color: #015A64; font-size: 16px;">${item.name}</strong>
-        ${item.toppings && item.toppings.length > 0 ? `
-          <div style="margin-top: 8px; color: #666;">
-            <strong>Toppings:</strong> ${item.toppings.map(t => t.name).join(', ')}
-          </div>
-        ` : ''}
-        <div style="margin-top: 8px; color: #333;">
-          Quantity: ${item.quantity} × $${getCurrentPrice().toFixed(2)} = $${(item.quantity * getCurrentPrice()).toFixed(2)}
-        </div>
+      <div class="item-card">
+        <div class="item-name">${item.name}</div>
+        ${item.toppings && item.toppings.length > 0 ? `<div class="item-toppings">Toppings: ${item.toppings.map(t => t.name).join(', ')}</div>` : ''}
+        <div class="item-qty">Qty ${item.quantity} × $${typeof item.price === 'number' ? item.price.toFixed(2) : getCurrentPrice().toFixed(2)} = $${(item.quantity * (typeof item.price === 'number' ? item.price : getCurrentPrice())).toFixed(2)}</div>
       </div>
     `).join('');
 
@@ -243,24 +237,31 @@ async function sendOrderConfirmation(orderData) {
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
-    .wrapper { background: #f5f5f5; padding: 30px 15px; }
-    .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
-    .header { background: linear-gradient(135deg, #015A64 0%, #013e4a 100%); color: #EFE8D8; padding: 36px 30px 28px; text-align: center; }
-    .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; }
-    .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
-    .content { background: #ffffff; padding: 32px 30px; }
-    .greeting { font-size: 20px; font-weight: 700; color: #015A64; margin: 0 0 8px; }
-    .section-title { color: #015A64; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #d0eaed; padding-bottom: 6px; }
-    .order-badge { background: #d0eaed; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 18px 0; font-size: 14px; }
-    .total-box { background: linear-gradient(135deg, #015A64 0%, #013e4a 100%); color: #EFE8D8; padding: 16px; text-align: center; font-size: 20px; font-weight: 700; border-radius: 10px; margin: 20px 0; }
-    .info-row { background: #f0f8f9; padding: 14px 16px; border-radius: 8px; font-size: 14px; line-height: 1.8; }
-    .footer { background: #1a1a1a; color: #aaa; padding: 24px 30px; text-align: center; font-size: 13px; }
-    .footer strong { color: #017d8e; }
-    .item-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px; margin: 10px 0; background: #fafafa; font-size: 14px; }
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #EFE8D8; margin: 0; padding: 0; background: #0b1416; }
+    .wrapper { background: #0b1416 !important; padding: 30px 15px; }
+    .container { max-width: 580px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .header { background: #015A64 !important; padding: 36px 30px 28px; text-align: center; }
+    .header h1 { margin: 10px 0 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; color: #EFE8D8 !important; }
+    .header p { margin: 8px 0 0; font-size: 14px; color: rgba(239,232,216,0.75) !important; }
+    .content { background: #0f1e20 !important; padding: 32px 30px; }
+    .greeting { font-size: 22px; font-weight: 700; color: #EFE8D8 !important; margin: 0 0 6px; font-family: 'Playfair Display', Georgia, serif; }
+    .subtext { color: rgba(239,232,216,0.65) !important; font-size: 14px; margin: 0 0 4px; }
+    .section-title { color: #015A64 !important; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 28px 0 10px; border-bottom: 1px solid #1e3538; padding-bottom: 8px; }
+    .order-badge { background: #162c2f !important; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 10px 0 18px; font-size: 14px; color: #EFE8D8 !important; }
+    .item-card { background: #162c2f !important; border: 1px solid #1e3538; border-radius: 10px; padding: 14px 16px; margin: 10px 0; font-size: 14px; color: #EFE8D8 !important; }
+    .item-name { font-weight: 700; color: #EFE8D8 !important; font-size: 15px; }
+    .item-toppings { color: rgba(239,232,216,0.55) !important; font-size: 13px; margin-top: 4px; }
+    .item-qty { color: rgba(239,232,216,0.8) !important; margin-top: 6px; font-size: 13px; }
+    .total-box { background: #015A64 !important; color: #EFE8D8 !important; padding: 18px 16px; text-align: center; font-size: 22px; font-weight: 700; border-radius: 10px; margin: 24px 0; }
+    .info-row { background: #162c2f !important; padding: 14px 16px; border-radius: 10px; font-size: 14px; line-height: 2; color: #EFE8D8 !important; }
+    .footer { background: #071012 !important; padding: 24px 30px; text-align: center; font-size: 13px; }
+    .footer-brand { color: #EFE8D8 !important; font-size: 15px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; }
+    .footer-sub { color: rgba(239,232,216,0.45) !important; font-size: 12px; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -273,7 +274,7 @@ async function sendOrderConfirmation(orderData) {
     </div>
     <div class="content">
       <p class="greeting">Hi ${orderData.customer_name}!</p>
-      <p style="color:#555;margin:0 0 4px;">Your order has been confirmed and will be prepared shortly.</p>
+      <p class="subtext">Your order has been confirmed and will be prepared shortly.</p>
 
       <p class="section-title">Order Reference</p>
       <div class="order-badge">
@@ -295,9 +296,8 @@ async function sendOrderConfirmation(orderData) {
       </div>
     </div>
     <div class="footer">
-      <strong>💪 Strong Spoon</strong><br>
-      High-Protein Dessert for Champions<br>
-      <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Questions? Reply to this email · Regina, SK</span>
+      <div class="footer-brand">💪 Strong Spoon</div>
+      <div class="footer-sub">High-Protein Dessert · Regina, SK<br>Questions? Reply to this email</div>
     </div>
   </div>
   </div>
@@ -365,9 +365,9 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
 
     // Build items list HTML
     const itemsHTML = items.map(item => `
-      <div style="background: #f0fdf4; padding: 12px; margin: 8px 0; border-radius: 6px; border-left: 3px solid #22c55e;">
-        <strong style="color: #166534;">${item.name || 'Item'}</strong>
-        <span style="color: #666; margin-left: 10px;">× ${item.quantity || 1}</span>
+      <div style="background:#162c2f;border:1px solid #1e3538;border-radius:10px;padding:12px 16px;margin:8px 0;color:#EFE8D8;font-size:14px;">
+        <strong style="color:#EFE8D8;">${item.name || 'Item'}</strong>
+        <span style="color:rgba(239,232,216,0.6);margin-left:10px;">× ${item.quantity || 1}</span>
       </div>
     `).join('');
 
@@ -406,23 +406,27 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
-    .wrapper { background: #f5f5f5; padding: 30px 15px; }
-    .container { max-width: 580px; margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
-    .header { background: linear-gradient(135deg, #015A64 0%, #013e4a 100%); color: #EFE8D8; padding: 36px 30px 28px; text-align: center; }
-    .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; }
-    .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.88; }
-    .content { background: #ffffff; padding: 32px 30px; }
-    .greeting { font-size: 20px; font-weight: 700; color: #015A64; margin: 0 0 8px; }
-    .section-title { color: #015A64; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px; border-bottom: 2px solid #d0eaed; padding-bottom: 6px; }
-    .delivered-badge { display: inline-block; background: #d0eaed; color: #00695c; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 15px; margin-bottom: 20px; }
-    .info-box { background: #f0f8f9; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 14px; line-height: 1.9; }
-    .footer { background: #1a1a1a; color: #aaa; padding: 24px 30px; text-align: center; font-size: 13px; }
-    .footer strong { color: #017d8e; }
-    .item-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px; margin: 10px 0; background: #fafafa; font-size: 14px; }
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #EFE8D8; margin: 0; padding: 0; background: #0b1416; }
+    .wrapper { background: #0b1416 !important; padding: 30px 15px; }
+    .container { max-width: 580px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .header { background: #015A64 !important; padding: 36px 30px 28px; text-align: center; }
+    .header h1 { margin: 10px 0 0; font-size: 24px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; color: #EFE8D8 !important; }
+    .header p { margin: 8px 0 0; font-size: 14px; color: rgba(239,232,216,0.75) !important; }
+    .content { background: #0f1e20 !important; padding: 32px 30px; }
+    .greeting { font-size: 22px; font-weight: 700; color: #EFE8D8 !important; margin: 0 0 6px; font-family: 'Playfair Display', Georgia, serif; }
+    .subtext { color: rgba(239,232,216,0.65) !important; font-size: 14px; margin: 0 0 4px; }
+    .section-title { color: #015A64 !important; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 28px 0 10px; border-bottom: 1px solid #1e3538; padding-bottom: 8px; }
+    .delivered-badge { display: inline-block; background: #015A64 !important; color: #EFE8D8 !important; padding: 8px 24px; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 20px; }
+    .info-box { background: #162c2f !important; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 10px 10px 0; margin: 10px 0 18px; font-size: 14px; line-height: 2; color: #EFE8D8 !important; }
+    .note-box { background: #162c2f !important; border-left: 4px solid rgba(239,232,216,0.2); padding: 14px 16px; border-radius: 0 10px 10px 0; margin-top: 20px; font-size: 14px; color: rgba(239,232,216,0.7) !important; }
+    .footer { background: #071012 !important; padding: 24px 30px; text-align: center; font-size: 13px; }
+    .footer-brand { color: #EFE8D8 !important; font-size: 15px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; }
+    .footer-sub { color: rgba(239,232,216,0.45) !important; font-size: 12px; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -430,15 +434,15 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
   <div class="container">
     <div class="header">
       ${LOGO_IMG_TAG}
-      <h1>✅ Your Order Has Arrived!</h1>
+      <h1>Your Order Has Arrived!</h1>
       <p>Strong Spoon delivered — enjoy every spoonful</p>
     </div>
     <div class="content">
-      <div style="text-align:center;">
+      <div style="text-align:center;margin-bottom:8px;">
         <span class="delivered-badge">🎉 Successfully Delivered</span>
       </div>
       <p class="greeting">Hi ${orderData.customer_name}!</p>
-      <p style="color:#555;margin:0 0 4px;">Great news! Your order has been delivered. We hope you enjoy your high-protein dessert!</p>
+      <p class="subtext">Great news! Your order has been delivered. Enjoy your high-protein dessert!</p>
 
       <p class="section-title">Delivery Info</p>
       <div class="info-box">
@@ -452,15 +456,14 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
 
       ${proofImageHTML}
 
-      <div style="background:#fff8e1;padding:14px 16px;border-radius:8px;margin-top:20px;border-left:4px solid #f59e0b;font-size:14px;">
-        <strong style="color:#7c4f00;">💡 Questions about your delivery?</strong><br>
-        <span style="color:#78350f;">Simply reply to this email and we'll get back to you.</span>
+      <div class="note-box">
+        💡 <strong style="color:#EFE8D8;">Questions about your delivery?</strong><br>
+        Simply reply to this email and we'll get back to you.
       </div>
     </div>
     <div class="footer">
-      <strong>💪 Strong Spoon</strong><br>
-      High-Protein Dessert for Champions<br>
-      <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Thank you for choosing Strong Spoon · Regina, SK</span>
+      <div class="footer-brand">💪 Strong Spoon</div>
+      <div class="footer-sub">High-Protein Dessert · Regina, SK<br>Thank you for choosing Strong Spoon</div>
     </div>
   </div>
   </div>
@@ -1382,24 +1385,28 @@ async function startServer() {
     const to = req.query.to || 'arsh99591@gmail.com';
     const html = `
 <!DOCTYPE html><html><head>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
-  body{font-family:Arial,sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5;}
-  .wrapper{background:#f5f5f5;padding:30px 15px;}
-  .container{max-width:580px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);}
-  .header{background:linear-gradient(135deg,#015A64 0%,#013e4a 100%);color: #EFE8D8;padding:36px 30px 28px;text-align:center;}
-  .header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:0.5px;font-family:'Playfair Display',Georgia,serif;}
-  .header p{margin:6px 0 0;font-size:14px;opacity:.88;}
-  .content{background:#fff;padding:32px 30px;}
-  .greeting{font-size:20px;font-weight:700;color:#015A64;margin:0 0 8px;}
-  .section-title{color:#015A64;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #d0eaed;padding-bottom:6px;}
-  .order-badge{background:#d0eaed;border-left:4px solid #015A64;padding:14px 16px;border-radius:0 8px 8px 0;margin:18px 0;font-size:14px;}
-  .total-box{background:linear-gradient(135deg,#015A64 0%,#013e4a 100%);color: #EFE8D8;padding:16px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;margin:20px 0;}
-  .info-row{background:#f0f8f9;padding:14px 16px;border-radius:8px;font-size:14px;line-height:1.8;}
-  .footer{background:#1a1a1a;color:#aaa;padding:24px 30px;text-align:center;font-size:13px;}
-  .footer strong{color:#017d8e;}
-  .item-card{border:1px solid #e8e8e8;border-radius:8px;padding:14px;margin:10px 0;background:#fafafa;font-size:14px;}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
+  body{font-family:Arial,sans-serif;line-height:1.6;color:#EFE8D8;margin:0;padding:0;background:#0b1416;}
+  .wrapper{background:#0b1416 !important;padding:30px 15px;}
+  .container{max-width:580px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+  .header{background:#015A64 !important;padding:36px 30px 28px;text-align:center;}
+  .header h1{margin:10px 0 0;font-size:24px;font-weight:700;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8 !important;}
+  .header p{margin:8px 0 0;font-size:14px;color:rgba(239,232,216,0.75) !important;}
+  .content{background:#0f1e20 !important;padding:32px 30px;}
+  .greeting{font-size:22px;font-weight:700;color:#EFE8D8 !important;margin:0 0 6px;font-family:'Playfair Display',Georgia,serif;}
+  .subtext{color:rgba(239,232,216,0.65) !important;font-size:14px;margin:0 0 4px;}
+  .section-title{color:#015A64 !important;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin:28px 0 10px;border-bottom:1px solid #1e3538;padding-bottom:8px;}
+  .order-badge{background:#162c2f !important;border-left:4px solid #015A64;padding:14px 16px;border-radius:0 10px 10px 0;margin:10px 0 18px;font-size:14px;color:#EFE8D8 !important;}
+  .item-card{background:#162c2f !important;border:1px solid #1e3538;border-radius:10px;padding:14px 16px;margin:10px 0;font-size:14px;color:#EFE8D8 !important;}
+  .total-box{background:#015A64 !important;color:#EFE8D8 !important;padding:18px 16px;text-align:center;font-size:22px;font-weight:700;border-radius:10px;margin:24px 0;}
+  .info-row{background:#162c2f !important;padding:14px 16px;border-radius:10px;font-size:14px;line-height:2;color:#EFE8D8 !important;}
+  .footer{background:#071012 !important;padding:24px 30px;text-align:center;font-size:13px;}
+  .footer-brand{color:#EFE8D8 !important;font-size:15px;font-weight:700;font-family:'Playfair Display',Georgia,serif;}
+  .footer-sub{color:rgba(239,232,216,0.45) !important;font-size:12px;margin-top:6px;}
 </style></head>
 <body><div class="wrapper"><div class="container">
   <div class="header">
@@ -1409,22 +1416,27 @@ async function startServer() {
   </div>
   <div class="content">
     <p class="greeting">Hi Arsh!</p>
-    <p style="color:#555;margin:0 0 4px;">This is a sample order confirmation email showing the new design with your logo.</p>
+    <p class="subtext">Here's your order confirmation from Strong Spoon.</p>
     <p class="section-title">Order Reference</p>
     <div class="order-badge"><strong>Order #SS-SAMPLE-001</strong><br>📅 March 25, 2026 at 10:30 AM</div>
     <p class="section-title">Items Ordered</p>
-    <div class="item-card"><strong>Brownie Issues</strong> — Chocolate high-protein dessert<br>
-      <span style="color:#777;font-size:13px;">Toppings: Almonds, Cashews</span><br>
-      <span style="margin-top:6px;display:block;">Quantity: 2 × $11.99 = $23.98</span>
+    <div class="item-card">
+      <div style="font-weight:700;font-size:15px;">Brownie Issues</div>
+      <div style="color:rgba(239,232,216,0.55);font-size:13px;margin-top:4px;">Toppings: Almonds, Cashews</div>
+      <div style="color:rgba(239,232,216,0.8);font-size:13px;margin-top:6px;">Qty 2 × $11.99 = $23.98</div>
     </div>
-    <div class="total-box">Total Paid: $23.98 CAD</div>
+    <div class="item-card">
+      <div style="font-weight:700;font-size:15px;">Golden Scoop</div>
+      <div style="color:rgba(239,232,216,0.55);font-size:13px;margin-top:4px;">No toppings</div>
+      <div style="color:rgba(239,232,216,0.8);font-size:13px;margin-top:6px;">Qty 1 × $11.99 = $11.99</div>
+    </div>
+    <div class="total-box">Total Paid: $35.97 CAD</div>
     <p class="section-title">Your Details</p>
     <div class="info-row">👤 Arsh<br>📧 ${to}<br>📍 Regina, SK</div>
   </div>
   <div class="footer">
-    <strong>💪 Strong Spoon</strong><br>
-    High-Protein Dessert for Champions<br>
-    <span style="font-size:12px;color:#666;margin-top:10px;display:block;">Questions? Reply to this email · Regina, SK</span>
+    <div class="footer-brand">💪 Strong Spoon</div>
+    <div class="footer-sub">High-Protein Dessert · Regina, SK<br>Questions? Reply to this email</div>
   </div>
 </div></div></body></html>`;
     // Generate sample PDF invoice
