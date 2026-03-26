@@ -8,7 +8,7 @@ function renderCart() {
     cartItemsContainer.innerHTML = `
       <div class="empty-cart">
         <h2>Your cart is empty</h2>
-        <p>Add some delicious Strong Spoon yogurt to get started!</p>
+        <p>Add some delicious Strong Spoon dessert to get started!</p>
         <a href="Html2.html" class="btn teal">Browse Products</a>
       </div>
     `;
