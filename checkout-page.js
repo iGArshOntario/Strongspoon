@@ -43,7 +43,7 @@ function renderCheckoutItems() {
   checkoutItemsContainer.innerHTML = cart.items.map((item, i) => {
     const hasToppings = item.toppings && item.toppings.length > 0;
     const icon = ITEM_ICONS[item.id] || '💪';
-    const itemTotal = (cart.getPricePerCup() * item.quantity).toFixed(2);
+    const itemTotal = (PRODUCT_PRICE * item.quantity).toFixed(2);
     return `
       <div class="checkout-item" style="animation-delay:${i * 0.07}s">
         <div class="checkout-item-inner">
