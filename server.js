@@ -5,7 +5,6 @@ const fs = require('fs');
 const { Pool } = require('pg');
 const { Resend } = require('resend');
 const PDFDocument = require('pdfkit');
-const twilio = require('twilio');
 
 // Cache brand logo for email embedding
 let LOGO_BASE64 = '';
@@ -206,38 +205,65 @@ if (!process.env.RESEND_API_KEY) {
   console.log('✅ Resend email service initialized');
 }
 
-// Twilio SMS client
-const OWNER_PHONE = '+13065024303';
-let twilioClient = null;
-if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-  twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-  console.log('✅ Twilio SMS service initialized');
-} else {
-  console.warn('⚠️ TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN not set - SMS alerts disabled');
-}
+// Owner alert email
+const OWNER_EMAIL = 'Strongspoon.ca@gmail.com';
 
-async function sendOrderSMS(orderData) {
-  if (!twilioClient || !process.env.TWILIO_PHONE_NUMBER) return { success: false };
+async function sendOwnerAlertEmail(orderData) {
+  if (!resend) return { success: false };
   try {
     const items = JSON.parse(orderData.items || '[]');
-    const itemSummary = items.map(i => `${i.quantity}x ${i.name}`).join(', ');
     const orderType = (orderData.order_type || 'delivery').toUpperCase();
-    const msg = [
-      `💪 NEW ORDER — Strong Spoon`,
-      `#${orderData.order_number}`,
-      `${orderData.customer_name} · $${orderData.total_amount}`,
-      `${orderType}: ${orderData.customer_address || 'Regina, SK'}`,
-      itemSummary
-    ].join('\n');
-    await twilioClient.messages.create({
-      body: msg,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: OWNER_PHONE
+    const itemRows = items.map(i => {
+      const toppingStr = (i.toppings && i.toppings.length) ? i.toppings.map(t => t.name).join(', ') : 'No toppings';
+      return `<tr><td style="padding:8px 12px;border-bottom:1px solid #1e3538;">${i.name}</td><td style="padding:8px 12px;border-bottom:1px solid #1e3538;text-align:center;">${i.quantity}</td><td style="padding:8px 12px;border-bottom:1px solid #1e3538;color:rgba(239,232,216,0.65);">${toppingStr}</td></tr>`;
+    }).join('');
+    const html = `<!DOCTYPE html><html><head>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+body{font-family:Arial,sans-serif;background:#0b1416;color:#EFE8D8;margin:0;padding:0;}
+.wrapper{background:#0b1416;padding:30px 15px;}
+.container{max-width:560px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+.header{background:#015A64;padding:28px 30px;text-align:center;}
+.header h1{margin:8px 0 0;font-size:22px;font-weight:700;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8;}
+.header p{margin:6px 0 0;font-size:13px;color:rgba(239,232,216,0.75);}
+.content{background:#0f1e20;padding:28px 30px;}
+.label{color:#015A64;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin:22px 0 8px;border-bottom:1px solid #1e3538;padding-bottom:6px;}
+.badge{background:#162c2f;border-left:4px solid #015A64;padding:12px 16px;border-radius:0 10px 10px 0;font-size:14px;}
+.total{background:#015A64;color:#EFE8D8;padding:16px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:14px;}
+th{background:#162c2f;padding:8px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(239,232,216,0.6);}
+.info{background:#162c2f;padding:14px 16px;border-radius:10px;font-size:14px;line-height:2;}
+.footer{background:#071012;padding:20px 30px;text-align:center;font-size:12px;color:rgba(239,232,216,0.45);}
+</style></head>
+<body><div class="wrapper"><div class="container">
+<div class="header">
+  ${LOGO_IMG_TAG}
+  <h1>🛎 New Order Received</h1>
+  <p>Someone just placed an order on Strong Spoon</p>
+</div>
+<div class="content">
+  <div class="label">Order Reference</div>
+  <div class="badge"><strong>#${orderData.order_number}</strong> &nbsp;·&nbsp; ${orderType} &nbsp;·&nbsp; $${orderData.total_amount} CAD</div>
+  <div class="label">Customer</div>
+  <div class="info">👤 ${orderData.customer_name}<br>📧 ${orderData.customer_email}<br>📞 ${orderData.customer_phone || '—'}<br>📍 ${orderData.customer_address || 'Regina, SK'}</div>
+  ${orderData.delivery_date ? `<div class="label">Scheduled Delivery</div><div class="info">📅 ${orderData.delivery_date}<br>🕐 ${orderData.delivery_time_slot || '—'}</div>` : ''}
+  <div class="label">Items Ordered</div>
+  <table><thead><tr><th>Product</th><th>Qty</th><th>Toppings</th></tr></thead><tbody>${itemRows}</tbody></table>
+  <div class="total">Total: $${orderData.total_amount} CAD</div>
+</div>
+<div class="footer">Strong Spoon · Regina, SK — New order alert</div>
+</div></div></body></html>`;
+
+    await resend.emails.send({
+      from: 'Strong Spoon <orders@resend.dev>',
+      to: [OWNER_EMAIL],
+      subject: `🛎 New Order #${orderData.order_number} — $${orderData.total_amount} CAD`,
+      html
     });
-    console.log('✅ SMS alert sent to owner');
+    console.log('✅ Owner alert email sent to:', OWNER_EMAIL);
     return { success: true };
   } catch (err) {
-    console.error('❌ SMS send error:', err.message);
+    console.error('❌ Owner alert email error:', err.message);
     return { success: false, error: err.message };
   }
 }
@@ -800,8 +826,8 @@ app.post('/save-order', async (req, res) => {
       console.log('✅ Confirmation email sent to:', metadata.customer_email);
     }
 
-    // SMS alert to owner
-    const smsResult = await sendOrderSMS({
+    // Owner alert email
+    await sendOwnerAlertEmail({
       ...orderData,
       order_type: metadata.order_type || 'delivery'
     });
@@ -810,8 +836,7 @@ app.post('/save-order', async (req, res) => {
       success: true,
       orderNumber: result.rows[0].order_number,
       orderId: result.rows[0].id,
-      emailSent: emailResult.success,
-      smsSent: smsResult.success
+      emailSent: emailResult.success
     });
   } catch (error) {
     console.error('Error saving order:', error);
@@ -1517,21 +1542,26 @@ async function startServer() {
     res.json({ success: true, message: `Test email sent to ${to}`, id: data?.id });
   });
 
-  // Test SMS route — sends a sample order alert to owner phone
-  app.get('/api/send-test-sms', async (req, res) => {
-    if (!twilioClient || !process.env.TWILIO_PHONE_NUMBER) {
-      return res.status(503).json({ error: 'SMS service not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_PHONE_NUMBER.' });
-    }
-    const result = await sendOrderSMS({
+  // Test owner alert email
+  app.get('/api/send-test-owner-alert', async (req, res) => {
+    if (!resend) return res.status(503).json({ error: 'Email service not configured' });
+    const result = await sendOwnerAlertEmail({
       order_number: 'ORD-TEST-001',
       customer_name: 'Test Customer',
+      customer_email: 'testcustomer@example.com',
+      customer_phone: '+1 (306) 555-0199',
       customer_address: '123 Wascana St, Regina, SK',
       total_amount: '23.98',
-      items: JSON.stringify([{ name: 'Brownie Issues', quantity: 2 }]),
-      order_type: 'delivery'
+      items: JSON.stringify([
+        { name: 'Brownie Issues', quantity: 2, toppings: [{ name: 'Almonds' }] },
+        { name: 'Golden Scoop', quantity: 1, toppings: [] }
+      ]),
+      order_type: 'delivery',
+      delivery_date: 'April 10, 2026',
+      delivery_time_slot: 'Morning 8AM–12PM'
     });
     if (result.success) {
-      res.json({ success: true, message: `Test SMS sent to ${OWNER_PHONE}` });
+      res.json({ success: true, message: `Test owner alert sent to ${OWNER_EMAIL}` });
     } else {
       res.status(500).json({ success: false, error: result.error });
     }

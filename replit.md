@@ -58,8 +58,5 @@ The architecture follows a modern e-commerce pattern with a client-side rich use
 - `ADMIN_PASSWORD` - Secures admin dashboard access
 - `DELIVERY_PASSWORD` - Secures delivery portal access
 - `PORT`
-- `TWILIO_ACCOUNT_SID` - Twilio Account SID for owner SMS alerts
-- `TWILIO_AUTH_TOKEN` - Twilio Auth Token
-- `TWILIO_PHONE_NUMBER` - Twilio "from" phone number (e.g. +1XXXXXXXXXX)
 
-**Note:** Twilio Replit integration was dismissed by user. Credentials must be entered manually as secrets above. Owner SMS alert phone is hardcoded to `+13065024303` in `server.js` (`OWNER_PHONE` constant). Test SMS available at `/api/send-test-sms`.
+**Note:** Owner order alert emails are sent to `Strongspoon.ca@gmail.com` via Resend (no SMS / no Twilio needed). Test alert available at `/api/send-test-owner-alert`.
