@@ -5,6 +5,7 @@ const fs = require('fs');
 const { Pool } = require('pg');
 const { Resend } = require('resend');
 const PDFDocument = require('pdfkit');
+const twilio = require('twilio');
 
 // Cache brand logo for email embedding
 let LOGO_BASE64 = '';
@@ -203,6 +204,42 @@ if (!process.env.RESEND_API_KEY) {
   console.warn('⚠️ RESEND_API_KEY not set - email confirmations disabled');
 } else {
   console.log('✅ Resend email service initialized');
+}
+
+// Twilio SMS client
+const OWNER_PHONE = '+13065024303';
+let twilioClient = null;
+if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+  twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  console.log('✅ Twilio SMS service initialized');
+} else {
+  console.warn('⚠️ TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN not set - SMS alerts disabled');
+}
+
+async function sendOrderSMS(orderData) {
+  if (!twilioClient || !process.env.TWILIO_PHONE_NUMBER) return { success: false };
+  try {
+    const items = JSON.parse(orderData.items || '[]');
+    const itemSummary = items.map(i => `${i.quantity}x ${i.name}`).join(', ');
+    const orderType = (orderData.order_type || 'delivery').toUpperCase();
+    const msg = [
+      `💪 NEW ORDER — Strong Spoon`,
+      `#${orderData.order_number}`,
+      `${orderData.customer_name} · $${orderData.total_amount}`,
+      `${orderType}: ${orderData.customer_address || 'Regina, SK'}`,
+      itemSummary
+    ].join('\n');
+    await twilioClient.messages.create({
+      body: msg,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: OWNER_PHONE
+    });
+    console.log('✅ SMS alert sent to owner');
+    return { success: true };
+  } catch (err) {
+    console.error('❌ SMS send error:', err.message);
+    return { success: false, error: err.message };
+  }
 }
 
 function getCurrentPrice() {
@@ -762,12 +799,19 @@ app.post('/save-order', async (req, res) => {
     if (emailResult.success) {
       console.log('✅ Confirmation email sent to:', metadata.customer_email);
     }
+
+    // SMS alert to owner
+    const smsResult = await sendOrderSMS({
+      ...orderData,
+      order_type: metadata.order_type || 'delivery'
+    });
     
     res.json({
       success: true,
       orderNumber: result.rows[0].order_number,
       orderId: result.rows[0].id,
-      emailSent: emailResult.success
+      emailSent: emailResult.success,
+      smsSent: smsResult.success
     });
   } catch (error) {
     console.error('Error saving order:', error);
@@ -1471,6 +1515,26 @@ async function startServer() {
     });
     if (error) return res.status(500).json({ error });
     res.json({ success: true, message: `Test email sent to ${to}`, id: data?.id });
+  });
+
+  // Test SMS route — sends a sample order alert to owner phone
+  app.get('/api/send-test-sms', async (req, res) => {
+    if (!twilioClient || !process.env.TWILIO_PHONE_NUMBER) {
+      return res.status(503).json({ error: 'SMS service not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_PHONE_NUMBER.' });
+    }
+    const result = await sendOrderSMS({
+      order_number: 'ORD-TEST-001',
+      customer_name: 'Test Customer',
+      customer_address: '123 Wascana St, Regina, SK',
+      total_amount: '23.98',
+      items: JSON.stringify([{ name: 'Brownie Issues', quantity: 2 }]),
+      order_type: 'delivery'
+    });
+    if (result.success) {
+      res.json({ success: true, message: `Test SMS sent to ${OWNER_PHONE}` });
+    } else {
+      res.status(500).json({ success: false, error: result.error });
+    }
   });
 
   // Start the server
