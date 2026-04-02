@@ -3362,7 +3362,7 @@ input[type="radio"]:checked + label,
 }
 @keyframes popIn { from { transform: scale(0.84) translateY(28px); opacity:0; } to { transform: scale(1) translateY(0); opacity:1; } }
 .soldout-modal-header {
-  background: linear-gradient(160deg, #011c21 0%, #013e4a 55%, #012830 100%);
+  background: linear-gradient(160deg, #020c0f 0%, #011520 50%, #020a0d 100%);
   padding: 34px 28px 26px;
   position: relative;
   overflow: hidden;
@@ -3373,7 +3373,7 @@ input[type="radio"]:checked + label,
   top: -40px; left: 50%;
   transform: translateX(-50%);
   width: 240px; height: 240px;
-  background: radial-gradient(circle, rgba(1,125,142,0.22) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(1,90,100,0.12) 0%, transparent 60%);
   pointer-events: none;
 }
 .soldout-icon {
@@ -3382,7 +3382,8 @@ input[type="radio"]:checked + label,
   display: block;
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 0 16px rgba(255,60,60,0.35));
+  filter: drop-shadow(0 0 16px rgba(220,38,38,0.5));
+  text-shadow: 0 0 22px rgba(220,38,38,0.7), 0 0 44px rgba(220,38,38,0.3);
 }
 .soldout-title {
   font-family: 'Playfair Display', Georgia, serif;
@@ -3522,9 +3523,9 @@ input[type="radio"]:checked + label,
   animation: fadeIn 0.5s ease;
   cursor: default;
 }
-.drop-status-banner.status-green  { background: rgba(76,175,80,0.1);   border-color: rgba(76,175,80,0.35);  color: #5ec463; }
-.drop-status-banner.status-yellow { background: rgba(255,193,7,0.1);   border-color: rgba(255,193,7,0.35);  color: #ffc107; }
-.drop-status-banner.status-red    { background: rgba(244,67,54,0.1);   border-color: rgba(244,67,54,0.35);  color: #f55; }
+.drop-status-banner.status-green  { background: rgba(76,175,80,0.1);   border-color: rgba(76,175,80,0.35);  color: #5ec463;  box-shadow: 0 0 12px rgba(76,175,80,0.25),  0 0 4px rgba(76,175,80,0.15); }
+.drop-status-banner.status-yellow { background: rgba(255,193,7,0.1);   border-color: rgba(255,193,7,0.35);  color: #ffc107; box-shadow: 0 0 12px rgba(255,193,7,0.25),  0 0 4px rgba(255,193,7,0.15); }
+.drop-status-banner.status-red    { background: rgba(244,67,54,0.1);   border-color: rgba(244,67,54,0.35);  color: #f55;    box-shadow: 0 0 14px rgba(244,67,54,0.3),  0 0 6px rgba(244,67,54,0.2); }
 
 /* ── Home Page: Mobile One-Screen Layout (≤480px) ──────────────────────── */
 @media (max-width: 480px) {
