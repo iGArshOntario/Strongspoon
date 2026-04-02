@@ -180,12 +180,12 @@
   if (btn) {
     var newBtn = btn.cloneNode(true);
     btn.parentNode.replaceChild(newBtn, btn);
-    newBtn.addEventListener('click', async function() {
-      var dropData = { status: 'green', nextDropTime: '' };
-      try { dropData = await fetch('/api/drop-status').then(function(r){ return r.json(); }); } catch(e) {}
-      if (dropData.status === 'red') {
+    newBtn.addEventListener('click', function() {
+      // Use cached status — no async delay before popup shows
+      if (_dropData.status === 'red') {
         var nt = document.getElementById('soldoutNextTime');
-        nt.innerHTML = dropData.nextDropTime ? 'Next Drop: <strong>' + dropData.nextDropTime + '</strong>' : ''; nt.style.display = dropData.nextDropTime ? 'inline-block' : 'none';
+        nt.innerHTML = _dropData.nextDropTime ? 'Next Drop: <strong>' + _dropData.nextDropTime + '</strong>' : '';
+        nt.style.display = _dropData.nextDropTime ? 'inline-block' : 'none';
         document.getElementById('soldoutOverlay').classList.add('active');
       } else {
         document.getElementById('qtyPickerOverlay').classList.add('active');
@@ -216,9 +216,11 @@
   };
 })();
 
-    // Load live drop status banner
-    (function() {
+    // Cache drop status on load — used synchronously in click handler
+    var _dropData = { status: 'green', nextDropTime: '' };
+    function refreshDropStatus() {
       fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
+        _dropData = d;
         var banner = document.getElementById('dropStatusBanner');
         if (!banner) return;
         var labels = { green: '🟢 Accepting Orders Now', yellow: '⚡ Hurry Up! Limited Slots Left Today', red: '🔴 STATUS: SOLD OUT' };
@@ -226,7 +228,9 @@
         banner.className = 'drop-status-banner status-' + d.status;
         banner.style.display = 'inline-flex';
       }).catch(function(){});
-    })();
+    }
+    refreshDropStatus();
+    setInterval(refreshDropStatus, 30000);
 
 </script>
 </body>

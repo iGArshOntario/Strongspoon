@@ -101,25 +101,30 @@
 
     // Load drop status on page load — show badge + cache for click handler
     var _dropData = { status: 'green', nextDropTime: '' };
-    fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
-      _dropData = d;
-      var banner = document.getElementById('dropStatusBanner');
-      var labels = { green: '🟢 Accepting Orders Now', yellow: '⚡ Hurry Up! Limited Slots Left Today', red: '🔴 STATUS: SOLD OUT' };
-      banner.textContent = labels[d.status] || '';
-      banner.className = 'drop-status-banner status-' + d.status;
-      banner.style.display = 'inline-flex';
-    }).catch(function(){});
+    function refreshDropStatus() {
+      fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
+        _dropData = d;
+        var banner = document.getElementById('dropStatusBanner');
+        var labels = { green: '🟢 Accepting Orders Now', yellow: '⚡ Hurry Up! Limited Slots Left Today', red: '🔴 STATUS: SOLD OUT' };
+        banner.textContent = labels[d.status] || '';
+        banner.className = 'drop-status-banner status-' + d.status;
+        banner.style.display = 'inline-flex';
+      }).catch(function(){});
+    }
+    refreshDropStatus();
+    // Refresh status every 30 seconds so it stays current
+    setInterval(refreshDropStatus, 30000);
 
-    // Intercept ORDER NOW — use cached status, show popup if sold out
-    document.getElementById('orderNowBtn').addEventListener('click', async function(e) {
-      // Re-fetch in case status changed since page load
-      try { _dropData = await fetch('/api/drop-status').then(function(r){ return r.json(); }); } catch(err) {}
+    // Intercept ORDER NOW — ALWAYS prevent default synchronously first
+    document.getElementById('orderNowBtn').addEventListener('click', function(e) {
+      e.preventDefault(); // Must be synchronous — stops navigation immediately
       if (_dropData.status === 'red') {
-        e.preventDefault();
         var nt = document.getElementById('soldoutNextTime');
         nt.innerHTML = _dropData.nextDropTime ? 'Next Drop: <strong>' + _dropData.nextDropTime + '</strong>' : '';
         nt.style.display = _dropData.nextDropTime ? 'inline-block' : 'none';
         document.getElementById('soldoutOverlay').classList.add('active');
+      } else {
+        window.location.href = 'Html2.html'; // Navigate manually if not sold out
       }
     });
     var overlay = document.getElementById('soldoutOverlay');
