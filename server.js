@@ -349,15 +349,15 @@ async function sendOrderConfirmation(orderData) {
     }
   </style>
 </head>
-<body>
-  <div class="wrapper">
+<body style="margin:0;padding:0;background-color:#0b1416;color:#EFE8D8;">
+  <div class="wrapper" style="background-color:#0b1416;">
   <div class="container">
-    <div class="header">
+    <div class="header" style="background-color:#015A64;">
       ${LOGO_IMG_TAG}
       <h1>Order Confirmed ✓</h1>
       <p>Your Strong Spoon order is on its way!</p>
     </div>
-    <div class="content">
+    <div class="content" style="background-color:#0f1e20;">
       <p class="greeting">Hi ${orderData.customer_name}!</p>
       <p class="subtext">Your order has been confirmed and will be prepared shortly.</p>
 
@@ -536,15 +536,15 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
     }
   </style>
 </head>
-<body>
-  <div class="wrapper">
+<body style="margin:0;padding:0;background-color:#0b1416;color:#EFE8D8;">
+  <div class="wrapper" style="background-color:#0b1416;">
   <div class="container">
-    <div class="header">
+    <div class="header" style="background-color:#015A64;">
       ${LOGO_IMG_TAG}
       <h1>Your Order Has Arrived!</h1>
       <p>Strong Spoon delivered — enjoy every spoonful</p>
     </div>
-    <div class="content">
+    <div class="content" style="background-color:#0f1e20;">
       <div style="text-align:center;margin-bottom:8px;">
         <span class="delivered-badge">🎉 Successfully Delivered</span>
       </div>
@@ -951,29 +951,51 @@ app.post('/api/drop-status', async (req, res) => {
               from: 'Strong Spoon <orders@resend.dev>',
               to: [row.email],
               subject: '💪 Fresh Batch Is Ready — Order Now!',
-              html: `<!DOCTYPE html><html><head>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<style>
-body{font-family:Arial,sans-serif;background:#0b1416;color:#EFE8D8;margin:0;padding:0;}
-.wrapper{background:#0b1416;padding:30px 15px;}
-.container{max-width:520px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
-.header{background:#015A64;padding:30px;text-align:center;}
-.header h1{margin:10px 0 0;font-size:24px;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8;}
-.header p{margin:8px 0 0;color:rgba(239,232,216,0.8);font-size:15px;}
-.content{background:#0f1e20;padding:32px 30px;text-align:center;}
-.badge{display:inline-block;background:#015A64;color:#EFE8D8;padding:8px 20px;border-radius:30px;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:20px;}
-.msg{font-size:16px;color:#EFE8D8;line-height:1.7;margin-bottom:24px;}
-.btn{display:inline-block;background:#015A64;color:#EFE8D8 !important;text-decoration:none;padding:14px 36px;border-radius:30px;font-weight:700;font-size:16px;letter-spacing:0.5px;}
-.footer{background:#071012;padding:20px;text-align:center;font-size:12px;color:rgba(239,232,216,0.4);}
-</style></head><body><div class="wrapper"><div class="container">
-<div class="header">${LOGO_IMG_TAG}<h1>Fresh Batch is Here! 🎉</h1><p>You asked us to let you know — and here we are.</p></div>
-<div class="content">
-  <div class="badge">🟢 NOW ACCEPTING ORDERS</div>
-  <p class="msg">A fresh batch of our high-protein desserts is ready and waiting for you.<br>Don't wait — these go fast!</p>
-  <a href="https://strongspoon.ca" class="btn">Order Now →</a>
-</div>
-<div class="footer">Strong Spoon · Regina, SK<br>You received this because you signed up for drop alerts.</div>
-</div></div></body></html>`
+              html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
+    :root { color-scheme: dark; }
+    body { margin:0!important; padding:0!important; background-color:#0b1416!important; }
+    @media (prefers-color-scheme: light) {
+      body, #wrapper { background-color:#0b1416!important; }
+      #content { background-color:#0f1e20!important; }
+      #footer-row { background-color:#071012!important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#0b1416;font-family:Arial,sans-serif;color:#EFE8D8;">
+  <div id="wrapper" style="background-color:#0b1416;padding:30px 15px;">
+    <div style="max-width:520px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6);">
+
+      <!-- HEADER -->
+      <div style="background-color:#015A64;padding:32px 30px 26px;text-align:center;">
+        ${LOGO_IMG_TAG}
+        <h1 style="margin:12px 0 0;font-size:26px;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8;font-weight:900;">Fresh Batch is Here! 🎉</h1>
+        <p style="margin:8px 0 0;color:rgba(239,232,216,0.8);font-size:15px;">You asked us to let you know — and here we are.</p>
+      </div>
+
+      <!-- CONTENT -->
+      <div id="content" style="background-color:#0f1e20;padding:34px 30px;text-align:center;">
+        <div style="display:inline-block;background-color:#015A64;color:#EFE8D8;padding:8px 22px;border-radius:30px;font-size:12px;font-weight:700;letter-spacing:1.5px;margin-bottom:22px;">🟢 NOW ACCEPTING ORDERS</div>
+        <p style="font-size:16px;color:#EFE8D8;line-height:1.75;margin:0 0 26px;">A fresh batch of our high-protein desserts is ready and waiting for you.<br>Don't wait — these go fast!</p>
+        <a href="https://strongspoon.ca" style="display:inline-block;background-color:#015A64;color:#EFE8D8;text-decoration:none;padding:14px 38px;border-radius:30px;font-weight:700;font-size:16px;letter-spacing:0.5px;">Order Now →</a>
+      </div>
+
+      <!-- FOOTER -->
+      <div id="footer-row" style="background-color:#071012;padding:20px 30px;text-align:center;font-size:12px;color:rgba(239,232,216,0.4);">
+        Strong Spoon · Regina, SK<br>You received this because you signed up for drop alerts.
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>`
             });
           } catch(e) { console.error('Waitlist email error:', e.message); }
         }
