@@ -3388,3 +3388,22 @@ input[type="radio"]:checked + label,
 }
 .soldout-email-submit:hover { opacity: 0.85; }
 .soldout-success { color: #4caf50; font-weight: 700; font-size: 0.95rem; margin-top: 6px; }
+
+/* ── Live Drop Status Banner ──────────────────────────────────────────────── */
+.drop-status-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin: 14px auto 0;
+  border: 1.5px solid transparent;
+  animation: fadeIn 0.5s ease;
+  cursor: default;
+}
+.drop-status-banner.status-green  { background: rgba(76,175,80,0.12);  border-color: rgba(76,175,80,0.4);  color: #4caf50; }
+.drop-status-banner.status-yellow { background: rgba(255,193,7,0.12);  border-color: rgba(255,193,7,0.4);  color: #ffc107; }
+.drop-status-banner.status-red    { background: rgba(244,67,54,0.12);  border-color: rgba(244,67,54,0.4);  color: #f44336; }

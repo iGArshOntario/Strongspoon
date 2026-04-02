@@ -40,6 +40,7 @@
       <p class="product-size">Size: 250g</p>
     </div>
 
+    <div id="dropStatusBanner" class="drop-status-banner" style="display:none; margin-bottom:12px;"></div>
     <div class="product-btn-group">
       <a href="Customise.html?flavor=Spoon%20Crumble" class="btn-customise">
         <span class="btn-customise-icon">✦</span>
@@ -208,6 +209,19 @@
     } catch(e) { alert('Network error. Try again.'); this.textContent = 'Send Me an Alert'; this.disabled = false; }
   };
 })();
+
+    // Load live drop status banner
+    (function() {
+      fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
+        var banner = document.getElementById('dropStatusBanner');
+        if (!banner) return;
+        var labels = { green: '🟢 Accepting Orders Now', yellow: '🟡 Limited Slots Left Today', red: '🔴 STATUS: SOLD OUT' };
+        banner.textContent = labels[d.status] || '';
+        banner.className = 'drop-status-banner status-' + d.status;
+        banner.style.display = 'inline-flex';
+      }).catch(function(){});
+    })();
+
 </script>
 </body>
 </html>

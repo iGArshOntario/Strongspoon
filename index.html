@@ -41,6 +41,7 @@
     </a>
     <h3 class="tagline">FUEL YOUR STRENGTH</h3>
     <button class="location-btn hero-location-btn" onclick="showLocationPopup()">📍 Regina, SK</button>
+    <div id="dropStatusBanner" class="drop-status-banner" style="display:none;"></div>
   </section>
 
   <section class="about">
@@ -92,10 +93,25 @@
       });
     }
 
+    // Load and display live drop status banner
+    var _dropCache = null;
+    async function loadDropBanner() {
+      try {
+        _dropCache = await fetch('/api/drop-status').then(function(r){ return r.json(); });
+      } catch(e) { return; }
+      var banner = document.getElementById('dropStatusBanner');
+      var s = _dropCache.status;
+      var labels = { green: '🟢 Accepting Orders Now', yellow: '🟡 Limited Slots Left Today', red: '🔴 STATUS: SOLD OUT' };
+      banner.textContent = labels[s] || '';
+      banner.className = 'drop-status-banner status-' + s;
+      banner.style.display = 'inline-flex';
+    }
+    loadDropBanner();
+
     // Intercept ORDER NOW — check drop status first
     document.getElementById('orderNowBtn').addEventListener('click', async function(e) {
-      var dropData = { status: 'green', nextDropTime: '' };
-      try { dropData = await fetch('/api/drop-status').then(function(r){ return r.json(); }); } catch(err) {}
+      var dropData = _dropCache || { status: 'green', nextDropTime: '' };
+      if (!_dropCache) { try { dropData = await fetch('/api/drop-status').then(function(r){ return r.json(); }); } catch(err) {} }
       if (dropData.status === 'red') {
         e.preventDefault();
         var nt = document.getElementById('soldoutNextTime');
