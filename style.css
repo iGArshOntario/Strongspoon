@@ -3583,3 +3583,125 @@ input[type="radio"]:checked + label,
     margin-bottom: 10px !important;
   }
 }
+
+/* ── Flavours Listing Page: Mobile No-Scroll Layout (≤480px) ─────────────── */
+@media (max-width: 480px) {
+  .flavours-page {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .premium-header {
+    margin-bottom: 0;
+  }
+  .premium-title {
+    font-size: 1.55rem;
+    margin: 5px 0;
+    letter-spacing: 1px;
+  }
+  .premium-subtitle {
+    font-size: 0.68rem;
+    margin-bottom: 4px;
+  }
+  .header-decoration {
+    margin: 3px auto;
+  }
+  .flavours-page .drop-status-banner {
+    margin-top: 8px !important;
+    font-size: 0.68rem !important;
+    padding: 4px 11px !important;
+  }
+  .flavour-grid {
+    gap: 8px;
+    margin-bottom: 0;
+  }
+  .flavour-card {
+    padding: 14px 10px;
+  }
+  .flavour-icon {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+  }
+  .flavour-name {
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+  }
+  .flavour-desc {
+    font-size: 0.62rem;
+    margin-bottom: 5px;
+  }
+  .flavour-tag {
+    font-size: 0.55rem;
+    padding: 3px 8px;
+  }
+  .flavours-page .back-link {
+    font-size: 0.72rem;
+    margin-top: 0;
+    display: block;
+    text-align: center;
+  }
+}
+
+/* ── Product Detail Pages: Mobile No-Scroll Layout (≤480px) ─────────────── */
+@media (max-width: 480px) {
+  .product-container {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+  }
+  .product-container .product-title {
+    font-size: 1.85rem;
+    margin-bottom: 0;
+    letter-spacing: 1px;
+  }
+  .product-container .product-image {
+    margin-bottom: 0;
+  }
+  .product-container .cup-png {
+    width: 150px;
+  }
+  .product-container .ingredients {
+    margin-bottom: 0;
+    font-size: 0.68rem;
+    line-height: 1.4;
+    text-align: left;
+    width: 100%;
+  }
+  .product-container .ingredients h3 {
+    font-size: 0.75rem;
+    margin-bottom: 3px;
+  }
+  .product-container .product-price {
+    margin: 0;
+  }
+  .product-container .product-price h2 {
+    font-size: 1.85rem;
+    margin-bottom: 2px;
+  }
+  .product-container .product-size {
+    font-size: 0.7rem;
+  }
+  .product-container .product-btn-group {
+    gap: 8px;
+    width: 100%;
+  }
+  .product-container .btn-customise,
+  .product-container .btn-quick-add {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+  .product-container .back-link {
+    font-size: 0.72rem;
+    margin-top: 0;
+  }
+}
