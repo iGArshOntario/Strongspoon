@@ -3525,3 +3525,43 @@ input[type="radio"]:checked + label,
 .drop-status-banner.status-green  { background: rgba(76,175,80,0.1);   border-color: rgba(76,175,80,0.35);  color: #5ec463; }
 .drop-status-banner.status-yellow { background: rgba(255,193,7,0.1);   border-color: rgba(255,193,7,0.35);  color: #ffc107; }
 .drop-status-banner.status-red    { background: rgba(244,67,54,0.1);   border-color: rgba(244,67,54,0.35);  color: #f55; }
+
+/* ── Home Page: Mobile One-Screen Layout (≤480px) ──────────────────────── */
+@media (max-width: 480px) {
+  body {
+    padding: 14px 16px;
+    justify-content: space-between;
+    min-height: 100dvh;
+  }
+  .hero {
+    margin-top: 0;
+  }
+  .logo {
+    width: 130px;
+  }
+  .tagline {
+    font-size: 1.4rem;
+    margin-top: 8px;
+    letter-spacing: 0.3px;
+  }
+  .hero-location-btn {
+    margin-top: 6px;
+  }
+  .about {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 0.76rem;
+    line-height: 1.45;
+  }
+  .about p {
+    margin-bottom: 7px;
+  }
+  footer {
+    padding-bottom: 8px;
+  }
+  .drop-status-banner {
+    font-size: 0.72rem !important;
+    padding: 5px 13px !important;
+    margin-bottom: 10px !important;
+  }
+}

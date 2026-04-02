@@ -105,7 +105,7 @@
       fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
         _dropData = d;
         var banner = document.getElementById('dropStatusBanner');
-        var labels = { green: '🟢 Open Now', yellow: '⚡ Limited', red: '🔴 Sold Out' };
+        var labels = { green: '🟢 Accepting Orders Now', yellow: '⚡ Hurry Up! Limited Slots Left Today', red: '🔴 STATUS: SOLD OUT' };
         banner.textContent = labels[d.status] || '';
         banner.className = 'drop-status-banner status-' + d.status;
         banner.style.display = 'inline-flex';
