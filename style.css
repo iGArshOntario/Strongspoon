@@ -3531,16 +3531,16 @@ input[type="radio"]:checked + label,
 /* ── Home Page: Mobile One-Screen Layout (≤480px) ──────────────────────── */
 @media (max-width: 480px) {
   body {
-    padding: 14px 16px 0;
-    justify-content: flex-start;
+    padding: 0 16px;
+    justify-content: space-evenly;
     min-height: 100dvh;
   }
   .hero {
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 0;
   }
   .logo {
-    width: 240px;
+    width: 230px;
   }
   .tagline {
     font-size: 1.55rem;
@@ -3555,19 +3555,19 @@ input[type="radio"]:checked + label,
     display: block;
     margin-top: 0;
     margin-bottom: 0;
-    font-size: 0.7rem;
-    line-height: 1.38;
+    font-size: 0.72rem;
+    line-height: 1.45;
   }
   .about p {
-    margin-bottom: 4px;
+    margin-bottom: 5px;
   }
-  /* Pin footer to bottom with no extra gap */
+  /* Footer sits naturally in the evenly-spaced layout */
   footer {
-    margin-top: auto;
+    margin-top: 0;
     margin-bottom: 0;
-    padding-bottom: 18px;
+    padding-bottom: 16px;
   }
-  /* ORDER NOW button: same natural width as the status badge, centered */
+  /* ORDER NOW button: compact width matching the status badge */
   footer .btn {
     font-size: 1rem;
     padding: 13px 32px;
