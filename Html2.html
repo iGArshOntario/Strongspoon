@@ -25,7 +25,8 @@
       <div class="header-decoration"></div>
       <h1 class="premium-title">Our Flavours</h1>
       <p class="premium-subtitle">Handcrafted with love, packed with protein</p>
-      <div class="header-decoration"></div>
+      <div id="dropStatusBanner" class="drop-status-banner" style="display:none; margin-top:14px;"></div>
+      <div class="header-decoration" style="margin-top:18px;"></div>
     </div>
 
     <div class="flavour-grid" id="flavour-grid">
@@ -72,6 +73,20 @@
     if (now < launchDate && localStorage.getItem('ss_preview') !== 'true') {
       window.location.href = '/countdown.html';
     }
+
+    // Live drop status banner
+    fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
+      var banner = document.getElementById('dropStatusBanner');
+      if (!banner) return;
+      var labels = {
+        green:  '🟢 Accepting Orders Now',
+        yellow: '⚡ Hurry Up! Limited Slots Left Today',
+        red:    '🔴 STATUS: SOLD OUT'
+      };
+      banner.textContent = labels[d.status] || '';
+      banner.className = 'drop-status-banner status-' + d.status;
+      banner.style.display = 'inline-flex';
+    }).catch(function(){});
   </script>
 
   <script src="products.js"></script>

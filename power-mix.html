@@ -160,17 +160,23 @@
 <!-- Sold-Out Popup -->
 <div class='soldout-overlay' id='soldoutOverlay'>
   <div class='soldout-modal'>
-    <div class='soldout-icon'>🔴</div>
-    <h2 class='soldout-title'>This Drop is Sold Out</h2>
-    <p class='soldout-desc'>We believe in serving it fresh.</p>
-    <p class='soldout-next' id='soldoutNextTime'></p>
-    <button class='soldout-notify-btn' id='soldoutNotifyBtn'>🔔 Notify Me for Next Drop</button>
-    <div class='soldout-email-form' id='soldoutEmailForm' style='display:none;'>
-      <input type='email' id='soldoutEmail' placeholder='your@email.com' />
-      <button class='soldout-email-submit' id='soldoutEmailSubmit'>Send Me an Alert</button>
+    <div class='soldout-modal-header'>
+      <span class='soldout-icon'>🔴</span>
+      <h2 class='soldout-title'>This Drop is Sold Out</h2>
+      <p class='soldout-desc'>We believe in serving it fresh.</p>
     </div>
-    <p class='soldout-success' id='soldoutSuccess' style='display:none;'></p>
-    <button class='soldout-close-btn' id='soldoutCloseBtn'>✕ Close</button>
+    <div class='soldout-modal-body'>
+      <p class='soldout-next' id='soldoutNextTime'></p>
+      <button class='soldout-notify-btn' id='soldoutNotifyBtn'>🔔 Notify Me for Next Drop</button>
+      <div class='soldout-email-form' id='soldoutEmailForm' style='display:none;'>
+        <span class='soldout-email-label'>Enter your email below</span>
+        <input type='email' id='soldoutEmail' placeholder='your@email.com' />
+        <button class='soldout-email-submit' id='soldoutEmailSubmit'>Send Me an Alert →</button>
+      </div>
+      <p class='soldout-success' id='soldoutSuccess' style='display:none;'></p>
+      <hr class='soldout-divider'>
+      <button class='soldout-close-btn' id='soldoutCloseBtn'>✕ Close for now</button>
+    </div>
   </div>
 </div>
 <script>
@@ -184,7 +190,7 @@
       try { dropData = await fetch('/api/drop-status').then(function(r){ return r.json(); }); } catch(e) {}
       if (dropData.status === 'red') {
         var nt = document.getElementById('soldoutNextTime');
-        nt.innerHTML = dropData.nextDropTime ? 'Next Drop: <strong>' + dropData.nextDropTime + '</strong>' : '';
+        nt.innerHTML = dropData.nextDropTime ? 'Next Drop: <strong>' + dropData.nextDropTime + '</strong>' : ''; nt.style.display = dropData.nextDropTime ? 'inline-block' : 'none';
         document.getElementById('soldoutOverlay').classList.add('active');
       } else {
         document.getElementById('qtyPickerOverlay').classList.add('active');
@@ -220,7 +226,7 @@
       fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
         var banner = document.getElementById('dropStatusBanner');
         if (!banner) return;
-        var labels = { green: '🟢 Accepting Orders Now', yellow: '🟡 Limited Slots Left Today', red: '🔴 STATUS: SOLD OUT' };
+        var labels = { green: '🟢 Accepting Orders Now', yellow: '⚡ Hurry Up! Limited Slots Left Today', red: '🔴 STATUS: SOLD OUT' };
         banner.textContent = labels[d.status] || '';
         banner.className = 'drop-status-banner status-' + d.status;
         banner.style.display = 'inline-flex';
