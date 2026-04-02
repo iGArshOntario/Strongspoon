@@ -59,6 +59,7 @@
 
  
    <footer>
+     <div id="dropStatusBanner" class="drop-status-banner" style="display:none; margin-bottom:14px;"></div>
      <a href="Html2.html" class="btn teal" id="orderNowBtn">ORDER NOW</a>
    </footer>
 
@@ -98,14 +99,26 @@
       });
     }
 
-    // Intercept ORDER NOW — check drop status first
+    // Load drop status on page load — show badge + cache for click handler
+    var _dropData = { status: 'green', nextDropTime: '' };
+    fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
+      _dropData = d;
+      var banner = document.getElementById('dropStatusBanner');
+      var labels = { green: '🟢 Accepting Orders Now', yellow: '⚡ Hurry Up! Limited Slots Left Today', red: '🔴 STATUS: SOLD OUT' };
+      banner.textContent = labels[d.status] || '';
+      banner.className = 'drop-status-banner status-' + d.status;
+      banner.style.display = 'inline-flex';
+    }).catch(function(){});
+
+    // Intercept ORDER NOW — use cached status, show popup if sold out
     document.getElementById('orderNowBtn').addEventListener('click', async function(e) {
-      var dropData = { status: 'green', nextDropTime: '' };
-      try { dropData = await fetch('/api/drop-status').then(function(r){ return r.json(); }); } catch(err) {}
-      if (dropData.status === 'red') {
+      // Re-fetch in case status changed since page load
+      try { _dropData = await fetch('/api/drop-status').then(function(r){ return r.json(); }); } catch(err) {}
+      if (_dropData.status === 'red') {
         e.preventDefault();
         var nt = document.getElementById('soldoutNextTime');
-        nt.innerHTML = dropData.nextDropTime ? 'Next Drop: <strong>' + dropData.nextDropTime + '</strong>' : ''; nt.style.display = dropData.nextDropTime ? 'inline-block' : 'none';
+        nt.innerHTML = _dropData.nextDropTime ? 'Next Drop: <strong>' + _dropData.nextDropTime + '</strong>' : '';
+        nt.style.display = _dropData.nextDropTime ? 'inline-block' : 'none';
         document.getElementById('soldoutOverlay').classList.add('active');
       }
     });
