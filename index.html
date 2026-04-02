@@ -59,9 +59,26 @@
 
  
    <footer>
-     <a href="Html2.html" class="btn teal">ORDER NOW</a>
+     <a href="Html2.html" class="btn teal" id="orderNowBtn">ORDER NOW</a>
    </footer>
-  
+
+<!-- Sold-Out Popup -->
+<div class="soldout-overlay" id="soldoutOverlay">
+  <div class="soldout-modal">
+    <div class="soldout-icon">🔴</div>
+    <h2 class="soldout-title">This Drop is Sold Out</h2>
+    <p class="soldout-desc">We believe in serving it fresh.</p>
+    <p class="soldout-next" id="soldoutNextTime"></p>
+    <button class="soldout-notify-btn" id="soldoutNotifyBtn">🔔 Notify Me for Next Drop</button>
+    <div class="soldout-email-form" id="soldoutEmailForm" style="display:none;">
+      <input type="email" id="soldoutEmail" placeholder="your@email.com" />
+      <button class="soldout-email-submit" id="soldoutEmailSubmit">Send Me an Alert</button>
+    </div>
+    <p class="soldout-success" id="soldoutSuccess" style="display:none;"></p>
+    <button class="soldout-close-btn" id="soldoutCloseBtn">✕ Close</button>
+  </div>
+</div>
+
   <script src="products.js"></script>
   <script src="script.js"></script>
   
@@ -74,6 +91,39 @@
           .catch(err => console.log('ServiceWorker registration failed'));
       });
     }
+
+    // Intercept ORDER NOW — check drop status first
+    document.getElementById('orderNowBtn').addEventListener('click', async function(e) {
+      var dropData = { status: 'green', nextDropTime: '' };
+      try { dropData = await fetch('/api/drop-status').then(function(r){ return r.json(); }); } catch(err) {}
+      if (dropData.status === 'red') {
+        e.preventDefault();
+        var nt = document.getElementById('soldoutNextTime');
+        nt.innerHTML = dropData.nextDropTime ? 'Next Drop: <strong>' + dropData.nextDropTime + '</strong>' : '';
+        document.getElementById('soldoutOverlay').classList.add('active');
+      }
+    });
+    var overlay = document.getElementById('soldoutOverlay');
+    document.getElementById('soldoutCloseBtn').onclick = function() { overlay.classList.remove('active'); };
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('active'); });
+    document.getElementById('soldoutNotifyBtn').onclick = function() {
+      document.getElementById('soldoutEmailForm').style.display = 'block'; this.style.display = 'none';
+    };
+    document.getElementById('soldoutEmailSubmit').onclick = async function() {
+      var email = document.getElementById('soldoutEmail').value.trim();
+      if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+      this.textContent = 'Sending\u2026'; this.disabled = true;
+      try {
+        var res = await fetch('/api/notify-waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) });
+        var data = await res.json();
+        if (data.success) {
+          document.getElementById('soldoutEmailForm').style.display = 'none';
+          var s = document.getElementById('soldoutSuccess');
+          s.textContent = '\u2705 We\'ll notify you the moment the next drop is live!';
+          s.style.display = 'block';
+        } else { alert('Something went wrong.'); this.textContent = 'Send Me an Alert'; this.disabled = false; }
+      } catch(err) { alert('Network error.'); this.textContent = 'Send Me an Alert'; this.disabled = false; }
+    };
 
     // Check if website should be in countdown mode
     const launchDate = new Date('2026-04-10T08:00:00-05:00').getTime();

@@ -858,6 +858,109 @@ if (!process.env.DELIVERY_PASSWORD) {
 }
 const DELIVERY_PASSWORD = process.env.DELIVERY_PASSWORD;
 
+// ─── Drop Status ────────────────────────────────────────────────────────────
+
+// Public: get current drop status + waitlist count
+app.get('/api/drop-status', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT key, value FROM drop_settings');
+    const settings = {};
+    result.rows.forEach(r => { settings[r.key] = r.value; });
+    const wl = await pool.query('SELECT COUNT(*) FROM notify_waitlist WHERE notified_at IS NULL');
+    res.json({
+      status: settings.status || 'green',
+      nextDropTime: settings.next_drop_time || '',
+      waitlistCount: parseInt(wl.rows[0].count)
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: update drop status (Basic auth required)
+app.post('/api/drop-status', async (req, res) => {
+  const authHeader = req.headers.authorization || '';
+  const b64 = authHeader.replace('Basic ', '');
+  const [username, password] = Buffer.from(b64, 'base64').toString().split(':');
+  if (username !== 'admin' || password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const { status, nextDropTime } = req.body;
+  if (!['green', 'yellow', 'red'].includes(status)) {
+    return res.status(400).json({ error: 'Invalid status' });
+  }
+  try {
+    // Check previous status
+    const prev = await pool.query("SELECT value FROM drop_settings WHERE key = 'status'");
+    const prevStatus = prev.rows[0]?.value;
+
+    await pool.query("INSERT INTO drop_settings (key, value) VALUES ('status', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [status]);
+    await pool.query("INSERT INTO drop_settings (key, value) VALUES ('next_drop_time', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [nextDropTime || '']);
+
+    // If switching TO green, notify waitlist
+    if (status === 'green' && prevStatus !== 'green') {
+      const waitlist = await pool.query('SELECT email FROM notify_waitlist WHERE notified_at IS NULL');
+      if (waitlist.rows.length > 0 && resend) {
+        for (const row of waitlist.rows) {
+          try {
+            await resend.emails.send({
+              from: 'Strong Spoon <orders@resend.dev>',
+              to: [row.email],
+              subject: '💪 Fresh Batch Is Ready — Order Now!',
+              html: `<!DOCTYPE html><html><head>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+body{font-family:Arial,sans-serif;background:#0b1416;color:#EFE8D8;margin:0;padding:0;}
+.wrapper{background:#0b1416;padding:30px 15px;}
+.container{max-width:520px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+.header{background:#015A64;padding:30px;text-align:center;}
+.header h1{margin:10px 0 0;font-size:24px;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8;}
+.header p{margin:8px 0 0;color:rgba(239,232,216,0.8);font-size:15px;}
+.content{background:#0f1e20;padding:32px 30px;text-align:center;}
+.badge{display:inline-block;background:#015A64;color:#EFE8D8;padding:8px 20px;border-radius:30px;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:20px;}
+.msg{font-size:16px;color:#EFE8D8;line-height:1.7;margin-bottom:24px;}
+.btn{display:inline-block;background:#015A64;color:#EFE8D8 !important;text-decoration:none;padding:14px 36px;border-radius:30px;font-weight:700;font-size:16px;letter-spacing:0.5px;}
+.footer{background:#071012;padding:20px;text-align:center;font-size:12px;color:rgba(239,232,216,0.4);}
+</style></head><body><div class="wrapper"><div class="container">
+<div class="header">${LOGO_IMG_TAG}<h1>Fresh Batch is Here! 🎉</h1><p>You asked us to let you know — and here we are.</p></div>
+<div class="content">
+  <div class="badge">🟢 NOW ACCEPTING ORDERS</div>
+  <p class="msg">A fresh batch of our high-protein desserts is ready and waiting for you.<br>Don't wait — these go fast!</p>
+  <a href="https://strongspoon.ca" class="btn">Order Now →</a>
+</div>
+<div class="footer">Strong Spoon · Regina, SK<br>You received this because you signed up for drop alerts.</div>
+</div></div></body></html>`
+            });
+          } catch(e) { console.error('Waitlist email error:', e.message); }
+        }
+        await pool.query('UPDATE notify_waitlist SET notified_at = NOW() WHERE notified_at IS NULL');
+        console.log(`✅ Notified ${waitlist.rows.length} waitlist subscribers`);
+      }
+    }
+
+    res.json({ success: true, status, waitlistNotified: status === 'green' && prevStatus !== 'green' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Public: join notify waitlist
+app.post('/api/notify-waitlist', async (req, res) => {
+  const { email } = req.body;
+  if (!email || !email.includes('@')) return res.status(400).json({ error: 'Valid email required' });
+  try {
+    await pool.query(
+      'INSERT INTO notify_waitlist (email) VALUES ($1) ON CONFLICT (email) DO UPDATE SET notified_at = NULL',
+      [email.trim().toLowerCase()]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── Orders ─────────────────────────────────────────────────────────────────
+
 // Get all orders (admin endpoint with basic auth)
 app.get('/admin/orders', async (req, res) => {
   try {

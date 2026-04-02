@@ -424,6 +424,69 @@
       cursor: pointer;
     }
 
+    /* Drop Control Panel */
+    .drop-control {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+    }
+    .drop-control-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #EFE8D8;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 0 0 18px;
+    }
+    .drop-toggle-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .drop-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 14px 10px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: rgba(255,255,255,0.06);
+      color: #EFE8D8;
+      transition: all 0.2s;
+    }
+    .drop-btn.active-green  { background:#1a3d1a; border-color:#4caf50; color:#4caf50; }
+    .drop-btn.active-yellow { background:#3d3200; border-color:#ffc107; color:#ffc107; }
+    .drop-btn.active-red    { background:#3d0f0f; border-color:#f44336; color:#f44336; }
+    .drop-next-time {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .drop-next-time.visible { display: flex; }
+    .drop-next-time label { font-size:0.9rem; color:rgba(239,232,216,0.7); white-space:nowrap; }
+    .drop-next-time input {
+      flex:1; padding:10px 14px; border-radius:10px;
+      border:1px solid rgba(255,255,255,0.15);
+      background:rgba(255,255,255,0.07); color:#EFE8D8; font-size:1rem;
+    }
+    .drop-save-btn {
+      background:#015A64; color:#EFE8D8; border:none;
+      padding:12px 28px; border-radius:10px; font-size:0.95rem;
+      font-weight:700; cursor:pointer; transition:opacity 0.2s;
+    }
+    .drop-save-btn:hover { opacity:0.85; }
+    .drop-status-badge {
+      display:inline-block; padding:5px 14px; border-radius:20px;
+      font-size:0.82rem; font-weight:700; margin-left:14px;
+    }
+    .drop-waitlist-count { font-size:0.85rem; color:rgba(239,232,216,0.5); margin-top:10px; }
+
     @media (max-width: 768px) {
       .admin-title {
         font-size: 2rem;
@@ -449,6 +512,24 @@
   <div class="admin-container">
     <div class="admin-header">
       <h1 class="admin-title">Order Management</h1>
+    </div>
+
+    <!-- Drop Status Control -->
+    <div class="drop-control" id="dropControlPanel" style="display:none;">
+      <p class="drop-control-title">🚦 Drop Status Control
+        <span class="drop-status-badge" id="dropStatusBadge"></span>
+      </p>
+      <div class="drop-toggle-row">
+        <button class="drop-btn" id="dropBtnGreen"  onclick="selectDropStatus('green')">🟢 Accepting Orders</button>
+        <button class="drop-btn" id="dropBtnYellow" onclick="selectDropStatus('yellow')">🟡 Limited Slots Left</button>
+        <button class="drop-btn" id="dropBtnRed"    onclick="selectDropStatus('red')">🔴 Sold Out</button>
+      </div>
+      <div class="drop-next-time" id="dropNextTimeRow">
+        <label>Next Drop Time:</label>
+        <input type="text" id="dropNextTimeInput" placeholder="e.g. 7:30 PM" />
+      </div>
+      <button class="drop-save-btn" onclick="saveDropStatus()">Save Status</button>
+      <p class="drop-waitlist-count" id="dropWaitlistCount"></p>
     </div>
 
     <div class="stats-container">
@@ -564,7 +645,8 @@
 
   <script>
     let adminCredentials = null;
-    
+    let selectedDropStatus = 'green';
+
     function promptAdminLogin() {
       const password = prompt('Enter admin password:');
       if (!password) {
@@ -573,7 +655,64 @@
       const credentials = btoa('admin:' + password);
       return credentials;
     }
-    
+
+    // ── Drop Status Control ──────────────────────────────────────────────────
+    async function loadDropStatus() {
+      try {
+        const data = await fetch('/api/drop-status').then(r => r.json());
+        selectedDropStatus = data.status;
+        renderDropButtons(data.status);
+        document.getElementById('dropNextTimeInput').value = data.nextDropTime || '';
+        const badge = document.getElementById('dropStatusBadge');
+        if (data.status === 'green')  { badge.textContent = '🟢 Open'; badge.style.cssText = 'background:#1a3d1a;color:#4caf50'; }
+        if (data.status === 'yellow') { badge.textContent = '🟡 Limited'; badge.style.cssText = 'background:#3d3200;color:#ffc107'; }
+        if (data.status === 'red')    { badge.textContent = '🔴 Sold Out'; badge.style.cssText = 'background:#3d0f0f;color:#f44336'; }
+        const wl = document.getElementById('dropWaitlistCount');
+        if (data.waitlistCount > 0) wl.textContent = `📬 ${data.waitlistCount} customer${data.waitlistCount === 1 ? '' : 's'} waiting for next drop`;
+        else wl.textContent = '';
+        document.getElementById('dropControlPanel').style.display = 'block';
+      } catch(e) { console.error('Drop status load error:', e); }
+    }
+
+    function renderDropButtons(status) {
+      document.getElementById('dropBtnGreen').className  = 'drop-btn' + (status === 'green'  ? ' active-green'  : '');
+      document.getElementById('dropBtnYellow').className = 'drop-btn' + (status === 'yellow' ? ' active-yellow' : '');
+      document.getElementById('dropBtnRed').className    = 'drop-btn' + (status === 'red'    ? ' active-red'    : '');
+      document.getElementById('dropNextTimeRow').className = 'drop-next-time' + (status === 'red' ? ' visible' : '');
+    }
+
+    function selectDropStatus(status) {
+      selectedDropStatus = status;
+      renderDropButtons(status);
+    }
+
+    async function saveDropStatus() {
+      if (!adminCredentials) {
+        adminCredentials = promptAdminLogin();
+        if (!adminCredentials) return;
+      }
+      const nextDropTime = document.getElementById('dropNextTimeInput').value.trim();
+      const btn = document.querySelector('.drop-save-btn');
+      btn.textContent = 'Saving…'; btn.disabled = true;
+      try {
+        const res = await fetch('/api/drop-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Basic ' + adminCredentials },
+          body: JSON.stringify({ status: selectedDropStatus, nextDropTime })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        await loadDropStatus();
+        btn.textContent = '✓ Saved!';
+        if (data.waitlistNotified) alert(`✅ Status updated and ${data.waitlistCount || 'all'} waitlist subscribers notified!`);
+        setTimeout(() => { btn.textContent = 'Save Status'; btn.disabled = false; }, 2000);
+      } catch(e) {
+        alert('Failed to save: ' + e.message);
+        btn.textContent = 'Save Status'; btn.disabled = false;
+      }
+    }
+    // ────────────────────────────────────────────────────────────────────────
+
     async function changeOrderStatus(orderId, newStatus) {
       try {
         const response = await fetch(`/admin/orders/${orderId}/status`, {
@@ -764,6 +903,7 @@
       }
     }
     
+    loadDropStatus();
     loadOrders();
     
     // Load Analytics

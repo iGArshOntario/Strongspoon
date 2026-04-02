@@ -150,5 +150,64 @@
     document.getElementById('continueBtn').onclick = () => confirmOverlay.classList.remove('active');
     confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) confirmOverlay.classList.remove('active'); });
   </script>
+
+<!-- Sold-Out Popup -->
+<div class='soldout-overlay' id='soldoutOverlay'>
+  <div class='soldout-modal'>
+    <div class='soldout-icon'>🔴</div>
+    <h2 class='soldout-title'>This Drop is Sold Out</h2>
+    <p class='soldout-desc'>We believe in serving it fresh.</p>
+    <p class='soldout-next' id='soldoutNextTime'></p>
+    <button class='soldout-notify-btn' id='soldoutNotifyBtn'>🔔 Notify Me for Next Drop</button>
+    <div class='soldout-email-form' id='soldoutEmailForm' style='display:none;'>
+      <input type='email' id='soldoutEmail' placeholder='your@email.com' />
+      <button class='soldout-email-submit' id='soldoutEmailSubmit'>Send Me an Alert</button>
+    </div>
+    <p class='soldout-success' id='soldoutSuccess' style='display:none;'></p>
+    <button class='soldout-close-btn' id='soldoutCloseBtn'>✕ Close</button>
+  </div>
+</div>
+<script>
+(function() {
+  var btn = document.getElementById('quickAddBtn');
+  if (btn) {
+    var newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener('click', async function() {
+      var dropData = { status: 'green', nextDropTime: '' };
+      try { dropData = await fetch('/api/drop-status').then(function(r){ return r.json(); }); } catch(e) {}
+      if (dropData.status === 'red') {
+        var nt = document.getElementById('soldoutNextTime');
+        nt.innerHTML = dropData.nextDropTime ? 'Next Drop: <strong>' + dropData.nextDropTime + '</strong>' : '';
+        document.getElementById('soldoutOverlay').classList.add('active');
+      } else {
+        document.getElementById('qtyPickerOverlay').classList.add('active');
+      }
+    });
+  }
+  var overlay = document.getElementById('soldoutOverlay');
+  document.getElementById('soldoutCloseBtn').onclick = function() { overlay.classList.remove('active'); };
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('active'); });
+  document.getElementById('soldoutNotifyBtn').onclick = function() {
+    document.getElementById('soldoutEmailForm').style.display = 'block';
+    this.style.display = 'none';
+  };
+  document.getElementById('soldoutEmailSubmit').onclick = async function() {
+    var email = document.getElementById('soldoutEmail').value.trim();
+    if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+    this.textContent = 'Sending…'; this.disabled = true;
+    try {
+      var res = await fetch('/api/notify-waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) });
+      var data = await res.json();
+      if (data.success) {
+        document.getElementById('soldoutEmailForm').style.display = 'none';
+        var s = document.getElementById('soldoutSuccess');
+        s.textContent = '✅ We'll notify you the moment the next drop is live!';
+        s.style.display = 'block';
+      } else { alert('Something went wrong. Try again.'); this.textContent = 'Send Me an Alert'; this.disabled = false; }
+    } catch(e) { alert('Network error. Try again.'); this.textContent = 'Send Me an Alert'; this.disabled = false; }
+  };
+})();
+</script>
 </body>
 </html>
