@@ -79,9 +79,9 @@
       var banner = document.getElementById('dropStatusBanner');
       if (!banner) return;
       var labels = {
-        green:  '🟢 Accepting Orders Now',
-        yellow: '⚡ Hurry Up! Limited Slots Left Today',
-        red:    '🔴 STATUS: SOLD OUT'
+        green:  '🟢 Open Now',
+        yellow: '⚡ Limited',
+        red:    '🔴 Sold Out'
       };
       banner.textContent = labels[d.status] || '';
       banner.className = 'drop-status-banner status-' + d.status;

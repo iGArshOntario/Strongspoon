@@ -300,8 +300,8 @@ async function sendOrderConfirmation(orderData) {
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="color-scheme" content="light dark">
-  <meta name="supported-color-schemes" content="light dark">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
@@ -325,6 +325,28 @@ async function sendOrderConfirmation(orderData) {
     .footer { background: #071012 !important; padding: 24px 30px; text-align: center; font-size: 13px; }
     .footer-brand { color: #EFE8D8 !important; font-size: 15px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; }
     .footer-sub { color: rgba(239,232,216,0.45) !important; font-size: 12px; margin-top: 6px; }
+
+    /* Force dark mode — never flip to light */
+    :root { color-scheme: dark; }
+    @media (prefers-color-scheme: light) {
+      body, .wrapper { background: #0b1416 !important; color: #EFE8D8 !important; }
+      .content { background: #0f1e20 !important; }
+      .item-card, .order-badge, .info-row { background: #162c2f !important; color: #EFE8D8 !important; }
+      .footer { background: #071012 !important; }
+      .total-box { background: #015A64 !important; color: #EFE8D8 !important; }
+      .header { background: #015A64 !important; }
+    }
+
+    /* Force dark mode — never flip to light */
+    :root { color-scheme: dark; }
+    @media (prefers-color-scheme: light) {
+      body, .wrapper { background: #0b1416 !important; color: #EFE8D8 !important; }
+      .content { background: #0f1e20 !important; }
+      .item-card, .order-badge, .info-row { background: #162c2f !important; color: #EFE8D8 !important; }
+      .footer { background: #071012 !important; }
+      .total-box { background: #015A64 !important; color: #EFE8D8 !important; }
+      .header { background: #015A64 !important; }
+    }
   </style>
 </head>
 <body>
@@ -469,8 +491,8 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="color-scheme" content="light dark">
-  <meta name="supported-color-schemes" content="light dark">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
@@ -490,6 +512,28 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
     .footer { background: #071012 !important; padding: 24px 30px; text-align: center; font-size: 13px; }
     .footer-brand { color: #EFE8D8 !important; font-size: 15px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; }
     .footer-sub { color: rgba(239,232,216,0.45) !important; font-size: 12px; margin-top: 6px; }
+
+    /* Force dark mode — never flip to light */
+    :root { color-scheme: dark; }
+    @media (prefers-color-scheme: light) {
+      body, .wrapper { background: #0b1416 !important; color: #EFE8D8 !important; }
+      .content { background: #0f1e20 !important; }
+      .item-card, .order-badge, .info-row { background: #162c2f !important; color: #EFE8D8 !important; }
+      .footer { background: #071012 !important; }
+      .total-box { background: #015A64 !important; color: #EFE8D8 !important; }
+      .header { background: #015A64 !important; }
+    }
+
+    /* Force dark mode — never flip to light */
+    :root { color-scheme: dark; }
+    @media (prefers-color-scheme: light) {
+      body, .wrapper { background: #0b1416 !important; color: #EFE8D8 !important; }
+      .content { background: #0f1e20 !important; }
+      .item-card, .order-badge, .info-row { background: #162c2f !important; color: #EFE8D8 !important; }
+      .footer { background: #071012 !important; }
+      .total-box { background: #015A64 !important; color: #EFE8D8 !important; }
+      .header { background: #015A64 !important; }
+    }
   </style>
 </head>
 <body>
@@ -1557,8 +1601,8 @@ async function startServer() {
     const to = req.query.to || 'arsh99591@gmail.com';
     const html = `
 <!DOCTYPE html><html><head>
-  <meta name="color-scheme" content="light dark">
-  <meta name="supported-color-schemes" content="light dark">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
