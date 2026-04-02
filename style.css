@@ -3538,7 +3538,7 @@ input[type="radio"]:checked + label,
     margin-top: 0;
   }
   .logo {
-    width: 200px;
+    width: 240px;
   }
   .tagline {
     font-size: 1.6rem;
@@ -3548,9 +3548,16 @@ input[type="radio"]:checked + label,
   .hero-location-btn {
     margin-top: 8px;
   }
-  /* Hide the description text on mobile — keep the gap via space-between */
+  /* Compact text — visible but tight so page stays scroll-free */
   .about {
-    display: none;
+    display: block;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 0.7rem;
+    line-height: 1.38;
+  }
+  .about p {
+    margin-bottom: 5px;
   }
   footer {
     padding-bottom: 10px;
