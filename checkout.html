@@ -176,17 +176,50 @@
       border-radius: 10px !important;
       font-size: 0.9rem !important;
     }
-    .pickup-free-badge {
-      background: linear-gradient(135deg, #015A64, #017d8e);
-      color: #EFE8D8;
-      font-size: 0.6rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 8px;
-      letter-spacing: 0.5px;
-      margin-left: 5px;
-      vertical-align: middle;
+    .pickup-toggle-btn {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 10px 16px !important;
     }
+    .pickup-main-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .pickup-free-badge {
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 10px;
+      letter-spacing: 0.8px;
+      line-height: 1.4;
+    }
+    .toggle-btn.active .pickup-free-badge {
+      background: linear-gradient(135deg, #66bb6a, #43a047);
+    }
+    .free-delivery-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(76,175,80,0.07);
+      border: 1px solid rgba(76,175,80,0.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin: 8px 0 12px;
+    }
+    .fdi-icon { font-size: 1rem; flex-shrink: 0; }
+    .fdi-text {
+      font-size: 0.78rem;
+      color: rgba(239,232,216,0.65);
+      line-height: 1.4;
+    }
+    .fdi-text strong { color: #66bb6a; font-weight: 700; }
+    #freeDeliveryInfo { display: flex; }
+    body[data-order-type="pickup"] #freeDeliveryInfo { display: none; }
     .checkout-fee-row {
       display: flex;
       justify-content: space-between;
@@ -418,8 +451,17 @@
             <label>Order Type *</label>
             <div class="order-type-toggle">
               <button type="button" id="deliveryBtn" class="toggle-btn active" onclick="setOrderType('delivery')">🚗 Delivery</button>
-              <button type="button" id="pickupBtn" class="toggle-btn" onclick="setOrderType('pickup')">🏪 Pickup <span class="pickup-free-badge">FREE</span></button>
+              <button type="button" id="pickupBtn" class="toggle-btn pickup-toggle-btn" onclick="setOrderType('pickup')">
+                <span class="pickup-main-text">🏪 Pickup</span>
+                <span class="pickup-free-badge">FREE</span>
+              </button>
             </div>
+          </div>
+
+          <!-- Free delivery info bar -->
+          <div class="free-delivery-info" id="freeDeliveryInfo">
+            <span class="fdi-icon">🚚</span>
+            <span class="fdi-text">Free delivery on orders <strong>$25+</strong> · Under $25 adds <strong>$4.99</strong></span>
           </div>
 
           <div id="deliveryFields">

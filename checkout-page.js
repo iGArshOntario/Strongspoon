@@ -41,6 +41,8 @@ function setOrderType(type) {
   const pickupFields = document.getElementById('pickupFields');
   const addressField = document.getElementById('customerAddress');
 
+  document.body.setAttribute('data-order-type', type);
+
   if (type === 'delivery') {
     deliveryBtn.classList.add('active');
     pickupBtn.classList.remove('active');
@@ -310,3 +312,7 @@ form.addEventListener('submit', async (e) => {
 });
 
 initializeStripe();
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.body.setAttribute('data-order-type', orderType);
+});
