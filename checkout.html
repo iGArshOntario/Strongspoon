@@ -24,221 +24,90 @@
     }
   </script>
   <style>
-    /* ── Checkout-only enhancements (within site design system) ── */
+    /* ── Checkout page styles ── */
 
-    /* Two-column form row */
+    .checkout-section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(1,90,100,0.9);
+      margin: 26px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .checkout-section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* Two-column row */
     .form-row-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
     }
 
-    /* Step section label */
-    .form-step-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: #015A64;
-      margin: 28px 0 16px;
-      display: flex;
-      align-items: center;
+    /* Delivery toggle */
+    .order-type-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
-    .form-step-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.06);
-    }
-    .form-step-num {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #015A64;
-      color: #EFE8D8;
-      font-size: 0.68rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* Enhanced checkout item with icon */
-    .checkout-item-icon {
-      width: 38px;
-      height: 38px;
-      background: linear-gradient(135deg, #015A64, #013e4a);
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      flex-shrink: 0;
-      margin-right: 12px;
-    }
-    .checkout-item-inner {
-      display: flex;
-      align-items: center;
-      flex: 1;
-    }
-    .checkout-item-text { flex: 1; text-align: left; }
-    .checkout-item-text .item-name {
-      font-weight: 600;
-      font-size: 0.92rem;
-      color: #EFE8D8;
-    }
-    .checkout-item-text .item-sub {
-      font-size: 0.78rem;
-      color: rgba(239,232,216,0.4);
-      margin-top: 2px;
-    }
-    .checkout-item-text .item-toppings {
-      font-size: 0.78rem;
-      color: #015A64;
-      margin-top: 2px;
-    }
-    .checkout-item-price-col {
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: #EFE8D8;
-      white-space: nowrap;
-      padding-left: 12px;
-    }
-
-    /* Total area */
-    .checkout-total-main {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 14px 0 6px;
-    }
-    .checkout-total-label {
-      font-size: 0.85rem;
-      color: rgba(239,232,216,0.55);
-      font-weight: 500;
-    }
-    .checkout-total-right { text-align: right; }
-    .checkout-total-amount {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.9rem;
-      font-weight: 800;
-      color: #EFE8D8;
-      line-height: 1;
-    }
-    .checkout-total-cad {
-      font-size: 0.7rem;
-      letter-spacing: 1.5px;
-      color: rgba(239,232,216,0.3);
-      margin-top: 2px;
-    }
-
-    /* Trust bar below summary */
-    .checkout-trust {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 22px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-    }
-    .checkout-trust-item {
-      font-size: 0.72rem;
-      color: rgba(239,232,216,0.25);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* Card brand chips above Stripe element */
-    .card-brand-row {
-      display: flex;
-      gap: 7px;
-      margin-bottom: 10px;
-    }
-    .card-brand-chip {
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 4px;
-      padding: 2px 8px;
-      color: rgba(239,232,216,0.5);
-    }
-
-    /* Pay button lock icon */
-    .pay-lock { font-size: 0.85rem; opacity: 0.7; margin-right: 4px; }
-
-    /* Improved toggle buttons */
     .toggle-btn {
-      border-radius: 10px !important;
-      font-size: 0.9rem !important;
-    }
-    .pickup-toggle-btn {
-      display: flex !important;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      padding: 10px 16px !important;
-    }
-    .pickup-main-text {
-      font-size: 0.95rem;
-      font-weight: 600;
-      line-height: 1;
-    }
-    .pickup-free-badge {
-      background: linear-gradient(135deg, #4caf50, #2e7d32);
-      color: #fff;
-      font-size: 0.58rem;
-      font-weight: 800;
-      padding: 2px 8px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.09);
       border-radius: 10px;
-      letter-spacing: 0.8px;
-      line-height: 1.4;
-    }
-    .toggle-btn.active .pickup-free-badge {
-      background: linear-gradient(135deg, #66bb6a, #43a047);
-    }
-    .free-delivery-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(76,175,80,0.07);
-      border: 1px solid rgba(76,175,80,0.2);
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin: 8px 0 12px;
-    }
-    .fdi-icon { font-size: 1rem; flex-shrink: 0; }
-    .fdi-text {
-      font-size: 0.78rem;
-      color: rgba(239,232,216,0.65);
-      line-height: 1.4;
-    }
-    .fdi-text strong { color: #66bb6a; font-weight: 700; }
-    #freeDeliveryInfo { display: flex; }
-    body[data-order-type="pickup"] #freeDeliveryInfo { display: none; }
-    .checkout-fee-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      margin-bottom: 2px;
-    }
-    .checkout-fee-label {
-      font-size: 0.82rem;
-      color: rgba(239,232,216,0.5);
-    }
-    .checkout-fee-amount {
+      color: rgba(239,232,216,0.55);
+      font-family: 'Poppins', sans-serif;
       font-size: 0.9rem;
       font-weight: 600;
+      padding: 13px 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      width: 100%;
+    }
+    .toggle-btn:hover {
+      border-color: rgba(1,90,100,0.4);
       color: rgba(239,232,216,0.8);
     }
+    .toggle-btn.active {
+      background: rgba(1,90,100,0.18);
+      border-color: #015A64;
+      color: #EFE8D8;
+    }
 
-    /* Premium date input */
+    /* Delivery fee note */
+    .delivery-note {
+      font-size: 0.75rem;
+      color: rgba(239,232,216,0.35);
+      margin: 8px 0 14px;
+      text-align: center;
+    }
+    .delivery-note strong { color: rgba(239,232,216,0.6); }
+    body[data-order-type="pickup"] .delivery-note { display: none; }
+
+    /* Pickup info */
+    .pickup-info {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: rgba(239,232,216,0.55);
+      line-height: 1.6;
+    }
+    .pickup-info strong {
+      color: #EFE8D8;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* Date input */
     .date-input-wrapper {
       position: relative;
     }
@@ -272,7 +141,6 @@
       font-size: 1rem;
       pointer-events: none;
     }
-    /* Fix date placeholder color */
     .date-input-wrapper input[type="date"]::-webkit-datetime-edit-text,
     .date-input-wrapper input[type="date"]::-webkit-datetime-edit-month-field,
     .date-input-wrapper input[type="date"]::-webkit-datetime-edit-day-field,
@@ -288,80 +156,138 @@
       cursor: pointer;
     }
 
-    /* Premium time slot cards */
+    /* Time slot grid */
     .timeslot-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 4px;
+      gap: 8px;
     }
     .timeslot-card {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 16px 10px;
+      border-radius: 10px;
+      padding: 14px 8px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.22s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
+      transition: all 0.2s ease;
       user-select: none;
     }
     .timeslot-card:hover {
-      border-color: rgba(1,90,100,0.5);
-      background: rgba(1,90,100,0.06);
+      border-color: rgba(1,90,100,0.45);
     }
     .timeslot-card.active {
-      background: linear-gradient(135deg, rgba(1,90,100,0.3), rgba(1,62,74,0.3));
+      background: rgba(1,90,100,0.18);
       border-color: #015A64;
-      box-shadow: 0 0 0 1px rgba(1,90,100,0.25);
     }
-    .timeslot-icon { font-size: 1.5rem; line-height: 1; }
+    .timeslot-icon { font-size: 1.3rem; display: block; margin-bottom: 5px; }
     .timeslot-name {
       font-size: 0.78rem;
       font-weight: 700;
       color: #EFE8D8;
-      letter-spacing: 0.3px;
+      display: block;
     }
     .timeslot-range {
-      font-size: 0.68rem;
-      color: rgba(239,232,216,0.4);
-      line-height: 1.3;
+      font-size: 0.64rem;
+      color: rgba(239,232,216,0.38);
+      display: block;
+      margin-top: 2px;
     }
-    .timeslot-card.active .timeslot-range { color: rgba(239,232,216,0.65); }
+    .timeslot-card.active .timeslot-range { color: rgba(239,232,216,0.6); }
 
-    /* Spacious pickup card */
-    .pickup-location-info {
-      padding: 22px 20px !important;
-      border-radius: 12px !important;
+    /* Order ahead note */
+    .order-ahead-note {
+      font-size: 0.75rem;
+      color: rgba(239,232,216,0.35);
+      margin: 8px 0 0;
+      text-align: center;
     }
-    .pickup-detail-row {
+
+    /* Summary totals */
+    .checkout-fee-row {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      margin-top: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .checkout-fee-label {
+      font-size: 0.82rem;
+      color: rgba(239,232,216,0.45);
+    }
+    .checkout-fee-amount {
       font-size: 0.88rem;
-      color: rgba(239,232,216,0.7);
+      font-weight: 600;
+      color: rgba(239,232,216,0.75);
     }
-    .pickup-detail-icon {
-      width: 30px;
-      height: 30px;
-      background: rgba(1,90,100,0.2);
-      border-radius: 8px;
+    .checkout-total-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 0 4px;
+    }
+    .checkout-total-label {
+      font-size: 0.85rem;
+      color: rgba(239,232,216,0.5);
+    }
+    .checkout-total-right { text-align: right; }
+    .checkout-total-amount {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #EFE8D8;
+      line-height: 1;
+    }
+    .checkout-total-cad {
+      font-size: 0.65rem;
+      letter-spacing: 1.5px;
+      color: rgba(239,232,216,0.25);
+      margin-top: 2px;
+    }
+
+    /* Item styles */
+    .checkout-item-inner {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      flex-shrink: 0;
+      flex: 1;
     }
+    .checkout-item-text { flex: 1; }
+    .checkout-item-text .item-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #EFE8D8;
+    }
+    .checkout-item-text .item-sub {
+      font-size: 0.75rem;
+      color: rgba(239,232,216,0.38);
+      margin-top: 2px;
+    }
+    .checkout-item-text .item-toppings {
+      font-size: 0.75rem;
+      color: rgba(1,90,100,0.85);
+      margin-top: 2px;
+    }
+    .checkout-item-price-col {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #EFE8D8;
+      white-space: nowrap;
+      padding-left: 14px;
+    }
+
+    /* Trust line */
+    .checkout-trust-line {
+      text-align: center;
+      font-size: 0.68rem;
+      color: rgba(239,232,216,0.2);
+      margin-top: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Pay button lock */
+    .pay-lock { margin-right: 5px; opacity: 0.7; }
 
     @media (max-width: 600px) {
       .form-row-2 { grid-template-columns: 1fr; gap: 0; }
-      .timeslot-grid { grid-template-columns: repeat(3, 1fr); gap: 7px; }
-      .timeslot-card { padding: 12px 6px; }
-      .timeslot-icon { font-size: 1.2rem; }
     }
   </style>
 </head>
@@ -380,7 +306,7 @@
 
     <div class="checkout-content">
 
-      <!-- ── LEFT: Order Summary ────────────────────── -->
+      <!-- ── LEFT: Order Summary ── -->
       <div class="checkout-left">
         <h2>Order Summary</h2>
 
@@ -390,41 +316,33 @@
 
         <div class="checkout-summary">
           <div id="deliveryFeeRow" class="checkout-fee-row" style="display:none;">
-            <span class="checkout-fee-label">🚗 Delivery fee</span>
+            <span class="checkout-fee-label">Delivery fee</span>
             <span class="checkout-fee-amount" id="deliveryFeeDisplay">$4.99</span>
           </div>
           <div id="freeDeliveryRow" class="checkout-fee-row" style="display:none;">
-            <span class="checkout-fee-label">🚗 Delivery</span>
+            <span class="checkout-fee-label">Delivery</span>
             <span class="checkout-fee-amount" style="color:#4caf50;">FREE</span>
           </div>
           <div class="checkout-total-main">
             <span class="checkout-total-label">Total</span>
             <div class="checkout-total-right">
               <div class="checkout-total-amount" id="checkoutTotal">$0.00</div>
-              <div class="checkout-total-cad">CAD</div>
+              <div class="checkout-total-cad">CAD · Tax Included</div>
             </div>
           </div>
           <div id="taxIncluded" class="tax-included-note" style="display:none;">✓ All taxes included</div>
         </div>
 
-        <div class="checkout-trust">
-          <div class="checkout-trust-item">🔒 SSL Encrypted</div>
-          <div class="checkout-trust-item">⚡ Stripe</div>
-          <div class="checkout-trust-item">🍁 Regina, SK</div>
-        </div>
+        <div class="checkout-trust-line">🔒 SSL Encrypted &nbsp;·&nbsp; Stripe &nbsp;·&nbsp; Regina, SK</div>
       </div>
 
-      <!-- ── RIGHT: Payment Form ────────────────────── -->
+      <!-- ── RIGHT: Payment Form ── -->
       <div class="checkout-right">
         <h2>Your Details</h2>
 
         <form id="payment-form">
 
-          <!-- Step 1: Contact -->
-          <div class="form-step-label">
-            <div class="form-step-num">1</div>
-            Contact Information
-          </div>
+          <div class="checkout-section-label">Contact</div>
 
           <div class="form-group">
             <label for="customerName">Full Name *</label>
@@ -441,27 +359,17 @@
             </div>
           </div>
 
-          <!-- Step 2: Delivery -->
-          <div class="form-step-label">
-            <div class="form-step-num">2</div>
-            Delivery or Pickup
-          </div>
+          <div class="checkout-section-label">Delivery or Pickup</div>
 
           <div class="form-group">
-            <label>Order Type *</label>
             <div class="order-type-toggle">
               <button type="button" id="deliveryBtn" class="toggle-btn active" onclick="setOrderType('delivery')">🚗 Delivery</button>
-              <button type="button" id="pickupBtn" class="toggle-btn pickup-toggle-btn" onclick="setOrderType('pickup')">
-                <span class="pickup-main-text">🏪 Pickup</span>
-                <span class="pickup-free-badge">FREE</span>
-              </button>
+              <button type="button" id="pickupBtn" class="toggle-btn" onclick="setOrderType('pickup')">🏪 Pickup · FREE</button>
             </div>
           </div>
 
-          <!-- Free delivery info bar -->
-          <div class="free-delivery-info" id="freeDeliveryInfo">
-            <span class="fdi-icon">🚚</span>
-            <span class="fdi-text">Free delivery on orders <strong>$25+</strong> · Under $25 adds <strong>$4.99</strong></span>
+          <div class="delivery-note" id="freeDeliveryInfo">
+            Free delivery on orders <strong>$25+</strong> · Under $25 adds <strong>$4.99</strong>
           </div>
 
           <div id="deliveryFields">
@@ -472,28 +380,13 @@
           </div>
 
           <div id="pickupFields" style="display:none;">
-            <div class="pickup-location-info">
-              <strong>📍 Pickup Location</strong>
-              <div class="pickup-detail-row">
-                <div class="pickup-detail-icon">📍</div>
-                <span>Regina, SK</span>
-              </div>
-              <div class="pickup-detail-row">
-                <div class="pickup-detail-icon">✉️</div>
-                <span>Exact address sent via email after your order is confirmed.</span>
-              </div>
+            <div class="pickup-info">
+              <strong>📍 Pickup — Regina, SK</strong>
+              Exact address will be sent via email once your order is confirmed.
             </div>
           </div>
 
-          <div class="advance-order-notice">
-            <span style="font-size:1.1rem;">⏰</span>
-            <div>
-              <strong>Order Ahead Required</strong>
-              <p>Please order at least 12 hours in advance.<br>Each batch is prepared fresh to order.</p>
-            </div>
-          </div>
-
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 16px;">
             <label for="deliveryDate">Preferred Date *</label>
             <div class="date-input-wrapper">
               <input type="date" id="deliveryDate" name="deliveryDate" required>
@@ -504,19 +397,19 @@
             <label>Time Slot *</label>
             <div class="timeslot-grid">
               <div class="timeslot-card" data-slot="Morning (8 AM - 12 PM)" onclick="selectTimeSlot(this)">
-                <div class="timeslot-icon">☀️</div>
-                <div class="timeslot-name">Morning</div>
-                <div class="timeslot-range">8 AM – 12 PM</div>
+                <span class="timeslot-icon">☀️</span>
+                <span class="timeslot-name">Morning</span>
+                <span class="timeslot-range">8 AM – 12 PM</span>
               </div>
               <div class="timeslot-card" data-slot="Afternoon (12 PM - 4 PM)" onclick="selectTimeSlot(this)">
-                <div class="timeslot-icon">🌤</div>
-                <div class="timeslot-name">Afternoon</div>
-                <div class="timeslot-range">12 PM – 4 PM</div>
+                <span class="timeslot-icon">🌤</span>
+                <span class="timeslot-name">Afternoon</span>
+                <span class="timeslot-range">12 PM – 4 PM</span>
               </div>
               <div class="timeslot-card" data-slot="Evening (4 PM - 8 PM)" onclick="selectTimeSlot(this)">
-                <div class="timeslot-icon">🌙</div>
-                <div class="timeslot-name">Evening</div>
-                <div class="timeslot-range">4 PM – 8 PM</div>
+                <span class="timeslot-icon">🌙</span>
+                <span class="timeslot-name">Evening</span>
+                <span class="timeslot-range">4 PM – 8 PM</span>
               </div>
             </div>
             <select id="deliveryTimeSlot" name="deliveryTimeSlot" required style="display:none;">
@@ -527,19 +420,12 @@
             </select>
           </div>
 
-          <!-- Step 3: Payment -->
-          <div class="form-step-label">
-            <div class="form-step-num">3</div>
-            Card Information
-          </div>
+          <p class="order-ahead-note">⏰ Orders need at least 12 hours notice — prepared fresh for you.</p>
+
+          <div class="checkout-section-label">Payment</div>
 
           <div class="form-group">
             <label>Card Details</label>
-            <div class="card-brand-row">
-              <span class="card-brand-chip">VISA</span>
-              <span class="card-brand-chip">MC</span>
-              <span class="card-brand-chip">AMEX</span>
-            </div>
             <div id="card-element"></div>
             <div id="card-errors" role="alert"></div>
           </div>
