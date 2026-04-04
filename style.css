@@ -305,14 +305,18 @@ body {
   font-weight: 800;
   color: #EFE8D8;
   margin: 15px 0;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  background: linear-gradient(135deg, #fff 0%, #017d8e 50%, #fff 100%);
-  background-size: 200% auto;
+  background: linear-gradient(135deg, #EFE8D8 0%, #d4a843 35%, #f5c842 55%, #c8941e 75%, #EFE8D8 100%);
+  background-size: 250% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer 3s ease-in-out infinite;
+  animation: goldShimmer 3.5s ease-in-out infinite;
+}
+@keyframes goldShimmer {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
 }
 
 @keyframes shimmer {
@@ -3582,56 +3586,60 @@ input[type="radio"]:checked + label,
 /* ── Flavours Listing Page: Mobile No-Scroll Layout (≤480px) ─────────────── */
 @media (max-width: 480px) {
   .flavours-page {
-    min-height: 100dvh;
+    min-height: calc(100dvh - 60px);
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    padding: 0;
+    padding: 16px 14px 0;
     box-sizing: border-box;
     width: 100%;
   }
   .premium-header {
-    margin-bottom: 0;
+    margin-bottom: 14px;
+    padding-top: 6px;
   }
   .premium-title {
-    font-size: 1.55rem;
-    margin: 5px 0;
-    letter-spacing: 1px;
+    font-size: 1.8rem;
+    margin: 6px 0;
+    letter-spacing: 2px;
+    white-space: nowrap;
   }
   .premium-subtitle {
-    font-size: 0.68rem;
-    margin-bottom: 4px;
+    font-size: 0.72rem;
+    margin-bottom: 0;
+    color: rgba(239,232,216,0.55);
   }
   .header-decoration {
-    margin: 3px auto;
-  }
-  .flavours-page .drop-status-banner {
-    margin-top: 8px !important;
-    font-size: 0.68rem !important;
-    padding: 4px 11px !important;
+    margin: 4px auto;
   }
   .flavour-grid {
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 0;
+    flex: 1;
   }
   .flavour-card {
-    padding: 14px 10px;
+    padding: 18px 12px;
+    border: 1px solid rgba(255,255,255,0.12);
   }
   .flavour-icon {
-    font-size: 1.8rem;
-    margin-bottom: 5px;
+    font-size: 2rem;
+    margin-bottom: 7px;
   }
   .flavour-name {
-    font-size: 0.85rem;
-    margin-bottom: 2px;
+    font-size: 0.95rem;
+    margin-bottom: 3px;
+    font-weight: 800;
   }
   .flavour-desc {
-    font-size: 0.62rem;
-    margin-bottom: 5px;
+    font-size: 0.67rem;
+    margin-bottom: 7px;
+    color: rgba(239,232,216,0.6);
   }
   .flavour-tag {
-    font-size: 0.55rem;
-    padding: 3px 8px;
+    font-size: 0.57rem;
+    padding: 3px 9px;
+    border: 1px solid rgba(0,191,165,0.35);
+    background: rgba(0,191,165,0.12);
+    color: #00bfa5;
   }
   .flavours-page .back-link,
   .flavours-page .feedback-nudge,
@@ -3790,4 +3798,117 @@ input[type="radio"]:checked + label,
 @media (max-width: 480px) {
   .review-card { min-width: 175px; max-width: 190px; padding: 10px 12px; }
   .review-comment { font-size: 0.68rem; }
+}
+
+/* ── Flavours Page — Sticky Bottom Price Bar ─────────────────────────────── */
+.flavours-bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(135deg, #012f38 0%, #015A64 60%, #013e4a 100%);
+  border-top: 1px solid rgba(0,191,165,0.3);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  z-index: 900;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+}
+.fbb-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f5c842;
+  letter-spacing: 0.5px;
+}
+.fbb-unit {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(245,200,66,0.7);
+  font-family: 'Poppins', sans-serif;
+}
+.fbb-divider {
+  color: rgba(0,191,165,0.5);
+  font-size: 0.9rem;
+}
+.fbb-note {
+  font-size: 0.72rem;
+  color: rgba(239,232,216,0.6);
+  font-weight: 400;
+  letter-spacing: 0.2px;
+}
+@media (min-width: 481px) {
+  .flavours-bottom-bar { display: none; }
+}
+
+/* ── Product Page — Premium Top Nav ─────────────────────────────────────── */
+.product-top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 0;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 10;
+}
+.product-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 30px;
+  padding: 7px 14px;
+  color: rgba(239,232,216,0.75);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.22s;
+  letter-spacing: 0.2px;
+}
+.product-back-btn:hover {
+  background: rgba(0,191,165,0.12);
+  border-color: rgba(0,191,165,0.4);
+  color: #00bfa5;
+}
+.product-back-btn svg {
+  width: 14px; height: 14px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+}
+.product-brand-tag {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(0,191,165,0.6);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.product-top-nav .cart-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+.product-top-nav .cart-icon .cart-emoji {
+  font-size: 1.05rem;
+}
+@media (max-width: 480px) {
+  .product-top-nav {
+    padding: 12px 14px 0;
+  }
+  .product-back-btn {
+    font-size: 0.74rem;
+    padding: 6px 12px;
+  }
+  .product-container {
+    padding-top: 0 !important;
+    justify-content: flex-start;
+    gap: 0;
+    padding-bottom: 10px;
+  }
+  .product-container .product-title {
+    margin-top: 8px;
+  }
 }
