@@ -84,11 +84,11 @@
     /* Delivery fee note */
     .delivery-note {
       font-size: 0.75rem;
-      color: rgba(239,232,216,0.35);
+      color: rgba(1,125,142,0.8);
       margin: 8px 0 14px;
       text-align: center;
     }
-    .delivery-note strong { color: rgba(239,232,216,0.6); }
+    .delivery-note strong { color: #017d8e; font-weight: 700; }
     body[data-order-type="pickup"] .delivery-note { display: none; }
 
     /* Pickup info */
@@ -197,9 +197,92 @@
     /* Order ahead note */
     .order-ahead-note {
       font-size: 0.75rem;
-      color: rgba(239,232,216,0.35);
+      color: rgba(1,125,142,0.75);
       margin: 8px 0 0;
       text-align: center;
+    }
+
+    /* Gold FREE badge in pickup toggle */
+    .free-gold {
+      color: #f5c842;
+      font-weight: 800;
+    }
+    .toggle-btn.active .free-gold { color: #f5c842; }
+
+    /* Card brand logos row */
+    .card-brands-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .card-brand-logo {
+      height: 26px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+      font-size: 0.6rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      border: 1px solid transparent;
+      flex-shrink: 0;
+    }
+    .cbrand-visa {
+      background: #1a1f71;
+      color: #fff;
+      font-size: 0.72rem;
+      font-style: italic;
+      letter-spacing: -0.5px;
+      font-family: 'Times New Roman', serif;
+      font-weight: 900;
+      border-color: rgba(255,255,255,0.1);
+      min-width: 42px;
+    }
+    .cbrand-mc {
+      background: #252525;
+      border-color: rgba(255,255,255,0.08);
+      min-width: 36px;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .cbrand-mc::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      background: #eb001b;
+      border-radius: 50%;
+    }
+    .cbrand-mc::after {
+      content: '';
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      background: #f79e1b;
+      border-radius: 50%;
+      opacity: 0.9;
+    }
+    .cbrand-amex {
+      background: #016fcf;
+      color: #fff;
+      font-size: 0.58rem;
+      letter-spacing: 1px;
+      border-color: rgba(255,255,255,0.1);
+      min-width: 42px;
+    }
+    .card-brands-accepted {
+      font-size: 0.65rem;
+      color: rgba(239,232,216,0.22);
+      margin-left: 2px;
     }
 
     /* Summary totals */
@@ -368,7 +451,7 @@
           <div class="form-group">
             <div class="order-type-toggle">
               <button type="button" id="deliveryBtn" class="toggle-btn active" onclick="setOrderType('delivery')">🚗 Delivery</button>
-              <button type="button" id="pickupBtn" class="toggle-btn" onclick="setOrderType('pickup')">🏪 Pickup · FREE</button>
+              <button type="button" id="pickupBtn" class="toggle-btn" onclick="setOrderType('pickup')">🏪 Pickup · <span class="free-gold">FREE</span></button>
             </div>
           </div>
 
@@ -424,12 +507,18 @@
             </select>
           </div>
 
-          <p class="order-ahead-note">⏰ Orders need at least 12 hours notice — prepared fresh for you.</p>
+          <p class="order-ahead-note">⏰ Order at least 12 hours ahead — each cup is prepared fresh for you.</p>
 
           <div class="checkout-section-label">Payment</div>
 
           <div class="form-group">
             <label>Card Details</label>
+            <div class="card-brands-row">
+              <div class="card-brand-logo cbrand-visa">VISA</div>
+              <div class="card-brand-logo cbrand-mc"></div>
+              <div class="card-brand-logo cbrand-amex">AMEX</div>
+              <span class="card-brands-accepted">Accepted</span>
+            </div>
             <div id="card-element"></div>
             <div id="card-errors" role="alert"></div>
           </div>
