@@ -3684,18 +3684,21 @@ input[type="radio"]:checked + label,
 /* ── Product Detail Pages: Mobile No-Scroll Layout (≤480px) ─────────────── */
 @media (max-width: 480px) {
   body.product-page {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
     justify-content: flex-start;
+    align-items: stretch;
     padding: 0;
-    min-height: 100dvh;
   }
   .product-container {
-    min-height: calc(100dvh - 52px);
-    height: calc(100dvh - 52px);
+    flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    padding: 8px 16px 12px;
+    padding: 8px 16px 16px;
     box-sizing: border-box;
     width: 100%;
     text-align: center;
