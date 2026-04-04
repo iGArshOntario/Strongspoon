@@ -47,7 +47,15 @@ function updateDeliveryFeeDisplay() {
   if (amexRow) amexRow.style.display = amexFee > 0 ? 'flex' : 'none';
   if (amexDisplay) amexDisplay.textContent = `$${amexFee.toFixed(2)}`;
 
-  if (totalEl) totalEl.textContent = `$${getFinalTotal().toFixed(2)}`;
+  const total = getFinalTotal();
+  if (totalEl) {
+    totalEl.textContent = `$${total.toFixed(2)}`;
+    totalEl.classList.remove('pop');
+    void totalEl.offsetWidth;
+    totalEl.classList.add('pop');
+  }
+  const btnText = document.getElementById('button-text');
+  if (btnText) btnText.textContent = `Complete Order · $${total.toFixed(2)}`;
 }
 
 function setOrderType(type) {
@@ -251,6 +259,10 @@ form.addEventListener('submit', async (e) => {
 
   submitButton.disabled = true;
   buttonText.style.display = 'none';
+  const payArrow = submitButton.querySelector('.pay-arrow');
+  const payLock = submitButton.querySelector('.pay-lock');
+  if (payArrow) payArrow.style.display = 'none';
+  if (payLock) payLock.style.display = 'none';
   spinner.style.display = 'inline-block';
 
   const customerName = document.getElementById('customerName').value;

@@ -24,34 +24,130 @@
     }
   </script>
   <style>
-    /* ── Checkout page styles ── */
+    /* ── Checkout animations ── */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmerSweep {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(1,125,142,0); }
+      50%       { box-shadow: 0 0 0 8px rgba(1,125,142,0.18); }
+    }
+    @keyframes totalPop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+    @keyframes checkBounce {
+      0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+      60%  { transform: scale(1.2) rotate(4deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
 
-    .checkout-section-label {
+    /* ── Progress bar ── */
+    .checkout-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 0 0 28px;
+      animation: fadeSlideUp 0.5s ease both;
+    }
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .progress-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 0.65rem;
+      color: rgba(239,232,216,0.3);
+      font-weight: 700;
+      transition: all 0.35s ease;
+    }
+    .progress-step.done .progress-dot {
+      background: rgba(1,90,100,0.35);
+      border-color: #015A64;
+      color: #017d8e;
+    }
+    .progress-step.done .progress-dot::after {
+      content: '✓';
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #017d8e;
+    }
+    .progress-step.done .progress-dot span { display: none; }
+    .progress-step.active .progress-dot {
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      border-color: #017d8e;
+      color: #EFE8D8;
+      box-shadow: 0 0 14px rgba(1,125,142,0.4);
+    }
+    .progress-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: rgba(239,232,216,0.25);
+      font-weight: 600;
+    }
+    .progress-step.active .progress-label { color: #017d8e; }
+    .progress-step.done .progress-label { color: rgba(1,125,142,0.6); }
+    .progress-line {
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+      margin: 0 6px;
+      margin-bottom: 18px;
+    }
+
+    /* ── Section labels ── */
+    .checkout-section-label {
+      font-size: 0.63rem;
       font-weight: 700;
       letter-spacing: 2.5px;
       text-transform: uppercase;
-      color: rgba(1,90,100,0.9);
-      margin: 26px 0 14px;
+      color: #017d8e;
+      margin: 28px 0 14px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+    }
+    .checkout-section-label::before {
+      content: '';
+      width: 3px;
+      height: 12px;
+      background: linear-gradient(180deg, #017d8e, #015A64);
+      border-radius: 2px;
+      flex-shrink: 0;
     }
     .checkout-section-label::after {
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.05);
     }
 
-    /* Two-column row */
+    /* ── Two-column row ── */
     .form-row-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
     }
 
-    /* Delivery toggle */
+    /* ── Delivery toggle ── */
     .order-type-toggle {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -59,63 +155,73 @@
     }
     .toggle-btn {
       background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 10px;
-      color: rgba(239,232,216,0.55);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      color: rgba(239,232,216,0.45);
       font-family: 'Poppins', sans-serif;
       font-size: 0.9rem;
       font-weight: 600;
-      padding: 13px 10px;
+      padding: 14px 10px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
       text-align: center;
       width: 100%;
+      position: relative;
+      overflow: hidden;
     }
-    .toggle-btn:hover {
-      border-color: rgba(1,90,100,0.4);
-      color: rgba(239,232,216,0.8);
+    .toggle-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(1,90,100,0.12), rgba(1,62,74,0.08));
+      opacity: 0;
+      transition: opacity 0.25s;
     }
+    .toggle-btn:hover::before { opacity: 1; }
+    .toggle-btn:hover { border-color: rgba(1,125,142,0.4); color: rgba(239,232,216,0.8); }
     .toggle-btn.active {
-      background: rgba(1,90,100,0.18);
+      background: linear-gradient(135deg, rgba(1,90,100,0.25), rgba(1,62,74,0.2));
       border-color: #015A64;
       color: #EFE8D8;
+      box-shadow: 0 0 16px rgba(1,90,100,0.2), inset 0 0 8px rgba(1,125,142,0.05);
     }
+    .free-gold { color: #f5c842; font-weight: 800; }
+    .toggle-btn.active .free-gold { color: #f5c842; }
 
-    /* Delivery fee note */
+    /* ── Delivery note ── */
     .delivery-note {
-      font-size: 0.75rem;
-      color: rgba(1,125,142,0.8);
+      font-size: 0.74rem;
+      color: rgba(1,125,142,0.75);
       margin: 8px 0 14px;
       text-align: center;
     }
     .delivery-note strong { color: #017d8e; font-weight: 700; }
     body[data-order-type="pickup"] .delivery-note { display: none; }
 
-    /* Pickup info */
+    /* ── Pickup info ── */
     .pickup-info {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 0.85rem;
+      background: rgba(1,90,100,0.07);
+      border: 1px solid rgba(1,90,100,0.2);
+      border-radius: 12px;
+      padding: 16px 18px;
+      font-size: 0.84rem;
       color: rgba(239,232,216,0.55);
-      line-height: 1.6;
+      line-height: 1.65;
     }
     .pickup-info strong {
       color: #EFE8D8;
       display: block;
       margin-bottom: 4px;
+      font-size: 0.9rem;
     }
 
-    /* Date input */
-    .date-input-wrapper {
-      position: relative;
-    }
+    /* ── Date input ── */
+    .date-input-wrapper { position: relative; }
     .date-input-wrapper input[type="date"] {
       width: 100%;
       padding: 14px 42px 14px 16px;
       background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.08);
       border-radius: 10px;
       color: #EFE8D8;
       font-family: 'Poppins', sans-serif;
@@ -123,14 +229,14 @@
       box-sizing: border-box;
       -webkit-appearance: none;
       appearance: none;
-      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+      transition: all 0.25s ease;
       cursor: pointer;
     }
     .date-input-wrapper input[type="date"]:focus {
       outline: none;
       border-color: #015A64;
-      background: rgba(1,90,100,0.06);
-      box-shadow: 0 0 0 3px rgba(1,90,100,0.12);
+      background: rgba(1,90,100,0.07);
+      box-shadow: 0 0 0 3px rgba(1,90,100,0.14), 0 0 12px rgba(1,125,142,0.08);
     }
     .date-input-wrapper::after {
       content: '📅';
@@ -144,9 +250,7 @@
     .date-input-wrapper input[type="date"]::-webkit-datetime-edit-text,
     .date-input-wrapper input[type="date"]::-webkit-datetime-edit-month-field,
     .date-input-wrapper input[type="date"]::-webkit-datetime-edit-day-field,
-    .date-input-wrapper input[type="date"]::-webkit-datetime-edit-year-field {
-      color: #EFE8D8;
-    }
+    .date-input-wrapper input[type="date"]::-webkit-datetime-edit-year-field { color: #EFE8D8; }
     .date-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
       opacity: 0;
       position: absolute;
@@ -156,7 +260,7 @@
       cursor: pointer;
     }
 
-    /* Time slot grid */
+    /* ── Timeslot grid ── */
     .timeslot-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -164,22 +268,38 @@
     }
     .timeslot-card {
       background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 14px 8px;
+      border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 16px 8px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.22s ease;
       user-select: none;
+      position: relative;
+      overflow: hidden;
     }
     .timeslot-card:hover {
-      border-color: rgba(1,90,100,0.45);
+      border-color: rgba(1,90,100,0.5);
+      background: rgba(1,90,100,0.06);
+      transform: translateY(-1px);
     }
     .timeslot-card.active {
-      background: rgba(1,90,100,0.18);
+      background: linear-gradient(135deg, rgba(1,90,100,0.25), rgba(1,62,74,0.2));
       border-color: #015A64;
+      box-shadow: 0 0 16px rgba(1,90,100,0.22);
+      transform: translateY(-1px);
     }
-    .timeslot-icon { font-size: 1.3rem; display: block; margin-bottom: 5px; }
+    .timeslot-card.active::after {
+      content: '✓';
+      position: absolute;
+      top: 5px;
+      right: 7px;
+      font-size: 0.6rem;
+      color: #017d8e;
+      font-weight: 700;
+      animation: checkBounce 0.4s ease both;
+    }
+    .timeslot-icon { font-size: 1.4rem; display: block; margin-bottom: 5px; }
     .timeslot-name {
       font-size: 0.78rem;
       font-weight: 700;
@@ -187,29 +307,22 @@
       display: block;
     }
     .timeslot-range {
-      font-size: 0.64rem;
-      color: rgba(239,232,216,0.38);
+      font-size: 0.63rem;
+      color: rgba(239,232,216,0.35);
       display: block;
-      margin-top: 2px;
+      margin-top: 3px;
     }
-    .timeslot-card.active .timeslot-range { color: rgba(239,232,216,0.6); }
+    .timeslot-card.active .timeslot-range { color: rgba(239,232,216,0.65); }
 
-    /* Order ahead note */
+    /* ── Order ahead note ── */
     .order-ahead-note {
-      font-size: 0.75rem;
-      color: rgba(1,125,142,0.75);
-      margin: 8px 0 0;
+      font-size: 0.74rem;
+      color: rgba(1,125,142,0.72);
+      margin: 10px 0 0;
       text-align: center;
     }
 
-    /* Gold FREE badge in pickup toggle */
-    .free-gold {
-      color: #f5c842;
-      font-weight: 800;
-    }
-    .toggle-btn.active .free-gold { color: #f5c842; }
-
-    /* Card brand logos row */
+    /* ── Card brand logos ── */
     .card-brands-row {
       display: flex;
       align-items: center;
@@ -251,22 +364,18 @@
     .cbrand-mc::before {
       content: '';
       position: absolute;
-      left: 4px;
-      top: 50%;
+      left: 4px; top: 50%;
       transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
+      width: 16px; height: 16px;
       background: #eb001b;
       border-radius: 50%;
     }
     .cbrand-mc::after {
       content: '';
       position: absolute;
-      right: 4px;
-      top: 50%;
+      right: 4px; top: 50%;
       transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
+      width: 16px; height: 16px;
       background: #f79e1b;
       border-radius: 50%;
       opacity: 0.9;
@@ -281,11 +390,11 @@
     }
     .card-brands-accepted {
       font-size: 0.65rem;
-      color: rgba(239,232,216,0.22);
+      color: rgba(239,232,216,0.2);
       margin-left: 2px;
     }
 
-    /* Summary totals */
+    /* ── Summary ── */
     .checkout-fee-row {
       display: flex;
       justify-content: space-between;
@@ -293,46 +402,48 @@
       padding: 7px 0;
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
-    .checkout-fee-label {
-      font-size: 0.82rem;
-      color: rgba(239,232,216,0.45);
-    }
-    .checkout-fee-amount {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: rgba(239,232,216,0.75);
-    }
+    .checkout-fee-label { font-size: 0.82rem; color: rgba(239,232,216,0.45); }
+    .checkout-fee-amount { font-size: 0.88rem; font-weight: 600; color: rgba(239,232,216,0.75); }
     .checkout-total-main {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding: 14px 0 4px;
+      padding: 16px 0 4px;
     }
-    .checkout-total-label {
-      font-size: 0.85rem;
-      color: rgba(239,232,216,0.5);
-    }
+    .checkout-total-label { font-size: 0.85rem; color: rgba(239,232,216,0.45); }
     .checkout-total-right { text-align: right; }
     .checkout-total-amount {
       font-family: 'Playfair Display', serif;
-      font-size: 1.9rem;
+      font-size: 2rem;
       font-weight: 800;
       color: #EFE8D8;
       line-height: 1;
+      transition: transform 0.2s ease;
     }
+    .checkout-total-amount.pop { animation: totalPop 0.3s ease; }
     .checkout-total-cad {
       font-size: 0.65rem;
       letter-spacing: 1.5px;
-      color: rgba(239,232,216,0.25);
+      color: rgba(239,232,216,0.22);
       margin-top: 2px;
     }
 
-    /* Item styles */
-    .checkout-item-inner {
-      display: flex;
-      align-items: center;
-      flex: 1;
+    /* ── Order summary glow card ── */
+    .checkout-left {
+      position: relative;
     }
+    .checkout-left::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(1,90,100,0.3), transparent 60%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ── Item styles ── */
+    .checkout-item-inner { display: flex; align-items: center; flex: 1; }
     .checkout-item-text { flex: 1; }
     .checkout-item-text .item-name {
       font-weight: 600;
@@ -341,12 +452,12 @@
     }
     .checkout-item-text .item-sub {
       font-size: 0.75rem;
-      color: rgba(239,232,216,0.38);
+      color: rgba(239,232,216,0.36);
       margin-top: 2px;
     }
     .checkout-item-text .item-toppings {
       font-size: 0.75rem;
-      color: rgba(1,90,100,0.85);
+      color: rgba(1,125,142,0.85);
       margin-top: 2px;
     }
     .checkout-item-price-col {
@@ -357,20 +468,96 @@
       padding-left: 14px;
     }
 
-    /* Trust line */
+    /* ── Trust line ── */
     .checkout-trust-line {
       text-align: center;
-      font-size: 0.68rem;
-      color: rgba(239,232,216,0.2);
+      font-size: 0.66rem;
+      color: rgba(239,232,216,0.18);
       margin-top: 20px;
       letter-spacing: 0.5px;
     }
 
-    /* Pay button lock */
-    .pay-lock { margin-right: 5px; opacity: 0.7; }
+    /* ── PAY BUTTON — the hero CTA ── */
+    .pay-btn-wrap {
+      margin-top: 24px;
+    }
+    #submit-payment {
+      width: 100%;
+      padding: 18px 24px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #015A64 0%, #017d8e 50%, #015A64 100%);
+      background-size: 200% 100%;
+      color: #EFE8D8;
+      box-shadow: 0 6px 28px rgba(1,90,100,0.45), 0 2px 8px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      animation: pulseGlow 2.8s ease-in-out infinite;
+    }
+    #submit-payment::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+      transition: left 0.5s ease;
+    }
+    #submit-payment:hover::before { left: 100%; }
+    #submit-payment:hover {
+      background-position: right center;
+      box-shadow: 0 10px 36px rgba(1,90,100,0.6), 0 4px 12px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+    #submit-payment:active { transform: translateY(0); }
+    #submit-payment:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      animation: none;
+      transform: none;
+    }
+    .pay-btn-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .pay-lock { font-size: 0.9rem; opacity: 0.8; }
+    .pay-arrow {
+      font-size: 1rem;
+      transition: transform 0.2s ease;
+    }
+    #submit-payment:hover .pay-arrow { transform: translateX(3px); }
+    .pay-sub {
+      font-size: 0.65rem;
+      color: rgba(239,232,216,0.5);
+      text-align: center;
+      margin-top: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Form inputs enhanced focus ── */
+    .checkout-right input:focus,
+    .checkout-right textarea:focus {
+      border-color: #015A64 !important;
+      background: rgba(1,90,100,0.07) !important;
+      box-shadow: 0 0 0 3px rgba(1,90,100,0.14), 0 0 12px rgba(1,125,142,0.07) !important;
+    }
+
+    /* ── Entrance animations ── */
+    .checkout-left  { animation: fadeSlideUp 0.5s ease 0.05s both; }
+    .checkout-right { animation: fadeSlideUp 0.5s ease 0.15s both; }
+    .checkout-header { animation: fadeSlideUp 0.4s ease both; }
 
     @media (max-width: 600px) {
       .form-row-2 { grid-template-columns: 1fr; gap: 0; }
+      .progress-line { max-width: 36px; }
+      #submit-payment { font-size: 0.97rem; padding: 16px 20px; }
     }
   </style>
 </head>
@@ -379,8 +566,26 @@
   <section class="checkout-container">
 
     <div class="checkout-header">
-      <h1 class="checkout-title">CHECKOUT</h1>
+      <h1 class="checkout-title">Almost There 💪</h1>
       <a href="cart.html" class="btn-link">← Back to Cart</a>
+    </div>
+
+    <!-- Progress indicator -->
+    <div class="checkout-progress">
+      <div class="progress-step done">
+        <div class="progress-dot"><span>1</span></div>
+        <div class="progress-label">Cart</div>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step active">
+        <div class="progress-dot"><span>2</span></div>
+        <div class="progress-label">Details</div>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step">
+        <div class="progress-dot"><span>3</span></div>
+        <div class="progress-label">Pay</div>
+      </div>
     </div>
 
     <div class="service-area-notice">
@@ -391,7 +596,7 @@
 
       <!-- ── LEFT: Order Summary ── -->
       <div class="checkout-left">
-        <h2>Order Summary</h2>
+        <h2>Your Order</h2>
 
         <div id="checkoutItems" class="checkout-items"></div>
 
@@ -404,14 +609,14 @@
           </div>
           <div id="freeDeliveryRow" class="checkout-fee-row" style="display:none;">
             <span class="checkout-fee-label">Delivery</span>
-            <span class="checkout-fee-amount" style="color:#4caf50;">FREE</span>
+            <span class="checkout-fee-amount" style="color:#4caf50;">FREE ✓</span>
           </div>
           <div id="amexFeeRow" class="checkout-fee-row" style="display:none;">
             <span class="checkout-fee-label">Amex processing (0.6%)</span>
             <span class="checkout-fee-amount" id="amexFeeDisplay">$0.00</span>
           </div>
           <div class="checkout-total-main">
-            <span class="checkout-total-label">Total</span>
+            <span class="checkout-total-label">Total due</span>
             <div class="checkout-total-right">
               <div class="checkout-total-amount" id="checkoutTotal">$0.00</div>
               <div class="checkout-total-cad">CAD · Tax Included</div>
@@ -420,7 +625,7 @@
           <div id="taxIncluded" class="tax-included-note" style="display:none;">✓ All taxes included</div>
         </div>
 
-        <div class="checkout-trust-line">🔒 SSL Encrypted &nbsp;·&nbsp; Stripe &nbsp;·&nbsp; Regina, SK</div>
+        <div class="checkout-trust-line">🔒 SSL · Stripe Payments · Regina, SK</div>
       </div>
 
       <!-- ── RIGHT: Payment Form ── -->
@@ -469,7 +674,7 @@
           <div id="pickupFields" style="display:none;">
             <div class="pickup-info">
               <strong>📍 Pickup — Regina, SK</strong>
-              Exact address will be sent via email once your order is confirmed.
+              Exact address sent via email once your order is confirmed.
             </div>
           </div>
 
@@ -523,11 +728,17 @@
             <div id="card-errors" role="alert"></div>
           </div>
 
-          <button type="submit" id="submit-payment" class="btn teal">
-            <span class="pay-lock">🔒</span>
-            <span id="button-text">Pay Now</span>
-            <span id="spinner" class="spinner" style="display:none;"></span>
-          </button>
+          <div class="pay-btn-wrap">
+            <button type="submit" id="submit-payment">
+              <div class="pay-btn-inner">
+                <span class="pay-lock">🔒</span>
+                <span id="button-text">Complete Order</span>
+                <span class="pay-arrow">→</span>
+                <span id="spinner" class="spinner" style="display:none;"></span>
+              </div>
+            </button>
+            <p class="pay-sub">Your protein boost is one tap away 💪</p>
+          </div>
 
         </form>
 
