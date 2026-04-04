@@ -764,7 +764,7 @@ app.get('/get-stripe-key', (req, res) => {
 
 app.post('/create-payment-intent', async (req, res) => {
   try {
-    const { customer, items, orderType, deliveryDate, deliveryTimeSlot } = req.body;
+    const { customer, items, orderType, deliveryDate, deliveryTimeSlot, cardBrand } = req.body;
     
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
@@ -825,7 +825,9 @@ app.post('/create-payment-intent', async (req, res) => {
     const bundleBase = getBundleBaseTotal(totalCups);
     const itemsSubtotal = Math.round((bundleBase + toppingsFee) * 100) / 100;
     const deliveryFee = (orderType === 'pickup') ? 0 : (itemsSubtotal < 25 ? 4.99 : 0);
-    const serverTotal = Math.round((itemsSubtotal + deliveryFee) * 100) / 100;
+    const baseTotal = Math.round((itemsSubtotal + deliveryFee) * 100) / 100;
+    const amexFee = (cardBrand === 'amex') ? Math.round(baseTotal * 0.006 * 100) / 100 : 0;
+    const serverTotal = Math.round((baseTotal + amexFee) * 100) / 100;
     const amountInCents = Math.round(serverTotal * 100);
 
     const paymentIntent = await stripe.paymentIntents.create({
@@ -842,6 +844,8 @@ app.post('/create-payment-intent', async (req, res) => {
         items: JSON.stringify(validatedItems),
         total: serverTotal.toFixed(2),
         delivery_fee: deliveryFee.toFixed(2),
+        amex_fee: amexFee > 0 ? amexFee.toFixed(2) : '0',
+        card_brand: cardBrand || 'unknown',
         pricing: `Flat rate $${getCurrentPrice().toFixed(2)} per cup (tax included)`
       },
     });

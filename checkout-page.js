@@ -1,22 +1,35 @@
 const DELIVERY_FEE = 4.99;
 const FREE_DELIVERY_THRESHOLD = 25;
+const AMEX_SURCHARGE_RATE = 0.006; // 0.6% — covers the extra Amex processing cost
 
 let orderType = 'delivery';
 let cartSubtotal = 0;
+let cardBrand = null;
 
 function getDeliveryFee() {
   if (orderType === 'pickup') return 0;
   return cartSubtotal < FREE_DELIVERY_THRESHOLD ? DELIVERY_FEE : 0;
 }
 
-function getFinalTotal() {
+function getBaseTotal() {
   return Math.round((cartSubtotal + getDeliveryFee()) * 100) / 100;
+}
+
+function getAmexFee() {
+  if (cardBrand !== 'amex') return 0;
+  return Math.round(getBaseTotal() * AMEX_SURCHARGE_RATE * 100) / 100;
+}
+
+function getFinalTotal() {
+  return Math.round((getBaseTotal() + getAmexFee()) * 100) / 100;
 }
 
 function updateDeliveryFeeDisplay() {
   const fee = getDeliveryFee();
   const feeRow = document.getElementById('deliveryFeeRow');
   const freeRow = document.getElementById('freeDeliveryRow');
+  const amexRow = document.getElementById('amexFeeRow');
+  const amexDisplay = document.getElementById('amexFeeDisplay');
   const totalEl = document.getElementById('checkoutTotal');
 
   if (orderType === 'pickup') {
@@ -29,6 +42,10 @@ function updateDeliveryFeeDisplay() {
     if (feeRow) feeRow.style.display = 'none';
     if (freeRow) freeRow.style.display = 'flex';
   }
+
+  const amexFee = getAmexFee();
+  if (amexRow) amexRow.style.display = amexFee > 0 ? 'flex' : 'none';
+  if (amexDisplay) amexDisplay.textContent = `$${amexFee.toFixed(2)}`;
 
   if (totalEl) totalEl.textContent = `$${getFinalTotal().toFixed(2)}`;
 }
@@ -196,6 +213,13 @@ async function initializeStripe() {
     cardElement.on('change', (event) => {
       const displayError = document.getElementById('card-errors');
       displayError.textContent = event.error ? event.error.message : '';
+
+      // Detect card brand for Amex surcharge
+      const newBrand = event.brand || null;
+      if (newBrand !== cardBrand) {
+        cardBrand = newBrand;
+        updateDeliveryFeeDisplay();
+      }
     });
   } catch (error) {
     console.error('Stripe initialization error:', error);
@@ -256,6 +280,7 @@ form.addEventListener('submit', async (e) => {
     items: cart.items,
     total: getFinalTotal(),
     deliveryFee: getDeliveryFee(),
+    cardBrand: cardBrand || 'unknown',
   };
 
   try {
