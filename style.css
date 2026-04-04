@@ -3534,7 +3534,7 @@ input[type="radio"]:checked + label,
 
 /* ── Home Page: Mobile One-Screen Layout (≤480px) ──────────────────────── */
 @media (max-width: 480px) {
-  body {
+  body.home-page {
     padding: 0 16px;
     justify-content: space-evenly;
     min-height: 100dvh;
