@@ -644,6 +644,19 @@ pool.query(`
   )
 `).catch(err => console.error('Waitlist table error:', err));
 
+// Create feedback table
+pool.query(`
+  CREATE TABLE IF NOT EXISTS feedback (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(255),
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5) NOT NULL,
+    comment TEXT,
+    flavor VARCHAR(100),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )
+`).catch(err => console.error('Feedback table error:', err));
+
 // Waitlist signup
 app.post('/waitlist', async (req, res) => {
   try {
@@ -654,6 +667,57 @@ app.post('/waitlist', async (req, res) => {
   } catch (err) {
     console.error('Waitlist error:', err);
     res.status(500).json({ error: 'Failed to save' });
+  }
+});
+
+// ─── Feedback API ───────────────────────────────────────────────────────────
+
+// Submit feedback (public)
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const { name, email, rating, comment, flavor } = req.body;
+    if (!rating || rating < 1 || rating > 5) return res.status(400).json({ error: 'Rating 1–5 required' });
+    const result = await pool.query(
+      `INSERT INTO feedback (name, email, rating, comment, flavor, created_at)
+       VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id, created_at`,
+      [name?.trim() || null, email?.trim() || null, rating, comment?.trim() || null, flavor?.trim() || null]
+    );
+    res.json({ success: true, id: result.rows[0].id });
+  } catch (err) {
+    console.error('Feedback submit error:', err);
+    res.status(500).json({ error: 'Failed to save feedback' });
+  }
+});
+
+// Public: get featured reviews (4–5 stars, max 10, newest first)
+app.get('/api/feedback/featured', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, rating, comment, flavor, created_at
+       FROM feedback WHERE rating >= 4
+       ORDER BY created_at DESC LIMIT 10`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Feedback featured error:', err);
+    res.status(500).json({ error: 'Failed to fetch' });
+  }
+});
+
+// Admin: get all feedback (requires ADMIN_PASSWORD)
+app.get('/admin/feedback', async (req, res) => {
+  const auth = req.headers.authorization;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!auth || auth !== `Bearer ${adminPassword}`) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const result = await pool.query(
+      `SELECT id, name, email, rating, comment, flavor, created_at
+       FROM feedback ORDER BY created_at DESC`
+    );
+    res.json({ feedback: result.rows });
+  } catch (err) {
+    console.error('Admin feedback error:', err);
+    res.status(500).json({ error: 'Failed to fetch feedback' });
   }
 });
 

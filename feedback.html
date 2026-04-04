@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Leave a Review — Strong Spoon</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#015A64">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000;
+      color: #EFE8D8;
+      font-family: 'Poppins', sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 40px;
+    }
+
+    /* Header */
+    .fb-header {
+      text-align: center;
+      margin-bottom: 28px;
+      width: 100%;
+    }
+    .fb-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #888;
+      text-decoration: none;
+      font-size: 0.78rem;
+      margin-bottom: 18px;
+      transition: color 0.2s;
+    }
+    .fb-back:hover { color: #015A64; }
+    .fb-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #015A64;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .fb-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 0%, #017d8e 50%, #fff 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s ease-in-out infinite;
+      margin-bottom: 6px;
+    }
+    @keyframes shimmer { 0%,100%{background-position:0% center} 50%{background-position:100% center} }
+    .fb-subtitle {
+      font-size: 0.82rem;
+      color: #777;
+      font-weight: 300;
+    }
+
+    /* Card */
+    .fb-card {
+      background: linear-gradient(175deg, #080f11 0%, #030709 100%);
+      border: 1px solid rgba(1,90,100,0.35);
+      border-radius: 22px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+      position: relative;
+      overflow: hidden;
+    }
+    .fb-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #015A64 30%, #017d8e 50%, #015A64 70%, transparent 100%);
+    }
+
+    /* Star rating */
+    .fb-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .star-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 22px;
+      justify-content: center;
+    }
+    .star-row input[type=radio] { display: none; }
+    .star-row label {
+      font-size: 2.2rem;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: opacity 0.18s, transform 0.18s;
+      filter: grayscale(1);
+    }
+    .star-row:hover label { opacity: 0.3; filter: grayscale(1); }
+    .star-row label:hover,
+    .star-row label:hover ~ label { opacity: 1; filter: none; }
+    .star-row input:checked ~ label { opacity: 0.3; filter: grayscale(1); }
+    .star-row label:has(~ input:checked),
+    .star-row input:checked + label { opacity: 1; filter: none; }
+
+    /* Reverse trick: stars go right-to-left so CSS sibling selector works */
+    .star-row { flex-direction: row-reverse; justify-content: center; }
+    .star-row label:hover,
+    .star-row label:hover ~ label { opacity: 1; filter: none; transform: scale(1.15); }
+
+    /* Selected state via JS class */
+    .star-row label.selected,
+    .star-row label.selected ~ label { opacity: 1; filter: none; }
+
+    /* Fields */
+    .fb-field {
+      margin-bottom: 14px;
+    }
+    .fb-input, .fb-select, .fb-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(1,90,100,0.3);
+      border-radius: 12px;
+      padding: 12px 15px;
+      color: #EFE8D8;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .fb-input:focus, .fb-select:focus, .fb-textarea:focus {
+      border-color: rgba(1,125,142,0.6);
+      background: rgba(1,90,100,0.08);
+    }
+    .fb-select {
+      appearance: none;
+      cursor: pointer;
+    }
+    .fb-select option { background: #0b1416; }
+    .fb-textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.5;
+    }
+    ::placeholder { color: rgba(239,232,216,0.25); }
+
+    /* Submit */
+    .fb-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #013e48 0%, #015A64 60%, #016e7d 100%);
+      border: 1px solid rgba(1,125,142,0.4);
+      border-radius: 14px;
+      padding: 15px;
+      color: #EFE8D8;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.22s;
+      margin-top: 6px;
+      box-shadow: 0 6px 22px rgba(1,62,72,0.5);
+    }
+    .fb-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(1,90,100,0.5); }
+    .fb-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Success */
+    .fb-success {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+    .fb-success-icon { font-size: 3rem; margin-bottom: 12px; }
+    .fb-success h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #EFE8D8;
+      margin-bottom: 8px;
+    }
+    .fb-success p { font-size: 0.82rem; color: #777; line-height: 1.6; }
+    .fb-success a {
+      display: inline-block;
+      margin-top: 18px;
+      color: #017d8e;
+      text-decoration: none;
+      font-size: 0.82rem;
+      border-bottom: 1px solid rgba(1,125,142,0.3);
+      padding-bottom: 2px;
+    }
+
+    /* Rating hint */
+    .rating-hint {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #555;
+      margin-bottom: 20px;
+      min-height: 16px;
+      transition: color 0.2s;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 16px 12px 32px; }
+      .fb-title { font-size: 1.65rem; }
+      .fb-card { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="fb-header">
+    <a href="index.html" class="fb-back">← Back to Strong Spoon</a>
+    <div class="fb-logo">Strong Spoon</div>
+    <h1 class="fb-title">Leave a Review</h1>
+    <p class="fb-subtitle">Your feedback helps us grow stronger</p>
+  </div>
+
+  <div class="fb-card" id="fbCard">
+
+    <!-- Success state (hidden by default) -->
+    <div class="fb-success" id="fbSuccess">
+      <div class="fb-success-icon">🙏</div>
+      <h2>Thank You!</h2>
+      <p>Your review has been received.<br>We really appreciate you taking the time.</p>
+      <a href="Html2.html">← Browse Flavours</a>
+    </div>
+
+    <!-- Form -->
+    <form id="fbForm">
+
+      <label class="fb-label" style="display:block; text-align:center; margin-bottom:12px;">How was your experience?</label>
+
+      <div class="star-row" id="starRow">
+        <input type="radio" name="rating" id="s5" value="5">
+        <label for="s5" data-val="5">⭐</label>
+        <input type="radio" name="rating" id="s4" value="4">
+        <label for="s4" data-val="4">⭐</label>
+        <input type="radio" name="rating" id="s3" value="3">
+        <label for="s3" data-val="3">⭐</label>
+        <input type="radio" name="rating" id="s2" value="2">
+        <label for="s2" data-val="2">⭐</label>
+        <input type="radio" name="rating" id="s1" value="1">
+        <label for="s1" data-val="1">⭐</label>
+      </div>
+
+      <p class="rating-hint" id="ratingHint">Tap a star to rate</p>
+
+      <div class="fb-field">
+        <input class="fb-input" type="text" id="fbName" placeholder="Your name (optional)" maxlength="100">
+      </div>
+
+      <div class="fb-field">
+        <select class="fb-select" id="fbFlavor">
+          <option value="">Which flavour? (optional)</option>
+          <option value="Brownie Issues">🍫 Brownie Issues</option>
+          <option value="Power Mix">🥜 Power Mix</option>
+          <option value="Golden Scoop">🍦 Golden Scoop</option>
+          <option value="Spoon Crumble">🍪 Spoon Crumble</option>
+        </select>
+      </div>
+
+      <div class="fb-field">
+        <textarea class="fb-textarea" id="fbComment" placeholder="Tell us about your experience…" maxlength="500"></textarea>
+      </div>
+
+      <button type="submit" class="fb-submit" id="fbSubmit" disabled>Submit Review</button>
+
+    </form>
+  </div>
+
+  <script>
+    const hints = ['','😞 That's tough to hear','😕 We'll do better','😊 Glad you liked it','😄 That's great!','🤩 Amazing — thank you!'];
+    const starLabels = document.querySelectorAll('#starRow label');
+    const ratingInputs = document.querySelectorAll('#starRow input[type=radio]');
+    const submitBtn = document.getElementById('fbSubmit');
+    const ratingHint = document.getElementById('ratingHint');
+    let selectedRating = 0;
+
+    // Star click handling
+    starLabels.forEach(lbl => {
+      lbl.addEventListener('click', () => {
+        const val = parseInt(lbl.dataset.val);
+        selectedRating = val;
+        updateStars(val);
+        submitBtn.disabled = false;
+        ratingHint.textContent = hints[val];
+        ratingHint.style.color = val >= 4 ? '#5ec463' : val === 3 ? '#ffc107' : '#f55';
+      });
+    });
+
+    function updateStars(val) {
+      // star-row is reversed, so label with data-val >= selected gets .selected
+      starLabels.forEach(lbl => {
+        const lblVal = parseInt(lbl.dataset.val);
+        lbl.style.opacity = lblVal <= val ? '1' : '0.25';
+        lbl.style.filter = lblVal <= val ? 'none' : 'grayscale(1)';
+        lbl.style.transform = lblVal <= val ? 'scale(1.1)' : 'scale(1)';
+      });
+    }
+
+    document.getElementById('fbForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!selectedRating) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      const body = {
+        rating: selectedRating,
+        name: document.getElementById('fbName').value.trim() || null,
+        flavor: document.getElementById('fbFlavor').value || null,
+        comment: document.getElementById('fbComment').value.trim() || null
+      };
+
+      try {
+        const res = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error('Server error');
+        document.getElementById('fbForm').style.display = 'none';
+        document.getElementById('fbSuccess').style.display = 'block';
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Review';
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  </script>
+</body>
+</html>

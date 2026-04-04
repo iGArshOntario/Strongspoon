@@ -631,6 +631,11 @@
         <p style="color: #888; text-align: center;">Loading waitlist...</p>
       </div>
     </div>
+
+    <h2 class="section-title">⭐ Customer Feedback</h2>
+    <div class="past-deliveries-section" id="feedbackSection">
+      <p style="color: #888; text-align: center;">Loading feedback...</p>
+    </div>
   </div>
 
   <div id="deliveryProofModal" class="modal">
@@ -800,6 +805,7 @@
         loadAnalytics('all');
         loadPastDeliveries();
         loadWaitlist();
+        loadFeedback();
         
         // Render orders table
         const container = document.getElementById('ordersContainer');
@@ -1076,6 +1082,55 @@
       }
     }
 
+    async function loadFeedback() {
+      const section = document.getElementById('feedbackSection');
+      if (!section) return;
+      try {
+        const response = await fetch('/admin/feedback', {
+          headers: { 'Authorization': `Bearer ${adminCredentials ? atob(adminCredentials).split(':')[1] : ''}` }
+        });
+        if (!response.ok) throw new Error('Unauthorized');
+        const data = await response.json();
+        const items = data.feedback || [];
+
+        if (items.length === 0) {
+          section.innerHTML = '<p style="color:#888;text-align:center;">No feedback yet</p>';
+          return;
+        }
+
+        const avgRating = (items.reduce((s, f) => s + f.rating, 0) / items.length).toFixed(1);
+        const stars = r => '⭐'.repeat(r) + '☆'.repeat(5 - r);
+
+        section.innerHTML = `
+          <div style="margin-bottom:14px; color:#aaa; font-size:0.88rem; display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+            <span>${items.length} review${items.length !== 1 ? 's' : ''}</span>
+            <span style="color:#ffc107;">⭐ ${avgRating} average</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            ${items.map(f => `
+              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 18px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+                  <div>
+                    <span style="color:#ffc107;font-size:0.9rem;">${stars(f.rating)}</span>
+                    ${f.flavor ? `<span style="font-size:0.7rem;color:#017d8e;background:rgba(1,90,100,0.15);padding:2px 8px;border-radius:8px;margin-left:8px;">${f.flavor}</span>` : ''}
+                  </div>
+                  <div style="color:#555;font-size:0.75rem;white-space:nowrap;">
+                    ${new Date(f.created_at).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}
+                  </div>
+                </div>
+                ${f.comment ? `<p style="margin-top:8px;font-size:0.85rem;color:rgba(239,232,216,0.75);line-height:1.5;font-style:italic;">"${f.comment}"</p>` : ''}
+                <div style="margin-top:6px;font-size:0.78rem;color:#555;">
+                  — ${f.name || 'Anonymous'}${f.email ? ` · <a href="mailto:${f.email}" style="color:#017d8e;text-decoration:none;">${f.email}</a>` : ''}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (error) {
+        section.innerHTML = '<p style="color:#888;text-align:center;">Error loading feedback</p>';
+      }
+    }
+
     // Note: loadAnalytics and loadPastDeliveries are now called from within loadOrders
     // after successful authentication to ensure credentials are available
     
@@ -1087,6 +1142,7 @@
                    document.querySelector('.range-tab.active')?.textContent.includes('7') ? '7d' : '14d');
       loadPastDeliveries();
       loadWaitlist();
+      loadFeedback();
     }, 30000);
   </script>
 </body>
