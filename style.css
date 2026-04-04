@@ -3513,14 +3513,14 @@ input[type="radio"]:checked + label,
 .drop-status-banner {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 18px;
-  border-radius: 30px;
-  font-size: 0.88rem;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.3px;
-  margin: 14px auto 0;
-  border: 1.5px solid transparent;
+  margin: 10px auto 0;
+  border: 1px solid transparent;
   animation: fadeIn 0.5s ease;
   cursor: default;
 }
@@ -3576,11 +3576,6 @@ input[type="radio"]:checked + label,
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0 6px 20px rgba(0,191,165,0.35);
-  }
-  .drop-status-banner {
-    font-size: 0.72rem !important;
-    padding: 5px 13px !important;
-    margin-bottom: 10px !important;
   }
 }
 
@@ -3638,13 +3633,27 @@ input[type="radio"]:checked + label,
     font-size: 0.55rem;
     padding: 3px 8px;
   }
-  .flavours-page .back-link {
-    font-size: 0.72rem;
-    margin-top: 0;
-    display: block;
-    text-align: center;
+  .flavours-page .back-link,
+  .flavours-page .feedback-nudge,
+  .flavours-page .reviews-section {
+    display: none !important;
   }
 }
+
+/* Review nav link — floating top-left on flavours page */
+.review-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(239,232,216,0.45);
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+  padding: 6px 2px;
+  letter-spacing: 0.2px;
+}
+.review-nav-link:hover { color: #017d8e; }
 
 /* ── Product Detail Pages: Mobile No-Scroll Layout (≤480px) ─────────────── */
 @media (max-width: 480px) {
