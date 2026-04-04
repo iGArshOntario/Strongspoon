@@ -1,4 +1,4 @@
-const CACHE_NAME = 'strong-spoon-v41';
+const CACHE_NAME = 'strong-spoon-v42';
 const urlsToCache = [
   '/',
   '/index.html',

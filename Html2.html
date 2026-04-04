@@ -14,7 +14,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <a href="feedback.html" class="review-nav-link" style="position:fixed;top:28px;left:18px;z-index:1000;">⭐ Review</a>
   <div class="cart-nav">
     <a href="cart.html" class="cart-icon">
       <span class="cart-emoji">🛒</span><span class="cart-count">0</span>
@@ -26,7 +25,6 @@
       <div class="header-decoration"></div>
       <h1 class="premium-title">Our Flavours</h1>
       <p class="premium-subtitle">Handcrafted with love, packed with protein</p>
-      <div id="dropStatusBanner" class="drop-status-banner" style="display:none; margin-top:14px;"></div>
       <div class="header-decoration" style="margin-top:18px;"></div>
     </div>
 
@@ -62,16 +60,6 @@
 
 
     
-    <!-- Featured Reviews -->
-    <div class="reviews-section" id="reviewsSection" style="display:none;">
-      <div class="reviews-header">
-        <span class="reviews-stars-display" id="reviewsAvg"></span>
-        <span class="reviews-count" id="reviewsCount"></span>
-      </div>
-      <div class="reviews-carousel" id="reviewsCarousel"></div>
-    </div>
-
-    <a href="feedback.html" class="feedback-nudge">⭐ Leave a Review</a>
     <a href="index.html" class="back-link">← Back to Home</a>
   </section>
 
@@ -110,19 +98,9 @@
 
     var _dropData = { status: 'green', nextDropTime: '' };
 
-    // Live drop status banner
+    // Fetch drop status (needed for sold-out popup intercept)
     fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
       _dropData = d;
-      var banner = document.getElementById('dropStatusBanner');
-      if (!banner) return;
-      var labels = {
-        green:  '🟢 Accepting Orders Now',
-        yellow: '⚡ Hurry Up! Limited Slots Left Today',
-        red:    '🔴 STATUS: SOLD OUT'
-      };
-      banner.textContent = labels[d.status] || '';
-      banner.className = 'drop-status-banner status-' + d.status;
-      banner.style.display = 'inline-flex';
     }).catch(function(){});
 
     // Sold-out popup logic
@@ -176,31 +154,5 @@
 
   <script src="products.js"></script>
   <script src="script.js"></script>
-  <script>
-    // Load featured reviews
-    fetch('/api/feedback/featured').then(r => r.json()).then(reviews => {
-      if (!reviews || !reviews.length) return;
-      const section = document.getElementById('reviewsSection');
-      const carousel = document.getElementById('reviewsCarousel');
-      const avgEl = document.getElementById('reviewsAvg');
-      const countEl = document.getElementById('reviewsCount');
-
-      const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
-      avgEl.textContent = '⭐'.repeat(Math.round(avg)) + ' ' + avg;
-      countEl.textContent = reviews.length + ' review' + (reviews.length !== 1 ? 's' : '');
-
-      reviews.slice(0, 6).forEach(r => {
-        const card = document.createElement('div');
-        card.className = 'review-card';
-        const stars = '⭐'.repeat(r.rating);
-        const name = r.name || 'Anonymous';
-        const flavor = r.flavor ? `<span class="review-flavor">${r.flavor}</span>` : '';
-        const comment = r.comment ? `<p class="review-comment">"${r.comment}"</p>` : '';
-        card.innerHTML = `<div class="review-top"><span class="review-stars">${stars}</span>${flavor}</div>${comment}<div class="review-name">— ${name}</div>`;
-        carousel.appendChild(card);
-      });
-      section.style.display = 'block';
-    }).catch(() => {});
-  </script>
 </body>
 </html>
