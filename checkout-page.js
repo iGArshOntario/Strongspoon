@@ -1,4 +1,37 @@
+const DELIVERY_FEE = 4.99;
+const FREE_DELIVERY_THRESHOLD = 25;
+
 let orderType = 'delivery';
+let cartSubtotal = 0;
+
+function getDeliveryFee() {
+  if (orderType === 'pickup') return 0;
+  return cartSubtotal < FREE_DELIVERY_THRESHOLD ? DELIVERY_FEE : 0;
+}
+
+function getFinalTotal() {
+  return Math.round((cartSubtotal + getDeliveryFee()) * 100) / 100;
+}
+
+function updateDeliveryFeeDisplay() {
+  const fee = getDeliveryFee();
+  const feeRow = document.getElementById('deliveryFeeRow');
+  const freeRow = document.getElementById('freeDeliveryRow');
+  const totalEl = document.getElementById('checkoutTotal');
+
+  if (orderType === 'pickup') {
+    if (feeRow) feeRow.style.display = 'none';
+    if (freeRow) freeRow.style.display = 'none';
+  } else if (fee > 0) {
+    if (feeRow) feeRow.style.display = 'flex';
+    if (freeRow) freeRow.style.display = 'none';
+  } else {
+    if (feeRow) feeRow.style.display = 'none';
+    if (freeRow) freeRow.style.display = 'flex';
+  }
+
+  if (totalEl) totalEl.textContent = `$${getFinalTotal().toFixed(2)}`;
+}
 
 function setOrderType(type) {
   orderType = type;
@@ -21,6 +54,7 @@ function setOrderType(type) {
     pickupFields.style.display = 'block';
     addressField.required = false;
   }
+  updateDeliveryFeeDisplay();
 }
 
 window.setOrderType = setOrderType;
@@ -68,7 +102,8 @@ function renderCheckoutItems() {
   }).join('');
 
   const total = cart.getTotal();
-  totalEl.textContent = `$${total.toFixed(2)}`;
+  cartSubtotal = total;
+  updateDeliveryFeeDisplay();
 
   const savingsEl = document.getElementById('checkoutSavingsBanner');
   if (savingsEl) {
@@ -217,7 +252,8 @@ form.addEventListener('submit', async (e) => {
     deliveryDate,
     deliveryTimeSlot,
     items: cart.items,
-    total: amounts.total,
+    total: getFinalTotal(),
+    deliveryFee: getDeliveryFee(),
   };
 
   try {

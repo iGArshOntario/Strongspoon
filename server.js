@@ -823,7 +823,9 @@ app.post('/create-payment-intent', async (req, res) => {
     }
 
     const bundleBase = getBundleBaseTotal(totalCups);
-    const serverTotal = Math.round((bundleBase + toppingsFee) * 100) / 100;
+    const itemsSubtotal = Math.round((bundleBase + toppingsFee) * 100) / 100;
+    const deliveryFee = (orderType === 'pickup') ? 0 : (itemsSubtotal < 25 ? 4.99 : 0);
+    const serverTotal = Math.round((itemsSubtotal + deliveryFee) * 100) / 100;
     const amountInCents = Math.round(serverTotal * 100);
 
     const paymentIntent = await stripe.paymentIntents.create({
@@ -839,6 +841,7 @@ app.post('/create-payment-intent', async (req, res) => {
         delivery_time_slot: deliveryTimeSlot || '',
         items: JSON.stringify(validatedItems),
         total: serverTotal.toFixed(2),
+        delivery_fee: deliveryFee.toFixed(2),
         pricing: `Flat rate $${getCurrentPrice().toFixed(2)} per cup (tax included)`
       },
     });

@@ -176,6 +176,34 @@
       border-radius: 10px !important;
       font-size: 0.9rem !important;
     }
+    .pickup-free-badge {
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      color: #EFE8D8;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    .checkout-fee-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 2px;
+    }
+    .checkout-fee-label {
+      font-size: 0.82rem;
+      color: rgba(239,232,216,0.5);
+    }
+    .checkout-fee-amount {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(239,232,216,0.8);
+    }
 
     /* Premium date input */
     .date-input-wrapper {
@@ -328,6 +356,14 @@
         <div id="checkoutSavingsBanner" class="bundle-savings-banner" style="display:none;"></div>
 
         <div class="checkout-summary">
+          <div id="deliveryFeeRow" class="checkout-fee-row" style="display:none;">
+            <span class="checkout-fee-label">🚗 Delivery fee</span>
+            <span class="checkout-fee-amount" id="deliveryFeeDisplay">$4.99</span>
+          </div>
+          <div id="freeDeliveryRow" class="checkout-fee-row" style="display:none;">
+            <span class="checkout-fee-label">🚗 Delivery</span>
+            <span class="checkout-fee-amount" style="color:#4caf50;">FREE</span>
+          </div>
           <div class="checkout-total-main">
             <span class="checkout-total-label">Total</span>
             <div class="checkout-total-right">
@@ -382,7 +418,7 @@
             <label>Order Type *</label>
             <div class="order-type-toggle">
               <button type="button" id="deliveryBtn" class="toggle-btn active" onclick="setOrderType('delivery')">🚗 Delivery</button>
-              <button type="button" id="pickupBtn" class="toggle-btn" onclick="setOrderType('pickup')">🏪 Pickup</button>
+              <button type="button" id="pickupBtn" class="toggle-btn" onclick="setOrderType('pickup')">🏪 Pickup <span class="pickup-free-badge">FREE</span></button>
             </div>
           </div>
 
