@@ -3583,19 +3583,20 @@ input[type="radio"]:checked + label,
   }
 }
 
-/* ── Flavours Listing Page: Mobile No-Scroll Layout (≤480px) ─────────────── */
+/* ── Flavours Listing Page: Mobile Layout (≤480px) ─────────────────────── */
 @media (max-width: 480px) {
   .flavours-page {
-    min-height: calc(100dvh - 60px);
     display: flex;
     flex-direction: column;
-    padding: 16px 14px 0;
+    align-items: center;
+    padding: 12px 14px 20px;
     box-sizing: border-box;
     width: 100%;
   }
   .premium-header {
     margin-bottom: 14px;
     padding-top: 6px;
+    width: 100%;
   }
   .premium-title {
     font-size: 1.8rem;
@@ -3613,8 +3614,8 @@ input[type="radio"]:checked + label,
   }
   .flavour-grid {
     gap: 10px;
-    margin-bottom: 0;
-    flex: 1;
+    margin-bottom: 16px;
+    width: 100%;
   }
   .flavour-card {
     padding: 18px 12px;
@@ -3641,10 +3642,27 @@ input[type="radio"]:checked + label,
     background: rgba(0,191,165,0.12);
     color: #00bfa5;
   }
-  .flavours-page .back-link,
   .flavours-page .feedback-nudge,
   .flavours-page .reviews-section {
     display: none !important;
+  }
+  .flavours-back-home {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #015A64, #017d8e) !important;
+    color: #EFE8D8 !important;
+    border: none !important;
+    border-radius: 50px !important;
+    padding: 13px 32px !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px;
+    text-decoration: none !important;
+    box-shadow: 0 6px 20px rgba(0,191,165,0.3);
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
   }
 }
 
@@ -3894,6 +3912,34 @@ input[type="radio"]:checked + label,
 .product-top-nav .cart-icon .cart-emoji {
   font-size: 1.05rem;
 }
+/* ── Product Page — Teal Back-to-Flavours Button ────────────────────────── */
+.product-back-flavours {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid rgba(1,125,142,0.5);
+  color: #017d8e;
+  border-radius: 50px;
+  padding: 11px 28px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.22s;
+  margin-top: 10px;
+  letter-spacing: 0.2px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+.product-back-flavours:hover {
+  background: linear-gradient(135deg, #015A64, #017d8e);
+  color: #EFE8D8;
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(0,191,165,0.3);
+}
+
 @media (max-width: 480px) {
   .product-top-nav {
     padding: 12px 14px 0;
@@ -3906,9 +3952,13 @@ input[type="radio"]:checked + label,
     padding-top: 0 !important;
     justify-content: flex-start;
     gap: 0;
-    padding-bottom: 10px;
+    padding-bottom: 14px;
   }
   .product-container .product-title {
     margin-top: 8px;
+  }
+  .product-back-flavours {
+    padding: 11px 24px;
+    font-size: 0.85rem;
   }
 }
