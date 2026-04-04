@@ -91,41 +91,38 @@
     .fb-label {
       font-size: 0.72rem;
       font-weight: 600;
-      color: #888;
+      color: #aaa;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
       display: block;
     }
     .star-row {
       display: flex;
-      gap: 8px;
-      margin-bottom: 22px;
+      gap: 6px;
+      margin-bottom: 20px;
       justify-content: center;
     }
-    .star-row input[type=radio] { display: none; }
-    .star-row label {
-      font-size: 2.2rem;
+    .star {
+      font-size: 2.4rem;
       cursor: pointer;
-      opacity: 0.3;
-      transition: opacity 0.18s, transform 0.18s;
+      opacity: 0.25;
       filter: grayscale(1);
+      transition: opacity 0.15s, transform 0.15s, filter 0.15s;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      line-height: 1;
     }
-    .star-row:hover label { opacity: 0.3; filter: grayscale(1); }
-    .star-row label:hover,
-    .star-row label:hover ~ label { opacity: 1; filter: none; }
-    .star-row input:checked ~ label { opacity: 0.3; filter: grayscale(1); }
-    .star-row label:has(~ input:checked),
-    .star-row input:checked + label { opacity: 1; filter: none; }
-
-    /* Reverse trick: stars go right-to-left so CSS sibling selector works */
-    .star-row { flex-direction: row-reverse; justify-content: center; }
-    .star-row label:hover,
-    .star-row label:hover ~ label { opacity: 1; filter: none; transform: scale(1.15); }
-
-    /* Selected state via JS class */
-    .star-row label.selected,
-    .star-row label.selected ~ label { opacity: 1; filter: none; }
+    .star.lit {
+      opacity: 1;
+      filter: none;
+      transform: scale(1.12);
+    }
+    .star.preview {
+      opacity: 0.75;
+      filter: none;
+    }
 
     /* Fields */
     .fb-field {
@@ -150,14 +147,16 @@
     .fb-select {
       appearance: none;
       cursor: pointer;
+      color: rgba(239,232,216,0.6);
     }
-    .fb-select option { background: #0b1416; }
+    .fb-select.chosen { color: #EFE8D8; }
+    .fb-select option { background: #0b1416; color: #EFE8D8; }
     .fb-textarea {
       resize: vertical;
       min-height: 90px;
       line-height: 1.5;
     }
-    ::placeholder { color: rgba(239,232,216,0.25); }
+    ::placeholder { color: rgba(239,232,216,0.4); }
 
     /* Submit */
     .fb-submit {
@@ -246,16 +245,11 @@
       <label class="fb-label" style="display:block; text-align:center; margin-bottom:12px;">How was your experience?</label>
 
       <div class="star-row" id="starRow">
-        <input type="radio" name="rating" id="s5" value="5">
-        <label for="s5" data-val="5">⭐</label>
-        <input type="radio" name="rating" id="s4" value="4">
-        <label for="s4" data-val="4">⭐</label>
-        <input type="radio" name="rating" id="s3" value="3">
-        <label for="s3" data-val="3">⭐</label>
-        <input type="radio" name="rating" id="s2" value="2">
-        <label for="s2" data-val="2">⭐</label>
-        <input type="radio" name="rating" id="s1" value="1">
-        <label for="s1" data-val="1">⭐</label>
+        <span class="star" data-val="1">⭐</span>
+        <span class="star" data-val="2">⭐</span>
+        <span class="star" data-val="3">⭐</span>
+        <span class="star" data-val="4">⭐</span>
+        <span class="star" data-val="5">⭐</span>
       </div>
 
       <p class="rating-hint" id="ratingHint">Tap a star to rate</p>
@@ -284,38 +278,79 @@
   </div>
 
   <script>
-    const hints = ['','😞 That's tough to hear','😕 We'll do better','😊 Glad you liked it','😄 That's great!','🤩 Amazing — thank you!'];
-    const starLabels = document.querySelectorAll('#starRow label');
-    const ratingInputs = document.querySelectorAll('#starRow input[type=radio]');
+    const hints = ['', '😞 That\'s tough to hear', '😕 We\'ll do better', '😊 Glad you liked it', '😄 That\'s great!', '🤩 Amazing — thank you!'];
+    const stars = Array.from(document.querySelectorAll('.star'));
     const submitBtn = document.getElementById('fbSubmit');
     const ratingHint = document.getElementById('ratingHint');
+    const flavorSelect = document.getElementById('fbFlavor');
     let selectedRating = 0;
 
-    // Star click handling
-    starLabels.forEach(lbl => {
-      lbl.addEventListener('click', () => {
-        const val = parseInt(lbl.dataset.val);
-        selectedRating = val;
-        updateStars(val);
-        submitBtn.disabled = false;
-        ratingHint.textContent = hints[val];
-        ratingHint.style.color = val >= 4 ? '#5ec463' : val === 3 ? '#ffc107' : '#f55';
-      });
-    });
-
-    function updateStars(val) {
-      // star-row is reversed, so label with data-val >= selected gets .selected
-      starLabels.forEach(lbl => {
-        const lblVal = parseInt(lbl.dataset.val);
-        lbl.style.opacity = lblVal <= val ? '1' : '0.25';
-        lbl.style.filter = lblVal <= val ? 'none' : 'grayscale(1)';
-        lbl.style.transform = lblVal <= val ? 'scale(1.1)' : 'scale(1)';
+    function paintStars(upTo) {
+      stars.forEach(s => {
+        const v = parseInt(s.dataset.val);
+        if (v <= upTo) {
+          s.classList.add('lit');
+          s.classList.remove('preview');
+        } else {
+          s.classList.remove('lit', 'preview');
+        }
       });
     }
 
+    // Mouse hover (desktop)
+    stars.forEach(s => {
+      s.addEventListener('mouseenter', () => {
+        if (selectedRating === 0) {
+          const v = parseInt(s.dataset.val);
+          stars.forEach(st => {
+            const sv = parseInt(st.dataset.val);
+            st.classList.toggle('preview', sv <= v);
+            st.classList.remove('lit');
+          });
+        }
+      });
+      s.addEventListener('mouseleave', () => {
+        if (selectedRating === 0) {
+          stars.forEach(st => st.classList.remove('preview'));
+        }
+      });
+    });
+
+    // Click / tap — works on both mobile and desktop
+    stars.forEach(s => {
+      s.addEventListener('click', (e) => {
+        e.preventDefault();
+        const val = parseInt(s.dataset.val);
+        // Allow tapping same star to deselect
+        if (selectedRating === val) {
+          selectedRating = 0;
+          paintStars(0);
+          submitBtn.disabled = true;
+          ratingHint.textContent = 'Tap a star to rate';
+          ratingHint.style.color = '#555';
+        } else {
+          selectedRating = val;
+          paintStars(val);
+          submitBtn.disabled = false;
+          ratingHint.textContent = hints[val];
+          ratingHint.style.color = val >= 4 ? '#5ec463' : val === 3 ? '#ffc107' : '#f55';
+        }
+      });
+    });
+
+    // Flavor select: brighten text once a real choice is made
+    flavorSelect.addEventListener('change', () => {
+      flavorSelect.classList.toggle('chosen', flavorSelect.value !== '');
+    });
+
+    // Form submit
     document.getElementById('fbForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!selectedRating) return;
+      if (!selectedRating) {
+        ratingHint.textContent = 'Please pick a star rating first';
+        ratingHint.style.color = '#f55';
+        return;
+      }
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
@@ -323,7 +358,7 @@
       const body = {
         rating: selectedRating,
         name: document.getElementById('fbName').value.trim() || null,
-        flavor: document.getElementById('fbFlavor').value || null,
+        flavor: flavorSelect.value || null,
         comment: document.getElementById('fbComment').value.trim() || null
       };
 
