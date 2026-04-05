@@ -208,6 +208,10 @@ if (!process.env.RESEND_API_KEY) {
 // Owner alert email
 const OWNER_EMAIL = 'Strongspoon.ca@gmail.com';
 
+// Sender address — set RESEND_FROM_EMAIL secret once your domain is verified in Resend.
+// Without it, Resend's test domain only delivers to your own account email.
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Strong Spoon <orders@resend.dev>';
+
 async function sendOwnerAlertEmail(orderData) {
   if (!resend) return { success: false };
   try {
@@ -255,7 +259,7 @@ th{background:#162c2f;padding:8px 12px;text-align:left;font-size:11px;text-trans
 </div></div></body></html>`;
 
     await resend.emails.send({
-      from: 'Strong Spoon <orders@resend.dev>',
+      from: FROM_EMAIL,
       to: [OWNER_EMAIL],
       subject: `🛎 New Order #${orderData.order_number} — $${orderData.total_amount} CAD`,
       html
@@ -405,7 +409,7 @@ async function sendOrderConfirmation(orderData) {
     }
 
     const { data, error } = await resend.emails.send({
-      from: 'Strong Spoon <orders@resend.dev>',
+      from: FROM_EMAIL,
       to: [orderData.customer_email],
       subject: `Order Confirmed ✓ — ${orderData.order_number}`,
       html: emailHTML,
@@ -579,7 +583,7 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
     `;
 
     const emailOptions = {
-      from: 'Strong Spoon <orders@resend.dev>',
+      from: FROM_EMAIL,
       to: [orderData.customer_email],
       subject: `✅ Delivered! Your Order ${orderData.order_number} Has Arrived`,
       html: emailHTML,
@@ -1019,7 +1023,7 @@ app.post('/api/drop-status', async (req, res) => {
         for (const row of waitlist.rows) {
           try {
             await resend.emails.send({
-              from: 'Strong Spoon <orders@resend.dev>',
+              from: FROM_EMAIL,
               to: [row.email],
               subject: '💪 Fresh Batch Is Ready — Order Now!',
               html: `<!DOCTYPE html>
@@ -1772,7 +1776,7 @@ async function startServer() {
     } catch(e) { console.error('Test PDF error:', e.message); }
 
     const { data, error } = await resend.emails.send({
-      from: 'Strong Spoon <orders@resend.dev>',
+      from: FROM_EMAIL,
       to: [to],
       subject: '📧 Strong Spoon — Sample Email Design',
       html,
