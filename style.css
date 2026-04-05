@@ -307,7 +307,7 @@ body {
   margin: 15px 0;
   letter-spacing: 3px;
   text-transform: uppercase;
-  background: linear-gradient(135deg, #EFE8D8 0%, #d4a843 35%, #f5c842 55%, #c8941e 75%, #EFE8D8 100%);
+  background: linear-gradient(135deg, #015A64 0%, #f5c842 35%, #f5d842 55%, #017d8e 80%, #015A64 100%);
   background-size: 250% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -393,8 +393,8 @@ body {
   font-size: 2.2rem;
   width: 66px;
   height: 66px;
-  background: rgba(1,90,100,0.15);
-  border: 1px solid rgba(1,90,100,0.28);
+  background: transparent;
+  border: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
