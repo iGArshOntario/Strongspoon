@@ -340,8 +340,8 @@ body {
 }
 
 .flavour-card {
-  background: linear-gradient(160deg, #0d2225 0%, #050f12 100%);
-  border: 1px solid rgba(1,90,100,0.25);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.09);
   border-radius: 22px;
   padding: 28px 18px 22px;
   text-decoration: none;
@@ -3227,17 +3227,12 @@ a.pricing-tier {
   color: #017d8e !important;
 }
 
-/* Flavours page back-link: hidden until user scrolls */
+/* Flavours page back-link: always visible, pushed to bottom */
 .flavours-page .back-link {
-  opacity: 0;
-  transform: translateY(6px);
-  pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-.flavours-page .back-link.visible {
   opacity: 1;
-  transform: translateY(0);
   pointer-events: auto;
+  margin-top: 32px;
+  margin-bottom: 16px;
 }
 
 /* Ingredients heading — teal with left accent */

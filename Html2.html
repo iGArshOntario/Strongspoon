@@ -120,14 +120,6 @@
     refreshDropStatus();
     setInterval(refreshDropStatus, 30000);
 
-    // Back-link: reveal on scroll
-    var backLink = document.querySelector('.flavours-page .back-link');
-    window.addEventListener('scroll', function() {
-      if (!backLink) return;
-      if (window.scrollY > 40) backLink.classList.add('visible');
-      else backLink.classList.remove('visible');
-    }, { passive: true });
-
     // Intercept all flavour card clicks when sold out
     document.getElementById('flavour-grid').addEventListener('click', function(e) {
       if (_dropData.status !== 'red') return;
