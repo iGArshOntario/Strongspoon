@@ -204,10 +204,10 @@ body {
   max-width: 700px;
   margin-top: 30px;
   margin-bottom: 30px;
-  font-size: 0.85rem;
+  font-size: 0.97rem;
   font-weight: 300;
   color: #EFE8D8;
-  line-height: 1.6;
+  line-height: 1.65;
   animation: fadeIn 1s ease-out 0.5s both;
 }
 
@@ -219,7 +219,7 @@ body {
   .about {
     margin-top: 20px;
     margin-bottom: 20px;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
   
   .about p {
@@ -3517,10 +3517,10 @@ input[type="radio"]:checked + label,
 .drop-status-banner {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 11px;
+  gap: 4px;
+  padding: 3px 9px;
   border-radius: 20px;
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.3px;
   margin: 10px auto 0;
