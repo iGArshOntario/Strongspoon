@@ -340,68 +340,119 @@ body {
 }
 
 .flavour-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.3) 100%);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 25px 15px;
+  background: linear-gradient(160deg, #0d2225 0%, #050f12 100%);
+  border: 1px solid rgba(1,90,100,0.25);
+  border-radius: 22px;
+  padding: 28px 18px 22px;
   text-decoration: none;
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+  animation: cardFadeUp 0.5s ease both;
+}
+.flavour-card:nth-child(1) { animation-delay: 0.06s; }
+.flavour-card:nth-child(2) { animation-delay: 0.12s; }
+.flavour-card:nth-child(3) { animation-delay: 0.18s; }
+.flavour-card:nth-child(4) { animation-delay: 0.24s; }
+@keyframes cardFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .flavour-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(0,191,165,0.1) 0%, transparent 50%);
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #015A64 30%, #017d8e 70%, transparent);
+  border-radius: 22px 22px 0 0;
+}
+
+.flavour-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(1,90,100,0.12) 0%, transparent 55%);
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.35s ease;
 }
 
 .flavour-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(0,191,165,0.5);
-  box-shadow: 0 15px 40px rgba(0,191,165,0.2);
+  transform: translateY(-7px);
+  border-color: rgba(1,125,142,0.5);
+  box-shadow: 0 24px 52px rgba(1,90,100,0.28), 0 0 0 1px rgba(1,125,142,0.1);
 }
 
-.flavour-card:hover::before {
+.flavour-card:hover::after {
   opacity: 1;
 }
 
 .flavour-icon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  font-size: 2.2rem;
+  width: 66px;
+  height: 66px;
+  background: rgba(1,90,100,0.15);
+  border: 1px solid rgba(1,90,100,0.28);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+.flavour-card:hover .flavour-icon {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(1,125,142,0.25);
 }
 
 .flavour-name {
   font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #EFE8D8;
   margin-bottom: 5px;
+  position: relative;
+  z-index: 1;
 }
 
 .flavour-desc {
-  font-size: 0.75rem;
-  color: #aaa;
-  margin-bottom: 10px;
+  font-size: 0.74rem;
+  color: rgba(239,232,216,0.42);
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 .flavour-tag {
   display: inline-block;
-  background: rgba(0,191,165,0.2);
+  background: rgba(1,90,100,0.2);
   color: #017d8e;
-  font-size: 0.6rem;
-  font-weight: 600;
-  padding: 4px 10px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  padding: 4px 11px;
   border-radius: 20px;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
+  position: relative;
+  z-index: 1;
+}
+
+.flavour-arrow {
+  display: block;
+  color: rgba(1,125,142,0.4);
+  font-size: 0.9rem;
+  margin-top: 12px;
+  transition: transform 0.25s ease, color 0.25s ease;
+  position: relative;
+  z-index: 1;
+}
+.flavour-card:hover .flavour-arrow {
+  transform: translateX(5px);
+  color: #017d8e;
 }
 
 .price-badge {
@@ -3176,6 +3227,19 @@ a.pricing-tier {
   color: #017d8e !important;
 }
 
+/* Flavours page back-link: hidden until user scrolls */
+.flavours-page .back-link {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.flavours-page .back-link.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 /* Ingredients heading — teal with left accent */
 .ingredients h3 {
   color: #017d8e !important;
@@ -3619,23 +3683,30 @@ input[type="radio"]:checked + label,
     margin-bottom: 0;
   }
   .flavour-card {
-    padding: 14px 10px;
+    padding: 18px 12px 16px;
+    border-radius: 18px;
   }
   .flavour-icon {
-    font-size: 1.8rem;
-    margin-bottom: 5px;
+    font-size: 1.7rem;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 10px;
   }
   .flavour-name {
-    font-size: 0.85rem;
-    margin-bottom: 2px;
+    font-size: 0.88rem;
+    margin-bottom: 3px;
   }
   .flavour-desc {
     font-size: 0.62rem;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
   }
   .flavour-tag {
-    font-size: 0.55rem;
+    font-size: 0.52rem;
     padding: 3px 8px;
+  }
+  .flavour-arrow {
+    font-size: 0.8rem;
+    margin-top: 8px;
   }
   .flavours-page .back-link {
     font-size: 0.72rem;
