@@ -59,10 +59,31 @@
       </a>
     </div>
 
-
-    
     <a href="index.html" class="back-link">← Back to Home</a>
   </section>
+
+  <!-- Sold-Out Popup (same as home page) -->
+  <div class="soldout-overlay" id="soldoutOverlay">
+    <div class="soldout-modal">
+      <div class="soldout-modal-header">
+        <span class="soldout-icon">🔴</span>
+        <h2 class="soldout-title">This Drop is Sold Out</h2>
+        <p class="soldout-desc">We believe in serving it fresh.</p>
+      </div>
+      <div class="soldout-modal-body">
+        <p class="soldout-next" id="soldoutNextTime"></p>
+        <button class="soldout-notify-btn" id="soldoutNotifyBtn">🔔 Notify Me for Next Drop</button>
+        <div class="soldout-email-form" id="soldoutEmailForm" style="display:none;">
+          <span class="soldout-email-label">Enter your email below</span>
+          <input type="email" id="soldoutEmail" placeholder="your@email.com" />
+          <button class="soldout-email-submit" id="soldoutEmailSubmit">Send Me an Alert →</button>
+        </div>
+        <p class="soldout-success" id="soldoutSuccess" style="display:none;"></p>
+        <hr class="soldout-divider">
+        <button class="soldout-close-btn" id="soldoutCloseBtn">✕ Close for now</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const launchDate = new Date('2026-04-10T08:00:00-05:00').getTime();
@@ -74,19 +95,70 @@
       window.location.href = '/countdown.html';
     }
 
-    // Live drop status banner
-    fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
-      var banner = document.getElementById('dropStatusBanner');
-      if (!banner) return;
-      var labels = {
-        green:  '🟢 Accepting Orders Now',
-        yellow: '⚡ Hurry Up! Limited Slots Left Today',
-        red:    '🔴 STATUS: SOLD OUT'
-      };
-      banner.textContent = labels[d.status] || '';
-      banner.className = 'drop-status-banner status-' + d.status;
-      banner.style.display = 'inline-flex';
-    }).catch(function(){});
+    // Drop status — stored so card clicks can check it
+    var _dropData = { status: 'green', nextDropTime: '' };
+
+    function refreshDropStatus() {
+      fetch('/api/drop-status').then(function(r){ return r.json(); }).then(function(d) {
+        _dropData = d;
+        var banner = document.getElementById('dropStatusBanner');
+        if (!banner) return;
+        var labels = {
+          green:  '🟢 Accepting Orders Now',
+          yellow: '⚡ Hurry Up! Limited Slots Left Today',
+          red:    '🔴 STATUS: SOLD OUT'
+        };
+        banner.textContent = labels[d.status] || '';
+        banner.className = 'drop-status-banner status-' + d.status;
+        banner.style.display = 'inline-flex';
+      }).catch(function(){});
+    }
+    refreshDropStatus();
+    setInterval(refreshDropStatus, 30000);
+
+    // Intercept all flavour card clicks when sold out
+    document.getElementById('flavour-grid').addEventListener('click', function(e) {
+      if (_dropData.status !== 'red') return;
+      var card = e.target.closest('.flavour-card');
+      if (!card) return;
+      e.preventDefault();
+      var nt = document.getElementById('soldoutNextTime');
+      nt.innerHTML = _dropData.nextDropTime ? 'Next Drop: <strong>' + _dropData.nextDropTime + '</strong>' : '';
+      nt.style.display = _dropData.nextDropTime ? 'inline-block' : 'none';
+      document.getElementById('soldoutOverlay').classList.add('active');
+    });
+
+    // Sold-out popup logic
+    var overlay = document.getElementById('soldoutOverlay');
+    function resetAndClosePopup() {
+      overlay.classList.remove('active');
+      document.getElementById('soldoutEmailForm').style.display = 'none';
+      document.getElementById('soldoutNotifyBtn').style.display = '';
+      document.getElementById('soldoutSuccess').style.display = 'none';
+      document.getElementById('soldoutEmail').value = '';
+      var btn = document.getElementById('soldoutEmailSubmit');
+      btn.textContent = 'Send Me an Alert →'; btn.disabled = false;
+    }
+    document.getElementById('soldoutCloseBtn').onclick = resetAndClosePopup;
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) resetAndClosePopup(); });
+    document.getElementById('soldoutNotifyBtn').onclick = function() {
+      document.getElementById('soldoutEmailForm').style.display = 'block'; this.style.display = 'none';
+    };
+    document.getElementById('soldoutEmailSubmit').onclick = async function() {
+      var email = document.getElementById('soldoutEmail').value.trim();
+      if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+      this.textContent = 'Sending…'; this.disabled = true;
+      try {
+        var res = await fetch('/api/notify-waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) });
+        var data = await res.json();
+        if (data.success) {
+          document.getElementById('soldoutEmailForm').style.display = 'none';
+          var s = document.getElementById('soldoutSuccess');
+          s.textContent = '✅ We\'ll notify you the moment the next drop is live!';
+          s.style.display = 'block';
+        } else { alert('Something went wrong.'); this.textContent = 'Send Me an Alert →'; this.disabled = false; }
+      } catch(err) { alert('Network error.'); this.textContent = 'Send Me an Alert →'; this.disabled = false; }
+    };
   </script>
 
   <script src="products.js"></script>
