@@ -191,6 +191,116 @@
       background: rgba(0, 191, 165, 0.3);
     }
 
+    .pickup-notify-btn {
+      background: rgba(1, 90, 100, 0.2);
+      border: 1px solid rgba(1, 125, 142, 0.5);
+      color: #017d8e;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-top: 5px;
+      font-weight: 600;
+      transition: all 0.18s ease;
+    }
+    .pickup-notify-btn:hover {
+      background: rgba(1, 90, 100, 0.4);
+      border-color: #017d8e;
+    }
+    .pickup-notify-btn.sent {
+      background: rgba(76, 175, 80, 0.15);
+      border-color: #4caf50;
+      color: #4caf50;
+      cursor: default;
+    }
+
+    /* Pickup ready modal */
+    #pickupReadyModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    #pickupReadyModal.active { display: flex; }
+    .pickup-modal-box {
+      background: #0f1e20;
+      border: 1.5px solid rgba(1,125,142,0.3);
+      border-radius: 18px;
+      padding: 30px 28px;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 16px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    }
+    .pickup-modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #EFE8D8;
+      margin: 0 0 4px;
+    }
+    .pickup-modal-sub {
+      font-size: 0.78rem;
+      color: rgba(239,232,216,0.45);
+      margin: 0 0 22px;
+    }
+    .pickup-modal-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #017d8e;
+      margin-bottom: 6px;
+    }
+    .pickup-modal-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #EFE8D8;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+      resize: vertical;
+      font-family: inherit;
+    }
+    .pickup-modal-input:focus {
+      outline: none;
+      border-color: rgba(1,125,142,0.6);
+    }
+    .pickup-modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .pickup-modal-send {
+      flex: 1;
+      background: #015A64;
+      color: #EFE8D8;
+      border: none;
+      border-radius: 10px;
+      padding: 13px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .pickup-modal-send:hover { background: #017d8e; }
+    .pickup-modal-send:disabled { opacity: 0.5; cursor: default; }
+    .pickup-modal-cancel {
+      background: rgba(255,255,255,0.05);
+      color: rgba(239,232,216,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -648,6 +758,23 @@
     </div>
   </div>
 
+  <!-- Pickup Ready Notification Modal -->
+  <div id="pickupReadyModal">
+    <div class="pickup-modal-box">
+      <p class="pickup-modal-title">📲 Notify Ready for Pickup</p>
+      <p class="pickup-modal-sub" id="pickupModalSub">Customer will receive an email with the address.</p>
+      <div class="pickup-modal-label">Pickup Address *</div>
+      <textarea class="pickup-modal-input" id="pickupAddressInput" rows="3" placeholder="e.g. 123 Main St, Regina, SK"></textarea>
+      <div class="pickup-modal-label">Your Phone Number (optional)</div>
+      <input type="tel" class="pickup-modal-input" id="pickupPhoneInput" placeholder="e.g. (306) 555-0123" style="resize:none;">
+      <div id="pickupModalError" style="color:#f55;font-size:0.8rem;margin-bottom:10px;display:none;"></div>
+      <div class="pickup-modal-actions">
+        <button class="pickup-modal-cancel" onclick="closePickupModal()">Cancel</button>
+        <button class="pickup-modal-send" id="pickupSendBtn" onclick="sendPickupReadyEmail()">📧 Send Email</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let adminCredentials = null;
     let selectedDropStatus = 'green';
@@ -750,6 +877,72 @@
     function closeDeliveryProof() {
       document.getElementById('deliveryProofModal').classList.remove('active');
     }
+
+    // ── Pickup Ready Notification ─────────────────────────────────────────────
+    let currentPickupOrderId = null;
+
+    function openPickupModal(orderId, customerName) {
+      currentPickupOrderId = orderId;
+      document.getElementById('pickupModalSub').textContent =
+        `${customerName} will receive an email with the pickup address.`;
+      document.getElementById('pickupModalError').style.display = 'none';
+      document.getElementById('pickupSendBtn').disabled = false;
+      document.getElementById('pickupSendBtn').textContent = '📧 Send Email';
+      document.getElementById('pickupReadyModal').classList.add('active');
+    }
+
+    function closePickupModal() {
+      document.getElementById('pickupReadyModal').classList.remove('active');
+      currentPickupOrderId = null;
+    }
+
+    async function sendPickupReadyEmail() {
+      const address = document.getElementById('pickupAddressInput').value.trim();
+      const phone = document.getElementById('pickupPhoneInput').value.trim();
+      const errEl = document.getElementById('pickupModalError');
+      const sendBtn = document.getElementById('pickupSendBtn');
+
+      if (!address) {
+        errEl.textContent = 'Please enter a pickup address.';
+        errEl.style.display = 'block';
+        return;
+      }
+      errEl.style.display = 'none';
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending…';
+
+      try {
+        const res = await fetch('/admin/notify-pickup-ready', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + adminCredentials
+          },
+          body: JSON.stringify({ orderId: currentPickupOrderId, pickupAddress: address, pickupPhone: phone })
+        });
+        const data = await res.json();
+        if (data.success) {
+          closePickupModal();
+          const btn = document.getElementById('pickupBtn_' + currentPickupOrderId);
+          if (btn) { btn.textContent = '✅ Notified'; btn.classList.add('sent'); btn.disabled = true; }
+          alert('✅ Pickup notification sent!');
+        } else {
+          errEl.textContent = data.error || 'Failed to send. Try again.';
+          errEl.style.display = 'block';
+          sendBtn.disabled = false;
+          sendBtn.textContent = '📧 Send Email';
+        }
+      } catch (e) {
+        errEl.textContent = 'Network error. Try again.';
+        errEl.style.display = 'block';
+        sendBtn.disabled = false;
+        sendBtn.textContent = '📧 Send Email';
+      }
+    }
+
+    document.getElementById('pickupReadyModal').addEventListener('click', function(e) {
+      if (e.target === this) closePickupModal();
+    });
 
     async function loadOrders() {
       try {
@@ -887,7 +1080,11 @@
                       ` : '<span style="color: #666; font-size: 0.85rem;">Not scheduled</span>'}
                     </td>
                     <td>
-                      ${order.delivery_proof ? `
+                      ${order.order_type === 'pickup' ? `
+                        <button class="pickup-notify-btn" id="pickupBtn_${order.id}" onclick="openPickupModal(${order.id}, '${(order.customer_name || '').replace(/'/g, "\\'")}')">
+                          📲 Ready for Pickup
+                        </button>
+                      ` : order.delivery_proof ? `
                         <button class="delivery-proof-btn" onclick='showDeliveryProof(\`${order.delivery_proof}\`, "${order.delivery_person}", "${order.delivered_at}")'>
                           View Proof
                         </button>
