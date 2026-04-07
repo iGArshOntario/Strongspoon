@@ -649,17 +649,18 @@
             <div class="pickup-info">
               <strong>📍 Pickup — Regina, SK</strong>
               Exact address sent via email once your order is confirmed.
+              <br><span style="color:#017d8e;font-size:0.82rem;margin-top:6px;display:block;">🔔 You will be notified when your order is ready for pickup.</span>
             </div>
           </div>
 
           <div class="form-group" style="margin-top: 16px;">
-            <label for="deliveryDate">Preferred Date *</label>
+            <label for="deliveryDate" id="deliveryDateLabel">Preferred Date *</label>
             <div class="date-input-wrapper">
               <input type="date" id="deliveryDate" name="deliveryDate" required>
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="nextDayBadgeBlock">
             <div class="next-day-badge">
               <span class="next-day-badge-icon">🚀</span>
               <div class="next-day-badge-text">
@@ -672,7 +673,7 @@
             </select>
           </div>
 
-          <p class="order-ahead-note"><span style="color:#EFE8D8;">📅 Select your preferred delivery date</span> <span style="color:#4caf50;">— each cup is prepared fresh for you.</span></p>
+          <p class="order-ahead-note" id="orderAheadNote"><span style="color:#EFE8D8;">📅 Select your preferred delivery date</span> <span style="color:#4caf50;">— each cup is prepared fresh for you.</span></p>
 
           <div class="checkout-section-label">Payment</div>
 

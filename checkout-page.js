@@ -65,6 +65,9 @@ function setOrderType(type) {
   const deliveryFields = document.getElementById('deliveryFields');
   const pickupFields = document.getElementById('pickupFields');
   const addressField = document.getElementById('customerAddress');
+  const nextDayBadgeBlock = document.getElementById('nextDayBadgeBlock');
+  const deliveryDateLabel = document.getElementById('deliveryDateLabel');
+  const orderAheadNote = document.getElementById('orderAheadNote');
 
   document.body.setAttribute('data-order-type', type);
 
@@ -74,12 +77,20 @@ function setOrderType(type) {
     deliveryFields.style.display = 'block';
     pickupFields.style.display = 'none';
     addressField.required = true;
+    if (nextDayBadgeBlock) nextDayBadgeBlock.style.display = 'block';
+    if (deliveryDateLabel) deliveryDateLabel.innerHTML = 'Preferred Delivery Date *';
+    if (orderAheadNote) orderAheadNote.innerHTML = '<span style="color:#EFE8D8;">📅 Select your preferred delivery date</span> <span style="color:#4caf50;">— each cup is prepared fresh for you.</span>';
+    document.getElementById('deliveryTimeSlot').value = 'Next Day Delivery';
   } else {
     deliveryBtn.classList.remove('active');
     pickupBtn.classList.add('active');
     deliveryFields.style.display = 'none';
     pickupFields.style.display = 'block';
     addressField.required = false;
+    if (nextDayBadgeBlock) nextDayBadgeBlock.style.display = 'none';
+    if (deliveryDateLabel) deliveryDateLabel.innerHTML = 'Preferred Pickup Date *';
+    if (orderAheadNote) orderAheadNote.innerHTML = '<span style="color:#EFE8D8;">📅 Select your preferred pickup date</span> <span style="color:#4caf50;">— each cup is prepared fresh for you.</span>';
+    document.getElementById('deliveryTimeSlot').value = 'Pickup';
   }
   updateDeliveryFeeDisplay();
 }
