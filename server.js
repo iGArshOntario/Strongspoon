@@ -1894,6 +1894,68 @@ async function startServer() {
     }
   });
 
+  // Test pickup ready email
+  app.get('/api/send-test-pickup-email', async (req, res) => {
+    if (!resend) return res.status(503).json({ error: 'Email service not configured' });
+    const to = req.query.to || OWNER_EMAIL;
+    const fakeOrder = {
+      order_number: 'SS-PICKUP-TEST',
+      customer_name: 'Test Customer',
+      customer_email: to,
+      total_amount: '23.98'
+    };
+    const pickupAddress = '456 Broad St, Regina, SK S4R 1X3';
+    const pickupPhone = '(306) 555-0100';
+
+    const html = `<!DOCTYPE html><html><head>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+body{font-family:Arial,sans-serif;background:#0b1416;color:#EFE8D8;margin:0;padding:0;}
+.wrapper{background:#0b1416;padding:30px 15px;}
+.container{max-width:560px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+.header{background:#015A64;padding:28px 30px;text-align:center;}
+.header h1{margin:8px 0 0;font-size:22px;font-weight:700;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8;}
+.header p{margin:6px 0 0;font-size:13px;color:rgba(239,232,216,0.75);}
+.content{background:#0f1e20;padding:28px 30px;}
+.label{color:#015A64;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin:22px 0 8px;border-bottom:1px solid #1e3538;padding-bottom:6px;}
+.badge{background:#162c2f;border-left:4px solid #015A64;padding:14px 18px;border-radius:0 10px 10px 0;font-size:15px;line-height:1.9;}
+.highlight{background:linear-gradient(135deg,rgba(1,90,100,0.25),rgba(1,62,74,0.2));border:1.5px solid rgba(1,125,142,0.35);border-radius:12px;padding:18px 20px;text-align:center;margin:20px 0;}
+.highlight .big{font-size:28px;margin-bottom:6px;}
+.highlight strong{font-size:18px;color:#017d8e;display:block;margin-bottom:4px;}
+.highlight span{font-size:13px;color:rgba(239,232,216,0.65);}
+.footer{background:#071012;padding:20px 30px;text-align:center;font-size:12px;color:rgba(239,232,216,0.45);}
+</style></head>
+<body><div class="wrapper"><div class="container">
+<div class="header">
+  ${LOGO_IMG_TAG}
+  <h1>🏪 Your Order is Ready for Pickup!</h1>
+  <p>Order #${fakeOrder.order_number} is ready and waiting for you</p>
+</div>
+<div class="content">
+  <p style="font-size:15px;margin:0 0 20px;">Hi <strong>${fakeOrder.customer_name}</strong>,<br><br>Great news — your Strong Spoon order is freshly prepared and ready for pickup right now!</p>
+  <div class="highlight">
+    <div class="big">📍</div>
+    <strong>Pickup Address</strong>
+    <span>${pickupAddress}</span>
+  </div>
+  <div class="label">Contact / Arrived?</div>
+  <div class="badge">📞 Call or text us when you arrive: <strong>${pickupPhone}</strong></div>
+  <div class="label">Your Order</div>
+  <div class="badge"><strong>#${fakeOrder.order_number}</strong><br>Total: $${fakeOrder.total_amount} CAD</div>
+</div>
+<div class="footer">Strong Spoon · Regina, SK · strongspoon.ca</div>
+</div></div></body></html>`;
+
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      subject: `🏪 Your Order #${fakeOrder.order_number} is Ready for Pickup! (TEST)`,
+      html
+    });
+    if (error) return res.status(500).json({ success: false, error: error.message });
+    res.json({ success: true, message: `Test pickup ready email sent to ${to}` });
+  });
+
   // Start the server
   const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Strong Spoon server running on port ${PORT}`);
