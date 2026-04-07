@@ -260,59 +260,33 @@
       cursor: pointer;
     }
 
-    /* ── Timeslot grid ── */
-    .timeslot-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+    /* ── Next Day Delivery badge ── */
+    .next-day-badge {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, rgba(1,90,100,0.18), rgba(1,62,74,0.12));
+      border: 1.5px solid rgba(1,125,142,0.35);
+      border-radius: 14px;
+      padding: 16px 20px;
     }
-    .timeslot-card {
-      background: rgba(255,255,255,0.03);
-      border: 1.5px solid rgba(255,255,255,0.07);
-      border-radius: 12px;
-      padding: 16px 8px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.22s ease;
-      user-select: none;
-      position: relative;
-      overflow: hidden;
+    .next-day-badge-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
     }
-    .timeslot-card:hover {
-      border-color: rgba(1,90,100,0.5);
-      background: rgba(1,90,100,0.06);
-      transform: translateY(-1px);
-    }
-    .timeslot-card.active {
-      background: linear-gradient(135deg, rgba(1,90,100,0.25), rgba(1,62,74,0.2));
-      border-color: #015A64;
-      box-shadow: 0 0 16px rgba(1,90,100,0.22);
-      transform: translateY(-1px);
-    }
-    .timeslot-card.active::after {
-      content: '✓';
-      position: absolute;
-      top: 5px;
-      right: 7px;
-      font-size: 0.6rem;
+    .next-day-badge-text strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
       color: #017d8e;
-      font-weight: 700;
-      animation: checkBounce 0.4s ease both;
+      letter-spacing: 0.3px;
     }
-    .timeslot-icon { font-size: 1.4rem; display: block; margin-bottom: 5px; }
-    .timeslot-name {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #EFE8D8;
+    .next-day-badge-text span {
+      font-size: 0.75rem;
+      color: rgba(239,232,216,0.55);
+      margin-top: 2px;
       display: block;
     }
-    .timeslot-range {
-      font-size: 0.63rem;
-      color: rgba(239,232,216,0.35);
-      display: block;
-      margin-top: 3px;
-    }
-    .timeslot-card.active .timeslot-range { color: rgba(239,232,216,0.65); }
 
     /* ── Order ahead note ── */
     .order-ahead-note {
@@ -686,33 +660,19 @@
           </div>
 
           <div class="form-group">
-            <label>Time Slot *</label>
-            <div class="timeslot-grid">
-              <div class="timeslot-card" data-slot="Morning (8 AM - 12 PM)" onclick="selectTimeSlot(this)">
-                <span class="timeslot-icon">☀️</span>
-                <span class="timeslot-name">Morning</span>
-                <span class="timeslot-range">8 AM – 12 PM</span>
-              </div>
-              <div class="timeslot-card" data-slot="Afternoon (12 PM - 4 PM)" onclick="selectTimeSlot(this)">
-                <span class="timeslot-icon">🌤</span>
-                <span class="timeslot-name">Afternoon</span>
-                <span class="timeslot-range">12 PM – 4 PM</span>
-              </div>
-              <div class="timeslot-card" data-slot="Evening (4 PM - 8 PM)" onclick="selectTimeSlot(this)">
-                <span class="timeslot-icon">🌙</span>
-                <span class="timeslot-name">Evening</span>
-                <span class="timeslot-range">4 PM – 8 PM</span>
+            <div class="next-day-badge">
+              <span class="next-day-badge-icon">🚀</span>
+              <div class="next-day-badge-text">
+                <strong>Next Day Delivery</strong>
+                <span>Order today, delivered on your selected date</span>
               </div>
             </div>
-            <select id="deliveryTimeSlot" name="deliveryTimeSlot" required style="display:none;">
-              <option value="">Select time</option>
-              <option value="Morning (8 AM - 12 PM)">Morning</option>
-              <option value="Afternoon (12 PM - 4 PM)">Afternoon</option>
-              <option value="Evening (4 PM - 8 PM)">Evening</option>
+            <select id="deliveryTimeSlot" name="deliveryTimeSlot" style="display:none;">
+              <option value="Next Day Delivery" selected>Next Day Delivery</option>
             </select>
           </div>
 
-          <p class="order-ahead-note"><span style="color:#EFE8D8;">⏰ Order at least 12 hours ahead</span> <span style="color:#4caf50;">— each cup is prepared fresh for you.</span></p>
+          <p class="order-ahead-note"><span style="color:#EFE8D8;">📅 Select your preferred delivery date</span> <span style="color:#4caf50;">— each cup is prepared fresh for you.</span></p>
 
           <div class="checkout-section-label">Payment</div>
 

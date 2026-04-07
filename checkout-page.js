@@ -86,12 +86,7 @@ function setOrderType(type) {
 
 window.setOrderType = setOrderType;
 
-function selectTimeSlot(card) {
-  document.querySelectorAll('.timeslot-card').forEach(c => c.classList.remove('active'));
-  card.classList.add('active');
-  const select = document.getElementById('deliveryTimeSlot');
-  select.value = card.dataset.slot;
-}
+function selectTimeSlot(card) {}
 window.selectTimeSlot = selectTimeSlot;
 
 const ITEM_ICONS = { brownie: '🍫', powerMix: '⚡', goldenScoop: '✨', spoonCrumble: '🌾' };
@@ -154,40 +149,35 @@ const amounts = renderCheckoutItems();
 function setMinimumDeliveryDate() {
   const deliveryDateInput = document.getElementById('deliveryDate');
   const now = new Date();
-  const minDate = new Date(now.getTime() + (12 * 60 * 60 * 1000));
-  const minDateString = minDate.toISOString().split('T')[0];
-  deliveryDateInput.min = minDateString;
-
   const tomorrow = new Date(now);
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const defaultDate = tomorrow > minDate ? tomorrow : minDate;
-  deliveryDateInput.value = defaultDate.toISOString().split('T')[0];
+  const tomorrowString = tomorrow.toISOString().split('T')[0];
+  deliveryDateInput.min = tomorrowString;
+  deliveryDateInput.value = tomorrowString;
+  document.getElementById('deliveryTimeSlot').value = 'Next Day Delivery';
 }
 
 function validateDeliveryDate() {
   const deliveryDate = document.getElementById('deliveryDate').value;
-  const deliveryTimeSlot = document.getElementById('deliveryTimeSlot').value;
 
-  if (!deliveryDate || !deliveryTimeSlot) {
-    return { valid: false, error: 'Please select both a delivery date and time slot.' };
+  if (!deliveryDate) {
+    return { valid: false, error: 'Please select a delivery date.' };
   }
 
   const [year, month, day] = deliveryDate.split('-').map(Number);
   const selectedDate = new Date(year, month - 1, day);
-
-  let deliveryStartHour = 8;
-  if (deliveryTimeSlot.includes('Afternoon')) deliveryStartHour = 12;
-  else if (deliveryTimeSlot.includes('Evening')) deliveryStartHour = 16;
-
-  selectedDate.setHours(deliveryStartHour, 0, 0, 0);
+  selectedDate.setHours(23, 59, 59, 999);
 
   const now = new Date();
-  const minDateTime = new Date(now.getTime() + (12 * 60 * 60 * 1000));
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
 
-  if (selectedDate < minDateTime) {
-    return { valid: false, error: 'Please select a delivery date and time at least 12 hours from now.' };
+  if (selectedDate < tomorrow) {
+    return { valid: false, error: 'Please select a delivery date of tomorrow or later.' };
   }
 
+  document.getElementById('deliveryTimeSlot').value = 'Next Day Delivery';
   return { valid: true };
 }
 

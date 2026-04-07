@@ -1767,7 +1767,7 @@ async function startServer() {
       created_at: new Date().toISOString(),
       order_type: 'delivery',
       delivery_date: 'April 10, 2026',
-      delivery_time_slot: 'Morning 8AM–12PM',
+      delivery_time_slot: 'Next Day Delivery',
     };
     let pdfAttachments = [];
     try {
@@ -1802,7 +1802,7 @@ async function startServer() {
       ]),
       order_type: 'delivery',
       delivery_date: 'April 10, 2026',
-      delivery_time_slot: 'Morning 8AM–12PM'
+      delivery_time_slot: 'Next Day Delivery'
     });
     if (result.success) {
       res.json({ success: true, message: `Test owner alert sent to ${OWNER_EMAIL}` });
