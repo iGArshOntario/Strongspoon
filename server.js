@@ -673,6 +673,18 @@ const PRODUCTS = {
     name: 'Power Mix',
     get price() { return getCurrentPrice(); },
     size: PRODUCT_SIZE
+  },
+  'goldenScoop': {
+    id: 'goldenScoop',
+    name: 'Golden Scoop',
+    get price() { return getCurrentPrice(); },
+    size: PRODUCT_SIZE
+  },
+  'spoonCrumble': {
+    id: 'spoonCrumble',
+    name: 'Spoon Crumble',
+    get price() { return getCurrentPrice(); },
+    size: PRODUCT_SIZE
   }
 };
 
