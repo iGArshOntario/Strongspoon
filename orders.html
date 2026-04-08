@@ -922,10 +922,12 @@
         });
         const data = await res.json();
         if (data.success) {
+          const notifiedOrderId = currentPickupOrderId;
           closePickupModal();
-          const btn = document.getElementById('pickupBtn_' + currentPickupOrderId);
+          const btn = document.getElementById('pickupBtn_' + notifiedOrderId);
           if (btn) { btn.textContent = '✅ Notified'; btn.classList.add('sent'); btn.disabled = true; }
           alert('✅ Pickup notification sent!');
+          await loadOrders();
         } else {
           errEl.textContent = data.error || 'Failed to send. Try again.';
           errEl.style.display = 'block';
@@ -1080,11 +1082,11 @@
                       ` : '<span style="color: #666; font-size: 0.85rem;">Not scheduled</span>'}
                     </td>
                     <td>
-                      ${order.order_type === 'pickup' ? `
+                      ${order.order_type === 'pickup' && order.order_status !== 'completed' ? `
                         <button class="pickup-notify-btn" id="pickupBtn_${order.id}" onclick="openPickupModal(${order.id}, '${(order.customer_name || '').replace(/'/g, "\\'")}')">
                           📲 Ready for Pickup
                         </button>
-                      ` : order.delivery_proof ? `
+                      ` : order.order_type !== 'pickup' && order.delivery_proof ? `
                         <button class="delivery-proof-btn" onclick='showDeliveryProof(\`${order.delivery_proof}\`, "${order.delivery_person}", "${order.delivered_at}")'>
                           View Proof
                         </button>

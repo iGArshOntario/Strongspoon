@@ -1400,6 +1400,10 @@ app.post('/admin/notify-pickup-ready', async (req, res) => {
 
     if (error) return res.status(500).json({ error: error.message });
     console.log(`✅ Pickup ready email sent to ${order.customer_email} for order #${order.order_number}`);
+
+    await pool.query('UPDATE orders SET order_status = $1 WHERE id = $2', ['completed', orderId]);
+    console.log(`✅ Order #${order.order_number} marked as completed after pickup notification`);
+
     res.json({ success: true });
   } catch (err) {
     console.error('Error sending pickup ready email:', err);
