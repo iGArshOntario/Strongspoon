@@ -1928,6 +1928,57 @@ async function startServer() {
     res.json({ success: true, message: `Test pickup ready email sent to ${to}` });
   });
 
+  // Test waitlist drop alert email
+  app.get('/api/send-test-waitlist-email', async (req, res) => {
+    if (!resend) return res.status(503).json({ error: 'Email service not configured' });
+    const to = req.query.to || OWNER_EMAIL;
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      subject: '💪 Fresh Batch Is Ready — Order Now!',
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fresh Batch Is Ready</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#1a1a1a;background:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding:30px 16px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+      <tr><td align="center" style="padding-bottom:24px;border-bottom:2px solid #013e4a;">
+        <div style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:2px;color:#013e4a;">💪 STRONG SPOON</div>
+        <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">Fuel your strength. · Regina, SK</div>
+      </td></tr>
+      <tr><td style="padding:28px 0;">
+        <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:22px;font-weight:700;color:#1a1a1a;">🎉 Fresh Batch Is Ready!</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#333;">You asked us to let you know — and here we are. A fresh batch of our high-protein desserts is ready and waiting. Don't wait, these go fast!</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:15px;font-weight:700;color:#013e4a;">🟢 Now Accepting Orders</div>
+            <div style="font-size:14px;color:#555;margin-top:4px;">Available in Regina, SK only</div>
+          </td></tr>
+        </table>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 32px;">
+          <tr><td align="center">
+            <a href="https://strongspoon.ca" style="display:inline-block;background:#015A64;color:#ffffff;text-decoration:none;padding:14px 40px;border-radius:6px;font-weight:700;font-size:16px;letter-spacing:0.5px;">Order Now →</a>
+          </td></tr>
+        </table>
+        <p style="margin:0;font-size:13px;color:#aaa;">You received this because you signed up for drop alerts at strongspoon.ca</p>
+      </td></tr>
+      <tr><td style="padding-top:24px;border-top:1px solid #e8e8e8;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`
+    });
+    if (error) return res.status(500).json({ success: false, error: error.message });
+    res.json({ success: true, message: `Test waitlist drop alert sent to ${to}` });
+  });
+
   // Test delivery notification email
   app.get('/api/send-test-delivery-email', async (req, res) => {
     if (!resend) return res.status(503).json({ error: 'Email service not configured' });
