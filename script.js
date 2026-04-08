@@ -122,9 +122,9 @@ class ShoppingCart {
   getTotal() {
     const totalCups = this.items.reduce((sum, item) => sum + item.quantity, 0);
     const bundleBase = getBundleBaseTotal(totalCups);
-    const toppingsFee = this.items.reduce((sum, item) => {
-      return sum + (item.toppings && item.toppings.length > 0 ? item.quantity : 0);
-    }, 0);
+    // Flat $1 for any toppings in the order — no matter how many toppings or cups
+    const hasToppings = this.items.some(item => item.toppings && item.toppings.length > 0);
+    const toppingsFee = hasToppings ? 1 : 0;
     return Math.round((bundleBase + toppingsFee) * 100) / 100;
   }
 

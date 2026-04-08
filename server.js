@@ -761,7 +761,7 @@ app.post('/create-payment-intent', async (req, res) => {
 
     const validatedItems = [];
     let totalCups = 0;
-    let toppingsFee = 0;
+    let anyToppings = false;
 
     for (const item of items) {
       const product = PRODUCTS[item.id];
@@ -789,7 +789,7 @@ app.post('/create-payment-intent', async (req, res) => {
       }
 
       totalCups += item.quantity;
-      if (validatedToppings.length > 0) toppingsFee += item.quantity;
+      if (validatedToppings.length > 0) anyToppings = true;
 
       validatedItems.push({
         name: product.name,
@@ -798,6 +798,9 @@ app.post('/create-payment-intent', async (req, res) => {
         toppings: validatedToppings
       });
     }
+
+    // Flat $1 topping fee for the whole order, regardless of how many toppings or cups
+    const toppingsFee = anyToppings ? 1 : 0;
 
     // Bundle pricing: 1 cup $11.99 | 2 cups $19.99 | 4 cups $35.99
     function getBundleBaseTotal(cups) {
