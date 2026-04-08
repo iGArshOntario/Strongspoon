@@ -1334,8 +1334,7 @@ function generatePickupReadyHtml(orderNumber, customerName, pickupAddress, picku
 
       <!-- Logo / Brand header -->
       <tr><td align="center" style="padding-bottom:28px;border-bottom:2px solid #013e4a;">
-        ${LOGO_IMG_TAG}
-        <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:2px;color:#013e4a;margin-top:8px;">💪 STRONG SPOON</div>
+        <div style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:2px;color:#013e4a;">💪 STRONG SPOON</div>
         <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">Fuel your strength. · Regina, SK</div>
       </td></tr>
 
