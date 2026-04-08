@@ -55,3 +55,8 @@ externalPort = 80
 
 [agent]
 expertMode = true
+
+[userenv]
+
+[userenv.shared]
+RESEND_FROM_EMAIL = "Strong Spoon <noreply@strongspoon.ca>"
