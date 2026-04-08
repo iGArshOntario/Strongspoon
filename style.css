@@ -1437,11 +1437,21 @@ body {
 }
 
 /* -------------------------------------------------
-   PAGE 3: PRODUCT PAGE (BROWNIE ISSUES)
+   PAGE 3: PRODUCT PAGE (ALL FLAVOURS)
 -------------------------------------------------- */
   /* ---------- PRODUCT PAGE (CLEAN & CENTERED) ---------- */
   .container {
   max-width: 600px;
+}
+
+.product-container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 20px 36px;
+  box-sizing: border-box;
 }
 
   .product-title {
@@ -1461,19 +1471,25 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-bottom: 40px;
+    margin-bottom: 28px;
+    background: radial-gradient(ellipse at center, rgba(1,90,100,0.18) 0%, transparent 70%);
+    border-radius: 20px;
+    padding: 12px 0;
+    width: 100%;
+    min-height: 200px;
   }
 
   .cup-png {
-    width: 280px;
-    max-width: 90%;
+    width: 300px;
+    max-width: 92%;
     border-radius: 12px;
-    animation: scaleIn 0.8s ease-out 0.3s both;
+    animation: scaleIn 0.6s ease-out;
     transition: transform 0.3s ease;
+    filter: drop-shadow(0 6px 28px rgba(1,122,142,0.35));
   }
   
   .cup-png:hover {
-    transform: scale(1.05);
+    transform: scale(1.04);
   }
 
   .ingredients {
@@ -1485,7 +1501,7 @@ body {
     max-width: 550px;
     margin-left: auto;
     margin-right: auto;
-    animation: fadeIn 0.8s ease-out 0.5s both;
+    animation: fadeIn 0.4s ease-out;
   }
 
   .ingredients h3 {
@@ -2496,7 +2512,7 @@ footer a:hover {
 
 .product-price {
   margin: 30px 0 40px 0;
-  animation: bounceIn 0.8s ease-out 0.6s both;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .product-price h2 {
@@ -3726,63 +3742,68 @@ input[type="radio"]:checked + label,
 }
 .review-nav-link:hover { color: #017d8e; }
 
-/* ── Product Detail Pages: Mobile No-Scroll Layout (≤480px) ─────────────── */
+/* ── Product Detail Pages: Mobile Layout (≤480px) ─────────────── */
 @media (max-width: 480px) {
   .product-container {
-    min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
     align-items: center;
-    padding: 0;
+    padding: 16px 14px 28px;
     box-sizing: border-box;
     width: 100%;
     text-align: center;
+    gap: 0;
   }
   .product-container .product-title {
-    font-size: 1.85rem;
-    margin-bottom: 0;
+    font-size: 1.8rem;
+    margin-bottom: 14px;
     letter-spacing: 1px;
   }
   .product-container .product-image {
-    margin-bottom: 0;
+    margin-bottom: 16px;
   }
   .product-container .cup-png {
-    width: 150px;
+    width: 220px;
+    max-width: 80vw;
   }
   .product-container .ingredients {
-    margin-bottom: 0;
-    font-size: 0.68rem;
-    line-height: 1.4;
+    margin-bottom: 14px;
+    font-size: 0.72rem;
+    line-height: 1.45;
     text-align: left;
     width: 100%;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    border-left: 3px solid rgba(1,90,100,0.5);
   }
   .product-container .ingredients h3 {
     font-size: 0.75rem;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
   }
   .product-container .product-price {
-    margin: 0;
+    margin: 0 0 14px;
   }
   .product-container .product-price h2 {
-    font-size: 1.85rem;
+    font-size: 2rem;
     margin-bottom: 2px;
   }
   .product-container .product-size {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
   }
   .product-container .product-btn-group {
-    gap: 8px;
+    gap: 10px;
     width: 100%;
+    margin-top: 4px;
   }
   .product-container .btn-customise,
   .product-container .btn-quick-add {
-    padding: 12px 20px;
-    font-size: 0.9rem;
+    padding: 13px 20px;
+    font-size: 0.92rem;
   }
   .product-container .back-link {
     font-size: 0.72rem;
-    margin-top: 0;
+    margin-top: 14px;
   }
 }
 
