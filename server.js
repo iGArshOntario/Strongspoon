@@ -1319,6 +1319,60 @@ app.get('/admin/waitlist', async (req, res) => {
   }
 });
 
+function generatePickupReadyHtml(orderNumber, customerName, pickupAddress, pickupPhone, total) {
+  return `<!DOCTYPE html>
+<html lang="en" style="background:#0b1416 !important;">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="dark">
+<meta name="supported-color-schemes" content="dark">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root { color-scheme: dark; }
+body { font-family: Arial, sans-serif; background: #0b1416 !important; background-color: #0b1416 !important; color: #EFE8D8 !important; margin: 0; padding: 0; }
+.wrapper { background: #0b1416 !important; background-color: #0b1416 !important; padding: 30px 15px; }
+.container { max-width: 560px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+.header { background: #015A64 !important; background-color: #015A64 !important; padding: 28px 30px; text-align: center; }
+.header h1 { margin: 8px 0 0; font-size: 22px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; color: #EFE8D8 !important; }
+.header p { margin: 6px 0 0; font-size: 13px; color: rgba(239,232,216,0.85) !important; }
+.content { background: #0f1e20 !important; background-color: #0f1e20 !important; padding: 28px 30px; color: #EFE8D8 !important; }
+.content p { color: #EFE8D8 !important; }
+.label { color: #017d8e !important; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 22px 0 8px; border-bottom: 1px solid #1e3538; padding-bottom: 6px; }
+.badge { background: #162c2f !important; background-color: #162c2f !important; border-left: 4px solid #015A64; padding: 14px 18px; border-radius: 0 10px 10px 0; font-size: 15px; line-height: 1.9; color: #EFE8D8 !important; }
+.highlight { background: #0d2a2e !important; background-color: #0d2a2e !important; border: 1.5px solid rgba(1,125,142,0.5); border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0; }
+.highlight .big { font-size: 28px; margin-bottom: 6px; }
+.highlight strong { font-size: 18px; color: #017d8e !important; display: block; margin-bottom: 6px; }
+.highlight span { font-size: 14px; color: #EFE8D8 !important; font-weight: 600; }
+.footer { background: #071012 !important; background-color: #071012 !important; padding: 20px 30px; text-align: center; font-size: 12px; color: rgba(239,232,216,0.5) !important; }
+</style>
+</head>
+<body style="background:#0b1416 !important; background-color:#0b1416 !important; color:#EFE8D8 !important; margin:0; padding:0;">
+<div class="wrapper" style="background:#0b1416 !important; background-color:#0b1416 !important; padding:30px 15px;">
+<div class="container" style="max-width:560px; margin:0 auto; border-radius:16px; overflow:hidden;">
+<div class="header" style="background:#015A64 !important; background-color:#015A64 !important; padding:28px 30px; text-align:center;">
+  ${LOGO_IMG_TAG}
+  <h1 style="margin:8px 0 0; font-size:22px; font-weight:700; color:#EFE8D8 !important;">🏪 Your Order is Ready for Pickup!</h1>
+  <p style="margin:6px 0 0; font-size:13px; color:rgba(239,232,216,0.85) !important;">Order #${orderNumber} is ready and waiting for you</p>
+</div>
+<div class="content" style="background:#0f1e20 !important; background-color:#0f1e20 !important; padding:28px 30px;">
+  <p style="font-size:15px; margin:0 0 20px; color:#EFE8D8 !important;">Hi <strong>${customerName}</strong>,<br><br>Great news — your Strong Spoon order is freshly prepared and ready for pickup right now!</p>
+  <div class="highlight" style="background:#0d2a2e !important; background-color:#0d2a2e !important; border:1.5px solid rgba(1,125,142,0.5); border-radius:12px; padding:20px; text-align:center; margin:20px 0;">
+    <div class="big" style="font-size:28px; margin-bottom:6px;">📍</div>
+    <strong style="font-size:18px; color:#017d8e !important; display:block; margin-bottom:6px;">Pickup Address</strong>
+    <span style="font-size:14px; color:#EFE8D8 !important; font-weight:600;">${pickupAddress}</span>
+  </div>
+  ${pickupPhone ? `<div class="label" style="color:#017d8e !important; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin:22px 0 8px; border-bottom:1px solid #1e3538; padding-bottom:6px;">Contact / Arrived?</div><div class="badge" style="background:#162c2f !important; background-color:#162c2f !important; border-left:4px solid #015A64; padding:14px 18px; border-radius:0 10px 10px 0; font-size:15px; color:#EFE8D8 !important;">📞 Call or text us when you arrive: <strong>${pickupPhone}</strong></div>` : ''}
+  <div class="label" style="color:#017d8e !important; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin:22px 0 8px; border-bottom:1px solid #1e3538; padding-bottom:6px;">Your Order</div>
+  <div class="badge" style="background:#162c2f !important; background-color:#162c2f !important; border-left:4px solid #015A64; padding:14px 18px; border-radius:0 10px 10px 0; font-size:15px; color:#EFE8D8 !important;">
+    <strong>#${orderNumber}</strong><br>Total: $${total} CAD
+  </div>
+</div>
+<div class="footer" style="background:#071012 !important; background-color:#071012 !important; padding:20px 30px; text-align:center; font-size:12px; color:rgba(239,232,216,0.5) !important;">Strong Spoon · Regina, SK · strongspoon.ca</div>
+</div>
+</div>
+</body></html>`;
+}
+
 // Notify pickup customer that order is ready
 app.post('/admin/notify-pickup-ready', async (req, res) => {
   try {
@@ -1345,46 +1399,13 @@ app.post('/admin/notify-pickup-ready', async (req, res) => {
 
     if (!resend) return res.status(503).json({ error: 'Email service not configured' });
 
-    const html = `<!DOCTYPE html><html><head>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<style>
-body{font-family:Arial,sans-serif;background:#0b1416;color:#EFE8D8;margin:0;padding:0;}
-.wrapper{background:#0b1416;padding:30px 15px;}
-.container{max-width:560px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
-.header{background:#015A64;padding:28px 30px;text-align:center;}
-.header h1{margin:8px 0 0;font-size:22px;font-weight:700;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8;}
-.header p{margin:6px 0 0;font-size:13px;color:rgba(239,232,216,0.75);}
-.content{background:#0f1e20;padding:28px 30px;}
-.label{color:#015A64;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin:22px 0 8px;border-bottom:1px solid #1e3538;padding-bottom:6px;}
-.badge{background:#162c2f;border-left:4px solid #015A64;padding:14px 18px;border-radius:0 10px 10px 0;font-size:15px;line-height:1.9;}
-.highlight{background:linear-gradient(135deg,rgba(1,90,100,0.25),rgba(1,62,74,0.2));border:1.5px solid rgba(1,125,142,0.35);border-radius:12px;padding:18px 20px;text-align:center;margin:20px 0;}
-.highlight .big{font-size:28px;margin-bottom:6px;}
-.highlight strong{font-size:18px;color:#017d8e;display:block;margin-bottom:4px;}
-.highlight span{font-size:13px;color:rgba(239,232,216,0.65);}
-.footer{background:#071012;padding:20px 30px;text-align:center;font-size:12px;color:rgba(239,232,216,0.45);}
-</style></head>
-<body><div class="wrapper"><div class="container">
-<div class="header">
-  ${LOGO_IMG_TAG}
-  <h1>🏪 Your Order is Ready for Pickup!</h1>
-  <p>Order #${order.order_number} is ready and waiting for you</p>
-</div>
-<div class="content">
-  <p style="font-size:15px;margin:0 0 20px;">Hi <strong>${order.customer_name}</strong>,<br><br>Great news — your Strong Spoon order is freshly prepared and ready for pickup right now!</p>
-  <div class="highlight">
-    <div class="big">📍</div>
-    <strong>Pickup Address</strong>
-    <span>${pickupAddress}</span>
-  </div>
-  ${pickupPhone ? `<div class="label">Contact / Arrived?</div><div class="badge">📞 Call or text us when you arrive: <strong>${pickupPhone}</strong></div>` : ''}
-  <div class="label">Your Order</div>
-  <div class="badge">
-    <strong>#${order.order_number}</strong><br>
-    Total: $${parseFloat(order.total_amount).toFixed(2)} CAD
-  </div>
-</div>
-<div class="footer">Strong Spoon · Regina, SK · strongspoon.ca</div>
-</div></div></body></html>`;
+    const html = generatePickupReadyHtml(
+      order.order_number,
+      order.customer_name,
+      pickupAddress,
+      pickupPhone,
+      parseFloat(order.total_amount).toFixed(2)
+    );
 
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
@@ -1907,44 +1928,13 @@ async function startServer() {
     const pickupAddress = '456 Broad St, Regina, SK S4R 1X3';
     const pickupPhone = '(306) 555-0100';
 
-    const html = `<!DOCTYPE html><html><head>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<style>
-body{font-family:Arial,sans-serif;background:#0b1416;color:#EFE8D8;margin:0;padding:0;}
-.wrapper{background:#0b1416;padding:30px 15px;}
-.container{max-width:560px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
-.header{background:#015A64;padding:28px 30px;text-align:center;}
-.header h1{margin:8px 0 0;font-size:22px;font-weight:700;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8;}
-.header p{margin:6px 0 0;font-size:13px;color:rgba(239,232,216,0.75);}
-.content{background:#0f1e20;padding:28px 30px;}
-.label{color:#015A64;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin:22px 0 8px;border-bottom:1px solid #1e3538;padding-bottom:6px;}
-.badge{background:#162c2f;border-left:4px solid #015A64;padding:14px 18px;border-radius:0 10px 10px 0;font-size:15px;line-height:1.9;}
-.highlight{background:linear-gradient(135deg,rgba(1,90,100,0.25),rgba(1,62,74,0.2));border:1.5px solid rgba(1,125,142,0.35);border-radius:12px;padding:18px 20px;text-align:center;margin:20px 0;}
-.highlight .big{font-size:28px;margin-bottom:6px;}
-.highlight strong{font-size:18px;color:#017d8e;display:block;margin-bottom:4px;}
-.highlight span{font-size:13px;color:rgba(239,232,216,0.65);}
-.footer{background:#071012;padding:20px 30px;text-align:center;font-size:12px;color:rgba(239,232,216,0.45);}
-</style></head>
-<body><div class="wrapper"><div class="container">
-<div class="header">
-  ${LOGO_IMG_TAG}
-  <h1>🏪 Your Order is Ready for Pickup!</h1>
-  <p>Order #${fakeOrder.order_number} is ready and waiting for you</p>
-</div>
-<div class="content">
-  <p style="font-size:15px;margin:0 0 20px;">Hi <strong>${fakeOrder.customer_name}</strong>,<br><br>Great news — your Strong Spoon order is freshly prepared and ready for pickup right now!</p>
-  <div class="highlight">
-    <div class="big">📍</div>
-    <strong>Pickup Address</strong>
-    <span>${pickupAddress}</span>
-  </div>
-  <div class="label">Contact / Arrived?</div>
-  <div class="badge">📞 Call or text us when you arrive: <strong>${pickupPhone}</strong></div>
-  <div class="label">Your Order</div>
-  <div class="badge"><strong>#${fakeOrder.order_number}</strong><br>Total: $${fakeOrder.total_amount} CAD</div>
-</div>
-<div class="footer">Strong Spoon · Regina, SK · strongspoon.ca</div>
-</div></div></body></html>`;
+    const html = generatePickupReadyHtml(
+      fakeOrder.order_number,
+      fakeOrder.customer_name,
+      pickupAddress,
+      pickupPhone,
+      fakeOrder.total_amount
+    );
 
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
