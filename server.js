@@ -217,46 +217,98 @@ async function sendOwnerAlertEmail(orderData) {
   try {
     const items = JSON.parse(orderData.items || '[]');
     const orderType = (orderData.order_type || 'delivery').toUpperCase();
-    const itemRows = items.map(i => {
+    const itemLines = items.map(i => {
       const toppingStr = (i.toppings && i.toppings.length) ? i.toppings.map(t => t.name).join(', ') : 'No toppings';
-      return `<tr><td style="padding:8px 12px;border-bottom:1px solid #1e3538;">${i.name}</td><td style="padding:8px 12px;border-bottom:1px solid #1e3538;text-align:center;">${i.quantity}</td><td style="padding:8px 12px;border-bottom:1px solid #1e3538;color:rgba(239,232,216,0.65);">${toppingStr}</td></tr>`;
+      return `<tr>
+        <td style="padding:10px 12px;border-bottom:1px solid #e8e8e8;font-size:15px;color:#1a1a1a;">${i.name} x${i.quantity}</td>
+        <td style="padding:10px 12px;border-bottom:1px solid #e8e8e8;font-size:14px;color:#666;">${toppingStr}</td>
+      </tr>`;
     }).join('');
-    const html = `<!DOCTYPE html><html><head>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<style>
-body{font-family:Arial,sans-serif;background:#0b1416;color:#EFE8D8;margin:0;padding:0;}
-.wrapper{background:#0b1416;padding:30px 15px;}
-.container{max-width:560px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
-.header{background:#015A64;padding:28px 30px;text-align:center;}
-.header h1{margin:8px 0 0;font-size:22px;font-weight:700;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8;}
-.header p{margin:6px 0 0;font-size:13px;color:rgba(239,232,216,0.75);}
-.content{background:#0f1e20;padding:28px 30px;}
-.label{color:#015A64;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin:22px 0 8px;border-bottom:1px solid #1e3538;padding-bottom:6px;}
-.badge{background:#162c2f;border-left:4px solid #015A64;padding:12px 16px;border-radius:0 10px 10px 0;font-size:14px;}
-.total{background:#015A64;color:#EFE8D8;padding:16px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;margin:20px 0;}
-table{width:100%;border-collapse:collapse;font-size:14px;}
-th{background:#162c2f;padding:8px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(239,232,216,0.6);}
-.info{background:#162c2f;padding:14px 16px;border-radius:10px;font-size:14px;line-height:2;}
-.footer{background:#071012;padding:20px 30px;text-align:center;font-size:12px;color:rgba(239,232,216,0.45);}
-</style></head>
-<body><div class="wrapper"><div class="container">
-<div class="header">
-  ${LOGO_IMG_TAG}
-  <h1>🛎 New Order Received</h1>
-  <p>Someone just placed an order on Strong Spoon</p>
-</div>
-<div class="content">
-  <div class="label">Order Reference</div>
-  <div class="badge"><strong>#${orderData.order_number}</strong> &nbsp;·&nbsp; ${orderType} &nbsp;·&nbsp; $${orderData.total_amount} CAD</div>
-  <div class="label">Customer</div>
-  <div class="info">👤 ${orderData.customer_name}<br>📧 ${orderData.customer_email}<br>📞 ${orderData.customer_phone || '—'}<br>📍 ${orderData.customer_address || 'Regina, SK'}</div>
-  ${orderData.delivery_date ? `<div class="label">Scheduled Delivery</div><div class="info">📅 ${orderData.delivery_date}<br>🕐 ${orderData.delivery_time_slot || '—'}</div>` : ''}
-  <div class="label">Items Ordered</div>
-  <table><thead><tr><th>Product</th><th>Qty</th><th>Toppings</th></tr></thead><tbody>${itemRows}</tbody></table>
-  <div class="total">Total: $${orderData.total_amount} CAD</div>
-</div>
-<div class="footer">Strong Spoon · Regina, SK — New order alert</div>
-</div></div></body></html>`;
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Order</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#1a1a1a;background:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding:30px 16px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+
+      <!-- Header -->
+      <tr><td align="center" style="padding-bottom:24px;border-bottom:2px solid #013e4a;">
+        <div style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:2px;color:#013e4a;">💪 STRONG SPOON</div>
+        <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">New Order Received</div>
+      </td></tr>
+
+      <!-- Body -->
+      <tr><td style="padding:28px 0 0;">
+
+        <p style="margin:0 0 24px;font-size:18px;font-weight:700;color:#1a1a1a;">🛎 Order #${orderData.order_number}</p>
+
+        <!-- Order info -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Order Details</div>
+            <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
+              <strong>Type:</strong> ${orderType}<br>
+              <strong>Total:</strong> $${orderData.total_amount} CAD
+            </div>
+          </td></tr>
+        </table>
+
+        <!-- Customer info -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Customer</div>
+            <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
+              👤 ${orderData.customer_name}<br>
+              📧 ${orderData.customer_email}<br>
+              📞 ${orderData.customer_phone || '—'}<br>
+              📍 ${orderData.customer_address || 'Regina, SK'}
+            </div>
+          </td></tr>
+        </table>
+
+        ${orderData.delivery_date ? `
+        <!-- Delivery schedule -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Scheduled Delivery</div>
+            <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
+              📅 ${orderData.delivery_date}<br>
+              🕐 ${orderData.delivery_time_slot || '—'}
+            </div>
+          </td></tr>
+        </table>
+        ` : ''}
+
+        <!-- Items -->
+        <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;">Items Ordered</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#e8e8e8;margin:0 0 24px;">
+          <thead>
+            <tr style="background:#f5f5f5;">
+              <th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;font-weight:700;">Item</th>
+              <th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;font-weight:700;">Toppings</th>
+            </tr>
+          </thead>
+          <tbody>${itemLines}</tbody>
+        </table>
+
+        <p style="margin:0 0 32px;font-size:17px;font-weight:700;color:#013e4a;">Total: $${orderData.total_amount} CAD</p>
+
+      </td></tr>
+
+      <!-- Footer -->
+      <tr><td style="padding-top:24px;border-top:1px solid #e8e8e8;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
+      </td></tr>
+
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
 
     await resend.emails.send({
       from: FROM_EMAIL,
