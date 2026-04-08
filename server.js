@@ -1321,55 +1321,61 @@ app.get('/admin/waitlist', async (req, res) => {
 
 function generatePickupReadyHtml(orderNumber, customerName, pickupAddress, pickupPhone, total) {
   return `<!DOCTYPE html>
-<html lang="en" style="background:#0b1416 !important;">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="color-scheme" content="dark">
-<meta name="supported-color-schemes" content="dark">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<style>
-:root { color-scheme: dark; }
-body { font-family: Arial, sans-serif; background: #0b1416 !important; background-color: #0b1416 !important; color: #EFE8D8 !important; margin: 0; padding: 0; }
-.wrapper { background: #0b1416 !important; background-color: #0b1416 !important; padding: 30px 15px; }
-.container { max-width: 560px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
-.header { background: #015A64 !important; background-color: #015A64 !important; padding: 28px 30px; text-align: center; }
-.header h1 { margin: 8px 0 0; font-size: 22px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; color: #EFE8D8 !important; }
-.header p { margin: 6px 0 0; font-size: 13px; color: rgba(239,232,216,0.85) !important; }
-.content { background: #0f1e20 !important; background-color: #0f1e20 !important; padding: 28px 30px; color: #EFE8D8 !important; }
-.content p { color: #EFE8D8 !important; }
-.label { color: #017d8e !important; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 22px 0 8px; border-bottom: 1px solid #1e3538; padding-bottom: 6px; }
-.badge { background: #162c2f !important; background-color: #162c2f !important; border-left: 4px solid #015A64; padding: 14px 18px; border-radius: 0 10px 10px 0; font-size: 15px; line-height: 1.9; color: #EFE8D8 !important; }
-.highlight { background: #0d2a2e !important; background-color: #0d2a2e !important; border: 1.5px solid rgba(1,125,142,0.5); border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0; }
-.highlight .big { font-size: 28px; margin-bottom: 6px; }
-.highlight strong { font-size: 18px; color: #017d8e !important; display: block; margin-bottom: 6px; }
-.highlight span { font-size: 14px; color: #EFE8D8 !important; font-weight: 600; }
-.footer { background: #071012 !important; background-color: #071012 !important; padding: 20px 30px; text-align: center; font-size: 12px; color: rgba(239,232,216,0.5) !important; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ready for Pickup</title>
 </head>
-<body style="background:#0b1416 !important; background-color:#0b1416 !important; color:#EFE8D8 !important; margin:0; padding:0;">
-<div class="wrapper" style="background:#0b1416 !important; background-color:#0b1416 !important; padding:30px 15px;">
-<div class="container" style="max-width:560px; margin:0 auto; border-radius:16px; overflow:hidden;">
-<div class="header" style="background:#015A64 !important; background-color:#015A64 !important; padding:28px 30px; text-align:center;">
-  ${LOGO_IMG_TAG}
-  <h1 style="margin:8px 0 0; font-size:22px; font-weight:700; color:#EFE8D8 !important;">🏪 Your Order is Ready for Pickup!</h1>
-  <p style="margin:6px 0 0; font-size:13px; color:rgba(239,232,216,0.85) !important;">Order #${orderNumber} is ready and waiting for you</p>
-</div>
-<div class="content" style="background:#0f1e20 !important; background-color:#0f1e20 !important; padding:28px 30px;">
-  <p style="font-size:15px; margin:0 0 20px; color:#EFE8D8 !important;">Hi <strong>${customerName}</strong>,<br><br>Great news — your Strong Spoon order is freshly prepared and ready for pickup right now!</p>
-  <div class="highlight" style="background:#0d2a2e !important; background-color:#0d2a2e !important; border:1.5px solid rgba(1,125,142,0.5); border-radius:12px; padding:20px; text-align:center; margin:20px 0;">
-    <div class="big" style="font-size:28px; margin-bottom:6px;">📍</div>
-    <strong style="font-size:18px; color:#017d8e !important; display:block; margin-bottom:6px;">Pickup Address</strong>
-    <span style="font-size:14px; color:#EFE8D8 !important; font-weight:600;">${pickupAddress}</span>
-  </div>
-  ${pickupPhone ? `<div class="label" style="color:#017d8e !important; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin:22px 0 8px; border-bottom:1px solid #1e3538; padding-bottom:6px;">Contact / Arrived?</div><div class="badge" style="background:#162c2f !important; background-color:#162c2f !important; border-left:4px solid #015A64; padding:14px 18px; border-radius:0 10px 10px 0; font-size:15px; color:#EFE8D8 !important;">📞 Call or text us when you arrive: <strong>${pickupPhone}</strong></div>` : ''}
-  <div class="label" style="color:#017d8e !important; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin:22px 0 8px; border-bottom:1px solid #1e3538; padding-bottom:6px;">Your Order</div>
-  <div class="badge" style="background:#162c2f !important; background-color:#162c2f !important; border-left:4px solid #015A64; padding:14px 18px; border-radius:0 10px 10px 0; font-size:15px; color:#EFE8D8 !important;">
-    <strong>#${orderNumber}</strong><br>Total: $${total} CAD
-  </div>
-</div>
-<div class="footer" style="background:#071012 !important; background-color:#071012 !important; padding:20px 30px; text-align:center; font-size:12px; color:rgba(239,232,216,0.5) !important;">Strong Spoon · Regina, SK · strongspoon.ca</div>
-</div>
-</div>
+<body style="margin:0;padding:0;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.7;color:#1a1a1a;background:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;">
+  <tr><td align="center" style="padding:30px 16px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+
+      <!-- Logo / Brand header -->
+      <tr><td align="center" style="padding-bottom:28px;border-bottom:2px solid #015A64;">
+        ${LOGO_IMG_TAG}
+        <div style="font-family:Georgia,serif;font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:#015A64;margin-top:10px;">High-Protein Dessert · Regina, SK</div>
+      </td></tr>
+
+      <!-- Main message -->
+      <tr><td style="padding:32px 0 0;">
+        <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:22px;font-weight:700;color:#1a1a1a;">Hi ${customerName},</p>
+        <p style="margin:0 0 24px;font-size:16px;color:#333;">Great news — your Strong Spoon order is freshly prepared and <strong>ready for pickup right now!</strong></p>
+
+        <!-- Address box -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:18px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">📍 Pickup Address</div>
+            <div style="font-size:17px;font-weight:700;color:#1a1a1a;">${pickupAddress}</div>
+          </td></tr>
+        </table>
+
+        ${pickupPhone ? `
+        <!-- Phone -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:6px;">📞 When you arrive</div>
+            <div style="font-size:16px;color:#1a1a1a;">Call or text us: <strong>${pickupPhone}</strong></div>
+          </td></tr>
+        </table>
+        ` : ''}
+
+        <!-- Order ref -->
+        <p style="margin:0 0 6px;font-size:13px;color:#888;">Order reference</p>
+        <p style="margin:0 0 32px;font-size:15px;color:#333;"><strong>#${orderNumber}</strong> &nbsp;·&nbsp; $${total} CAD</p>
+
+        <p style="margin:0;font-size:15px;color:#555;">We look forward to seeing you. Enjoy your Strong Spoon!</p>
+      </td></tr>
+
+      <!-- Footer -->
+      <tr><td style="padding-top:32px;border-top:1px solid #e8e8e8;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
+      </td></tr>
+
+    </table>
+  </td></tr>
+</table>
 </body></html>`;
 }
 
