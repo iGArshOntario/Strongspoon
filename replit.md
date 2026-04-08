@@ -15,8 +15,8 @@ The platform features a modern, responsive design with a black background and wh
 The frontend is built using HTML5, CSS3, and vanilla JavaScript, leveraging localStorage for shopping cart persistence and Stripe.js for secure client-side payment processing. There are no frontend frameworks or build tools. The backend is a Node.js Express.js server that handles Stripe payment intents and manages API keys securely using environment variables. Email order confirmations are sent automatically using the Resend API, featuring professional HTML templates. The platform is deployed as a Progressive Web App (PWA) at strongspoon.ca with service worker caching for offline functionality and installability on mobile devices.
 
 ### Feature Specifications
-- **Product Catalog**: Allows browsing of dessert flavors with dynamic pricing — $12 per 250g cup (tax-included) regularly, $7 during the 24-hour launch window (April 10, 2026 8 AM – April 11, 2026 8 AM CST). All toppings are free.
-- **Order Customization**: Customers can select from a variety of free toppings (almonds, cashews, peanuts, raisins, walnut, apple, blueberries).
+- **Product Catalog**: Allows browsing of dessert flavors with dynamic pricing — $12 per 250g cup (tax-included) regularly, $7 during the 24-hour launch window (April 10, 2026 8 AM – April 11, 2026 8 AM CST). Toppings are +$1 per cup.
+- **Order Customization**: Customers can select from a variety of toppings at +$1 per cup (almonds, cashews, peanuts, raisins, walnut, apple, blueberries).
 - **Shopping Cart System**: Full cart functionality with add, remove, update quantities, and real-time total calculations. Cart state persists across sessions using localStorage.
 - **Delivery Scheduling**: Customers can select preferred delivery date and time slot (Morning 8AM-12PM, Afternoon 12PM-4PM, Evening 4PM-8PM) during checkout. System enforces 12-hour minimum advance order requirement with timezone-aware validation. Scheduled delivery information is displayed in admin dashboard and delivery portal.
 - **Secure Checkout**: Integration with Stripe for secure payment processing using Payment Intents API.
