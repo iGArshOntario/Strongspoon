@@ -1333,9 +1333,10 @@ function generatePickupReadyHtml(orderNumber, customerName, pickupAddress, picku
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
 
       <!-- Logo / Brand header -->
-      <tr><td align="center" style="padding-bottom:28px;border-bottom:2px solid #015A64;">
+      <tr><td align="center" style="padding-bottom:28px;border-bottom:2px solid #013e4a;">
         ${LOGO_IMG_TAG}
-        <div style="font-family:Georgia,serif;font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:#015A64;margin-top:10px;">High-Protein Dessert · Regina, SK</div>
+        <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;letter-spacing:2px;color:#013e4a;margin-top:8px;">💪 STRONG SPOON</div>
+        <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">Fuel your strength. · Regina, SK</div>
       </td></tr>
 
       <!-- Main message -->
