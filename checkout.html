@@ -461,6 +461,21 @@
       letter-spacing: 0.5px;
     }
 
+    /* ── Test mode banner ── */
+    .test-mode-banner {
+      display: none;
+      background: linear-gradient(135deg, #f5c842, #e0a800);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-align: center;
+      padding: 10px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+    .test-mode-banner.active { display: block; }
+
     /* ── PAY BUTTON — the hero CTA ── */
     .pay-btn-wrap {
       margin-top: 24px;
@@ -618,6 +633,10 @@
 
         <form id="payment-form">
 
+          <div class="test-mode-banner" id="testModeBanner">
+            🧪 TEST MODE — You will be charged exactly $1.00 CAD
+          </div>
+
           <div class="checkout-section-label">Contact</div>
 
           <div class="form-group">
@@ -722,5 +741,12 @@
   <script src="products.js"></script>
   <script src="script.js"></script>
   <script src="checkout-page.js"></script>
+  <script>
+    // Activate test mode banner if ?test=1 in URL
+    if (new URLSearchParams(window.location.search).get('test') === '1') {
+      const banner = document.getElementById('testModeBanner');
+      if (banner) banner.classList.add('active');
+    }
+  </script>
 </body>
 </html>

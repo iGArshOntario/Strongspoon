@@ -753,7 +753,7 @@ app.get('/get-stripe-key', (req, res) => {
 
 app.post('/create-payment-intent', async (req, res) => {
   try {
-    const { customer, items, orderType, deliveryDate, deliveryTimeSlot, cardBrand } = req.body;
+    const { customer, items, orderType, deliveryDate, deliveryTimeSlot, cardBrand, testMode } = req.body;
     
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
@@ -820,7 +820,15 @@ app.post('/create-payment-intent', async (req, res) => {
     const baseTotal = Math.round((itemsSubtotal + deliveryFee) * 100) / 100;
     const amexFee = (cardBrand === 'amex') ? Math.round(baseTotal * 0.006 * 100) / 100 : 0;
     const serverTotal = Math.round((baseTotal + amexFee) * 100) / 100;
-    const amountInCents = Math.round(serverTotal * 100);
+
+    // Test mode: charge exactly $1.00 CAD for payment flow testing
+    const isTestMode = testMode === true;
+    const amountInCents = isTestMode ? 100 : Math.round(serverTotal * 100);
+    const chargeTotal = isTestMode ? '1.00' : serverTotal.toFixed(2);
+
+    if (isTestMode) {
+      console.log('🧪 TEST MODE: Charging $1.00 instead of $' + serverTotal.toFixed(2));
+    }
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInCents,
@@ -834,11 +842,12 @@ app.post('/create-payment-intent', async (req, res) => {
         delivery_date: deliveryDate || '',
         delivery_time_slot: deliveryTimeSlot || '',
         items: JSON.stringify(validatedItems),
-        total: serverTotal.toFixed(2),
+        total: chargeTotal,
         delivery_fee: deliveryFee.toFixed(2),
         amex_fee: amexFee > 0 ? amexFee.toFixed(2) : '0',
         card_brand: cardBrand || 'unknown',
-        pricing: `Flat rate $${getCurrentPrice().toFixed(2)} per cup (tax included)`
+        pricing: `Flat rate $${getCurrentPrice().toFixed(2)} per cup (tax included)`,
+        test_mode: isTestMode ? 'true' : 'false'
       },
     });
 

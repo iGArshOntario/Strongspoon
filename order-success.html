@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmed | Strong Spoon</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#015A64">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Strong Spoon">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #EFE8D8;
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes checkPop {
+      0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+      60%  { transform: scale(1.15) rotate(4deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(1,125,142,0); }
+      50%       { box-shadow: 0 0 0 16px rgba(1,125,142,0.12); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    .success-card {
+      background: linear-gradient(135deg, rgba(1,90,100,0.12), rgba(0,0,0,0));
+      border: 1px solid rgba(1,90,100,0.25);
+      border-radius: 24px;
+      padding: 48px 32px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .check-circle {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.4rem;
+      margin: 0 auto 28px;
+      animation: checkPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.2s both, pulse 3s ease-in-out 1s infinite;
+    }
+
+    .cup-float {
+      font-size: 3rem;
+      display: block;
+      margin: 0 auto 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .success-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #EFE8D8;
+      margin-bottom: 10px;
+      line-height: 1.15;
+    }
+
+    .success-subtitle {
+      font-size: 0.9rem;
+      color: rgba(239,232,216,0.55);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .order-badge {
+      display: inline-block;
+      background: rgba(1,90,100,0.18);
+      border: 1px solid rgba(1,125,142,0.3);
+      border-radius: 10px;
+      padding: 12px 20px;
+      margin-bottom: 32px;
+    }
+    .order-badge-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(1,125,142,0.8);
+      margin-bottom: 4px;
+    }
+    .order-badge-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #EFE8D8;
+      letter-spacing: 0.5px;
+    }
+
+    .info-rows {
+      margin-bottom: 32px;
+      text-align: left;
+    }
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .info-text strong {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #EFE8D8;
+      margin-bottom: 2px;
+    }
+    .info-text span {
+      font-size: 0.78rem;
+      color: rgba(239,232,216,0.45);
+      line-height: 1.5;
+    }
+
+    .btn-home {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      color: #EFE8D8;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 24px rgba(1,90,100,0.4);
+      transition: all 0.25s ease;
+      letter-spacing: 0.3px;
+    }
+    .btn-home:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(1,90,100,0.55);
+    }
+
+    .btn-feedback {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid rgba(1,125,142,0.3);
+      color: rgba(239,232,216,0.6);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.25s ease;
+    }
+    .btn-feedback:hover {
+      border-color: rgba(1,125,142,0.6);
+      color: #EFE8D8;
+      background: rgba(1,90,100,0.08);
+    }
+
+    .trust-line {
+      margin-top: 24px;
+      font-size: 0.65rem;
+      color: rgba(239,232,216,0.15);
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="success-card">
+    <div class="check-circle">✓</div>
+
+    <h1 class="success-title">Order Confirmed!</h1>
+    <p class="success-subtitle">
+      Your protein-packed dessert is on its way to being made fresh.<br>Check your inbox for your confirmation email.
+    </p>
+
+    <div class="order-badge" id="orderBadge" style="display:none;">
+      <div class="order-badge-label">Your Order Number</div>
+      <div class="order-badge-number" id="orderNumberDisplay"></div>
+    </div>
+
+    <div class="info-rows">
+      <div class="info-row">
+        <span class="info-icon">📧</span>
+        <div class="info-text">
+          <strong>Confirmation Email Sent</strong>
+          <span>Check your inbox (and spam folder) for your order receipt with full details.</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">🔔</span>
+        <div class="info-text">
+          <strong>We'll Notify You</strong>
+          <span>You'll get an email the moment your order is ready for pickup or out for delivery.</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">💪</span>
+        <div class="info-text">
+          <strong>Made Fresh For You</strong>
+          <span>Each cup is handcrafted in small batches — no shortcuts, just protein goodness.</span>
+        </div>
+      </div>
+    </div>
+
+    <a href="index.html?preview=strongspoon" class="btn-home">Back to Home</a>
+    <a href="feedback.html" class="btn-feedback">⭐ Leave a Review</a>
+
+    <p class="trust-line">🔒 Secured by Stripe · Strong Spoon · Regina, SK</p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const orderNum = params.get('order');
+    if (orderNum) {
+      document.getElementById('orderNumberDisplay').textContent = orderNum;
+      document.getElementById('orderBadge').style.display = 'inline-block';
+    }
+  </script>
+</body>
+</html>

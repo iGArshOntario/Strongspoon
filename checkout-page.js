@@ -2,6 +2,9 @@ const DELIVERY_FEE = 4.99;
 const FREE_DELIVERY_THRESHOLD = 25;
 const AMEX_SURCHARGE_RATE = 0.006; // 0.6% — covers the extra Amex processing cost
 
+// Test mode: ?test=1 in URL charges exactly $1.00 for payment flow testing
+const IS_TEST_MODE = new URLSearchParams(window.location.search).get('test') === '1';
+
 let orderType = 'delivery';
 let cartSubtotal = 0;
 let cardBrand = null;
@@ -21,6 +24,7 @@ function getAmexFee() {
 }
 
 function getFinalTotal() {
+  if (IS_TEST_MODE) return 1.00;
   return Math.round((getBaseTotal() + getAmexFee()) * 100) / 100;
 }
 
@@ -294,6 +298,7 @@ form.addEventListener('submit', async (e) => {
     total: getFinalTotal(),
     deliveryFee: getDeliveryFee(),
     cardBrand: cardBrand || 'unknown',
+    testMode: IS_TEST_MODE,
   };
 
   try {
@@ -328,10 +333,11 @@ form.addEventListener('submit', async (e) => {
         if (!saveResponse.ok) throw new Error('Failed to save order');
 
         const saveData = await saveResponse.json();
-        messageDiv.textContent = `✅ Payment successful! Order #${saveData.orderNumber} confirmed. Redirecting…`;
+        const testTag = IS_TEST_MODE ? ' (Test Order)' : '';
+        messageDiv.textContent = `✅ Payment successful! Order #${saveData.orderNumber} confirmed${testTag}. Check your email — redirecting…`;
         messageDiv.className = 'payment-message success';
         cart.clear();
-        setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+        setTimeout(() => { window.location.href = `order-success.html?order=${encodeURIComponent(saveData.orderNumber)}`; }, 2500);
       } catch (saveError) {
         console.error('Error saving order:', saveError);
         messageDiv.textContent = '⚠️ Payment succeeded but order save failed. Contact support with payment ID: ' + result.paymentIntent.id;

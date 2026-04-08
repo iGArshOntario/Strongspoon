@@ -69,11 +69,19 @@ The architecture follows a modern e-commerce pattern with a client-side rich use
 - `GET /api/send-test-delivery-email` — Delivery notification
 - `GET /api/send-test-waitlist-email` — Waitlist drop alert
 
-### UI Fixes (v66)
-- All 4 flavour pages now have consistent layout: ingredients, image, price, buttons always visible
-- Fixed animation delays that caused ingredients + price to be invisible on page load
-- Mobile image size increased from 150px to 220px; desktop from 280px to 300px
-- Product image zone has consistent min-height and teal radial glow background
-- Toppings correctly labelled "FREE" (not "+$1") on Customise page and cart
-- "Brownie issues" corrected to "Brownie Issues"
-- Service worker bumped to v66
+### UI Fixes & Updates (v71)
+- All 4 flavour pages consistent layout: ingredients, image, price, buttons always visible
+- Checkout form spacing fixed: all form-groups have 18px margin-bottom
+- Pickup info box has 20px bottom margin; order-ahead note has 24px bottom margin
+- Toppings correctly priced: flat $1 for entire order (server + frontend both updated)
+- Toppings labelled "+$1 flat" on Customise page and cart
+- "Brownie Issues" correctly capitalised
+- Html2.html title updated to "Our Flavours | Strong Spoon"
+- New order-success.html page shown after successful payment with order number display
+- $1 Test Payment Mode: append ?test=1 to checkout URL to charge $1 instead of full price (full order flow fires — email, DB, admin dashboard all work)
+- Service worker bumped to v71
+
+### Test Payment URL
+Add these params to checkout URL to test the full order flow for $1:
+`/checkout.html?preview=strongspoon&test=1`
+A yellow "TEST MODE" banner appears in the form; Stripe charges exactly $1.00 CAD.
