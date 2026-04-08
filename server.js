@@ -345,106 +345,75 @@ async function sendOrderConfirmation(orderData) {
     
     // Build items list HTML
     const itemsHTML = items.map(item => `
-      <div class="item-card">
-        <div class="item-name">${item.name}</div>
-        ${item.toppings && item.toppings.length > 0 ? `<div class="item-toppings">Toppings: ${item.toppings.map(t => t.name).join(', ')}</div>` : ''}
-        <div class="item-qty">Qty ${item.quantity} × $${typeof item.price === 'number' ? item.price.toFixed(2) : getCurrentPrice().toFixed(2)} = $${(item.quantity * (typeof item.price === 'number' ? item.price : getCurrentPrice())).toFixed(2)}</div>
-      </div>
+      <tr>
+        <td style="padding:10px 12px;border-bottom:1px solid #e8e8e8;font-size:15px;color:#1a1a1a;font-weight:700;">${item.name} ×${item.quantity}</td>
+        <td style="padding:10px 12px;border-bottom:1px solid #e8e8e8;font-size:14px;color:#666;">${item.toppings && item.toppings.length > 0 ? item.toppings.map(t => t.name).join(', ') : 'No toppings'}</td>
+      </tr>
     `).join('');
 
-    const emailHTML = `
-<!DOCTYPE html>
-<html>
+    const emailHTML = `<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta name="color-scheme" content="dark">
-  <meta name="supported-color-schemes" content="dark">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #EFE8D8; margin: 0; padding: 0; background: #0b1416; }
-    .wrapper { background: #0b1416 !important; padding: 30px 15px; }
-    .container { max-width: 580px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
-    .header { background: #015A64 !important; padding: 36px 30px 28px; text-align: center; }
-    .header h1 { margin: 10px 0 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; font-family: 'Playfair Display', Georgia, serif; color: #EFE8D8 !important; }
-    .header p { margin: 8px 0 0; font-size: 14px; color: rgba(239,232,216,0.75) !important; }
-    .content { background: #0f1e20 !important; padding: 32px 30px; }
-    .greeting { font-size: 22px; font-weight: 700; color: #EFE8D8 !important; margin: 0 0 6px; font-family: 'Playfair Display', Georgia, serif; }
-    .subtext { color: rgba(239,232,216,0.65) !important; font-size: 14px; margin: 0 0 4px; }
-    .section-title { color: #015A64 !important; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 28px 0 10px; border-bottom: 1px solid #1e3538; padding-bottom: 8px; }
-    .order-badge { background: #162c2f !important; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 10px 0 18px; font-size: 14px; color: #EFE8D8 !important; }
-    .item-card { background: #162c2f !important; border: 1px solid #1e3538; border-radius: 10px; padding: 14px 16px; margin: 10px 0; font-size: 14px; color: #EFE8D8 !important; }
-    .item-name { font-weight: 700; color: #EFE8D8 !important; font-size: 15px; }
-    .item-toppings { color: rgba(239,232,216,0.55) !important; font-size: 13px; margin-top: 4px; }
-    .item-qty { color: rgba(239,232,216,0.8) !important; margin-top: 6px; font-size: 13px; }
-    .total-box { background: #015A64 !important; color: #EFE8D8 !important; padding: 18px 16px; text-align: center; font-size: 22px; font-weight: 700; border-radius: 10px; margin: 24px 0; }
-    .info-row { background: #162c2f !important; padding: 14px 16px; border-radius: 10px; font-size: 14px; line-height: 2; color: #EFE8D8 !important; }
-    .footer { background: #071012 !important; padding: 24px 30px; text-align: center; font-size: 13px; }
-    .footer-brand { color: #EFE8D8 !important; font-size: 15px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; }
-    .footer-sub { color: rgba(239,232,216,0.45) !important; font-size: 12px; margin-top: 6px; }
-
-    /* Force dark mode — never flip to light */
-    :root { color-scheme: dark; }
-    @media (prefers-color-scheme: light) {
-      body, .wrapper { background: #0b1416 !important; color: #EFE8D8 !important; }
-      .content { background: #0f1e20 !important; }
-      .item-card, .order-badge, .info-row { background: #162c2f !important; color: #EFE8D8 !important; }
-      .footer { background: #071012 !important; }
-      .total-box { background: #015A64 !important; color: #EFE8D8 !important; }
-      .header { background: #015A64 !important; }
-    }
-
-    /* Force dark mode — never flip to light */
-    :root { color-scheme: dark; }
-    @media (prefers-color-scheme: light) {
-      body, .wrapper { background: #0b1416 !important; color: #EFE8D8 !important; }
-      .content { background: #0f1e20 !important; }
-      .item-card, .order-badge, .info-row { background: #162c2f !important; color: #EFE8D8 !important; }
-      .footer { background: #071012 !important; }
-      .total-box { background: #015A64 !important; color: #EFE8D8 !important; }
-      .header { background: #015A64 !important; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmed</title>
 </head>
-<body style="margin:0;padding:0;background-color:#0b1416;color:#EFE8D8;">
-  <div class="wrapper" style="background-color:#0b1416;">
-  <div class="container">
-    <div class="header" style="background-color:#015A64;">
-      ${LOGO_IMG_TAG}
-      <h1>Order Confirmed ✓</h1>
-      <p>Your Strong Spoon order is on its way!</p>
-    </div>
-    <div class="content" style="background-color:#0f1e20;">
-      <p class="greeting">Hi ${orderData.customer_name}!</p>
-      <p class="subtext">Your order has been confirmed and will be prepared shortly.</p>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#1a1a1a;background:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding:30px 16px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
 
-      <p class="section-title">Order Reference</p>
-      <div class="order-badge">
-        <strong>Order #${orderData.order_number}</strong><br>
-        📅 ${new Date(orderData.created_at).toLocaleString('en-CA', { timeZone: 'America/Toronto', dateStyle: 'long', timeStyle: 'short' })}
-      </div>
+      <tr><td align="center" style="padding-bottom:24px;border-bottom:2px solid #013e4a;">
+        <div style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:2px;color:#013e4a;">💪 STRONG SPOON</div>
+        <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">Order Confirmed ✓</div>
+      </td></tr>
 
-      <p class="section-title">Items Ordered</p>
-      ${itemsHTML}
+      <tr><td style="padding:28px 0 0;">
+        <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:22px;font-weight:700;color:#1a1a1a;">Hi ${orderData.customer_name}!</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#333;">Your order has been confirmed and will be prepared shortly. Thank you for choosing Strong Spoon!</p>
 
-      <div class="total-box">Total Paid: $${orderData.total_amount} CAD</div>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Order Reference</div>
+            <div style="font-size:16px;font-weight:700;color:#1a1a1a;">#${orderData.order_number}</div>
+            <div style="font-size:13px;color:#666;margin-top:4px;">📅 ${new Date(orderData.created_at).toLocaleString('en-CA', { timeZone: 'America/Toronto', dateStyle: 'long', timeStyle: 'short' })}</div>
+          </td></tr>
+        </table>
 
-      <p class="section-title">Your Details</p>
-      <div class="info-row">
-        👤 ${orderData.customer_name}<br>
-        📧 ${orderData.customer_email}<br>
-        ${orderData.customer_phone ? `📞 ${orderData.customer_phone}<br>` : ''}
-        ${orderData.customer_address ? `📍 ${orderData.customer_address}` : ''}
-      </div>
-    </div>
-    <div class="footer">
-      <div class="footer-brand">💪 Strong Spoon</div>
-      <div class="footer-sub">High-Protein Dessert · Regina, SK<br>Questions? Reply to this email</div>
-    </div>
-  </div>
-  </div>
-</body>
-</html>
-    `;
+        <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;">Items Ordered</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#e8e8e8;margin:0 0 20px;">
+          <thead><tr style="background:#f5f5f5;">
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;font-weight:700;">Item</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;font-weight:700;">Toppings</th>
+          </tr></thead>
+          <tbody>${itemsHTML}</tbody>
+        </table>
+
+        <p style="margin:0 0 20px;font-size:18px;font-weight:700;color:#013e4a;">Total Paid: $${orderData.total_amount} CAD</p>
+
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 32px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Your Details</div>
+            <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
+              👤 ${orderData.customer_name}<br>
+              📧 ${orderData.customer_email}<br>
+              ${orderData.customer_phone ? `📞 ${orderData.customer_phone}<br>` : ''}
+              ${orderData.customer_address ? `📍 ${orderData.customer_address}` : ''}
+            </div>
+          </td></tr>
+        </table>
+
+        <p style="margin:0;font-size:14px;color:#555;">Questions? Simply reply to this email and we'll get back to you.</p>
+      </td></tr>
+
+      <tr><td style="padding-top:32px;border-top:1px solid #e8e8e8;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
+      </td></tr>
+
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
 
     // Generate PDF invoice
     let pdfAttachments = [];
@@ -506,10 +475,9 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
 
     // Build items list HTML
     const itemsHTML = items.map(item => `
-      <div style="background:#162c2f;border:1px solid #1e3538;border-radius:10px;padding:12px 16px;margin:8px 0;color:#EFE8D8;font-size:14px;">
-        <strong style="color:#EFE8D8;">${item.name || 'Item'}</strong>
-        <span style="color:rgba(239,232,216,0.6);margin-left:10px;">× ${item.quantity || 1}</span>
-      </div>
+      <tr>
+        <td style="padding:10px 12px;border-bottom:1px solid #e8e8e8;font-size:15px;color:#1a1a1a;font-weight:700;">${item.name || 'Item'} ×${item.quantity || 1}</td>
+      </tr>
     `).join('');
 
     // Prepare the proof image as an inline attachment
@@ -517,122 +485,75 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
     let proofImageHTML = '';
     
     if (deliveryProof && deliveryProof.startsWith('data:image/')) {
-      // Extract content type and base64 data
       const matches = deliveryProof.match(/^data:(image\/\w+);base64,(.+)$/);
       if (matches) {
         const contentType = matches[1];
         const base64Data = matches[2];
         const extension = contentType.split('/')[1] || 'jpeg';
-        
-        // Convert base64 to Buffer for Resend API
         const imageBuffer = Buffer.from(base64Data, 'base64');
-        
         attachments = [{
           filename: `delivery-proof.${extension}`,
           content: imageBuffer,
           contentType: contentType,
           cid: 'deliveryproof'
         }];
-        
         proofImageHTML = `
-          <div style="margin: 20px 0; text-align: center;">
-            <p style="color: #666; margin-bottom: 10px; font-size: 14px;">📷 Proof of Delivery</p>
-            <img src="cid:deliveryproof" alt="Delivery Proof" style="max-width: 100%; max-height: 400px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
-          </div>
+          <p style="margin:20px 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;">📷 Proof of Delivery</p>
+          <img src="cid:deliveryproof" alt="Delivery Proof" style="max-width:100%;max-height:400px;border-radius:8px;border:1px solid #e8e8e8;" />
         `;
       }
     }
 
-    const emailHTML = `
-<!DOCTYPE html>
-<html>
+    const emailHTML = `<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta name="color-scheme" content="dark">
-  <meta name="supported-color-schemes" content="dark">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #EFE8D8; margin: 0; padding: 0; background: #0b1416; }
-    .wrapper { background: #0b1416 !important; padding: 30px 15px; }
-    .container { max-width: 580px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
-    .header { background: #015A64 !important; padding: 36px 30px 28px; text-align: center; }
-    .header h1 { margin: 10px 0 0; font-size: 24px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; color: #EFE8D8 !important; }
-    .header p { margin: 8px 0 0; font-size: 14px; color: rgba(239,232,216,0.75) !important; }
-    .content { background: #0f1e20 !important; padding: 32px 30px; }
-    .greeting { font-size: 22px; font-weight: 700; color: #EFE8D8 !important; margin: 0 0 6px; font-family: 'Playfair Display', Georgia, serif; }
-    .subtext { color: rgba(239,232,216,0.65) !important; font-size: 14px; margin: 0 0 4px; }
-    .section-title { color: #015A64 !important; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 28px 0 10px; border-bottom: 1px solid #1e3538; padding-bottom: 8px; }
-    .delivered-badge { display: inline-block; background: #015A64 !important; color: #EFE8D8 !important; padding: 8px 24px; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 20px; }
-    .info-box { background: #162c2f !important; border-left: 4px solid #015A64; padding: 14px 16px; border-radius: 0 10px 10px 0; margin: 10px 0 18px; font-size: 14px; line-height: 2; color: #EFE8D8 !important; }
-    .note-box { background: #162c2f !important; border-left: 4px solid rgba(239,232,216,0.2); padding: 14px 16px; border-radius: 0 10px 10px 0; margin-top: 20px; font-size: 14px; color: rgba(239,232,216,0.7) !important; }
-    .footer { background: #071012 !important; padding: 24px 30px; text-align: center; font-size: 13px; }
-    .footer-brand { color: #EFE8D8 !important; font-size: 15px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; }
-    .footer-sub { color: rgba(239,232,216,0.45) !important; font-size: 12px; margin-top: 6px; }
-
-    /* Force dark mode — never flip to light */
-    :root { color-scheme: dark; }
-    @media (prefers-color-scheme: light) {
-      body, .wrapper { background: #0b1416 !important; color: #EFE8D8 !important; }
-      .content { background: #0f1e20 !important; }
-      .item-card, .order-badge, .info-row { background: #162c2f !important; color: #EFE8D8 !important; }
-      .footer { background: #071012 !important; }
-      .total-box { background: #015A64 !important; color: #EFE8D8 !important; }
-      .header { background: #015A64 !important; }
-    }
-
-    /* Force dark mode — never flip to light */
-    :root { color-scheme: dark; }
-    @media (prefers-color-scheme: light) {
-      body, .wrapper { background: #0b1416 !important; color: #EFE8D8 !important; }
-      .content { background: #0f1e20 !important; }
-      .item-card, .order-badge, .info-row { background: #162c2f !important; color: #EFE8D8 !important; }
-      .footer { background: #071012 !important; }
-      .total-box { background: #015A64 !important; color: #EFE8D8 !important; }
-      .header { background: #015A64 !important; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Order Has Arrived</title>
 </head>
-<body style="margin:0;padding:0;background-color:#0b1416;color:#EFE8D8;">
-  <div class="wrapper" style="background-color:#0b1416;">
-  <div class="container">
-    <div class="header" style="background-color:#015A64;">
-      ${LOGO_IMG_TAG}
-      <h1>Your Order Has Arrived!</h1>
-      <p>Strong Spoon delivered — enjoy every spoonful</p>
-    </div>
-    <div class="content" style="background-color:#0f1e20;">
-      <div style="text-align:center;margin-bottom:8px;">
-        <span class="delivered-badge">🎉 Successfully Delivered</span>
-      </div>
-      <p class="greeting">Hi ${orderData.customer_name}!</p>
-      <p class="subtext">Great news! Your order has been delivered. Enjoy your high-protein dessert!</p>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#1a1a1a;background:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding:30px 16px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
 
-      <p class="section-title">Delivery Info</p>
-      <div class="info-box">
-        📦 <strong>Order:</strong> ${orderData.order_number}<br>
-        🕐 <strong>Delivered:</strong> ${deliveredAt}<br>
-        🚚 <strong>Delivered by:</strong> ${deliveryPerson}
-      </div>
+      <tr><td align="center" style="padding-bottom:24px;border-bottom:2px solid #013e4a;">
+        <div style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:2px;color:#013e4a;">💪 STRONG SPOON</div>
+        <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">Your Order Has Arrived!</div>
+      </td></tr>
 
-      <p class="section-title">Your Items</p>
-      ${itemsHTML}
+      <tr><td style="padding:28px 0 0;">
+        <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:22px;font-weight:700;color:#1a1a1a;">Hi ${orderData.customer_name}!</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#333;">🎉 Great news — your Strong Spoon order has been delivered. Enjoy every spoonful!</p>
 
-      ${proofImageHTML}
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Delivery Info</div>
+            <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
+              📦 <strong>Order:</strong> ${orderData.order_number}<br>
+              🕐 <strong>Delivered:</strong> ${deliveredAt}<br>
+              🚚 <strong>By:</strong> ${deliveryPerson}
+            </div>
+          </td></tr>
+        </table>
 
-      <div class="note-box">
-        💡 <strong style="color:#EFE8D8;">Questions about your delivery?</strong><br>
-        Simply reply to this email and we'll get back to you.
-      </div>
-    </div>
-    <div class="footer">
-      <div class="footer-brand">💪 Strong Spoon</div>
-      <div class="footer-sub">High-Protein Dessert · Regina, SK<br>Thank you for choosing Strong Spoon</div>
-    </div>
-  </div>
-  </div>
-</body>
-</html>
-    `;
+        <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;">Your Items</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#e8e8e8;margin:0 0 20px;">
+          <tbody>${itemsHTML}</tbody>
+        </table>
+
+        ${proofImageHTML}
+
+        <p style="margin:24px 0 0;font-size:14px;color:#555;">Questions about your delivery? Simply reply to this email and we'll get back to you.</p>
+      </td></tr>
+
+      <tr><td style="padding-top:32px;border-top:1px solid #e8e8e8;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
+      </td></tr>
+
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
 
     const emailOptions = {
       from: FROM_EMAIL,
@@ -1093,48 +1014,41 @@ app.post('/api/drop-status', async (req, res) => {
               html: `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="color-scheme" content="dark">
-  <meta name="supported-color-schemes" content="dark">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
-    :root { color-scheme: dark; }
-    body { margin:0!important; padding:0!important; background-color:#0b1416!important; }
-    @media (prefers-color-scheme: light) {
-      body, #wrapper { background-color:#0b1416!important; }
-      #content { background-color:#0f1e20!important; }
-      #footer-row { background-color:#071012!important; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fresh Batch Is Ready</title>
 </head>
-<body style="margin:0;padding:0;background-color:#0b1416;font-family:Arial,sans-serif;color:#EFE8D8;">
-  <div id="wrapper" style="background-color:#0b1416;padding:30px 15px;">
-    <div style="max-width:520px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6);">
-
-      <!-- HEADER -->
-      <div style="background-color:#015A64;padding:32px 30px 26px;text-align:center;">
-        ${LOGO_IMG_TAG}
-        <h1 style="margin:12px 0 0;font-size:26px;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8;font-weight:900;">Fresh Batch is Here! 🎉</h1>
-        <p style="margin:8px 0 0;color:rgba(239,232,216,0.8);font-size:15px;">You asked us to let you know — and here we are.</p>
-      </div>
-
-      <!-- CONTENT -->
-      <div id="content" style="background-color:#0f1e20;padding:34px 30px;text-align:center;">
-        <div style="display:inline-block;background-color:#015A64;color:#EFE8D8;padding:8px 22px;border-radius:30px;font-size:12px;font-weight:700;letter-spacing:1.5px;margin-bottom:22px;">🟢 NOW ACCEPTING ORDERS</div>
-        <p style="font-size:16px;color:#EFE8D8;line-height:1.75;margin:0 0 26px;">A fresh batch of our high-protein desserts is ready and waiting for you.<br>Don't wait — these go fast!</p>
-        <a href="https://strongspoon.ca" style="display:inline-block;background-color:#015A64;color:#EFE8D8;text-decoration:none;padding:14px 38px;border-radius:30px;font-weight:700;font-size:16px;letter-spacing:0.5px;">Order Now →</a>
-      </div>
-
-      <!-- FOOTER -->
-      <div id="footer-row" style="background-color:#071012;padding:20px 30px;text-align:center;font-size:12px;color:rgba(239,232,216,0.4);">
-        Strong Spoon · Regina, SK<br>You received this because you signed up for drop alerts.
-      </div>
-
-    </div>
-  </div>
-</body>
-</html>`
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#1a1a1a;background:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding:30px 16px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+      <tr><td align="center" style="padding-bottom:24px;border-bottom:2px solid #013e4a;">
+        <div style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:2px;color:#013e4a;">💪 STRONG SPOON</div>
+        <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">Fuel your strength. · Regina, SK</div>
+      </td></tr>
+      <tr><td style="padding:28px 0;">
+        <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:22px;font-weight:700;color:#1a1a1a;">🎉 Fresh Batch Is Ready!</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#333;">You asked us to let you know — and here we are. A fresh batch of our high-protein desserts is ready and waiting. Don't wait, these go fast!</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:15px;font-weight:700;color:#013e4a;">🟢 Now Accepting Orders</div>
+            <div style="font-size:14px;color:#555;margin-top:4px;">Available in Regina, SK only</div>
+          </td></tr>
+        </table>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 32px;">
+          <tr><td align="center">
+            <a href="https://strongspoon.ca" style="display:inline-block;background:#015A64;color:#ffffff;text-decoration:none;padding:14px 40px;border-radius:6px;font-weight:700;font-size:16px;letter-spacing:0.5px;">Order Now →</a>
+          </td></tr>
+        </table>
+        <p style="margin:0;font-size:13px;color:#aaa;">You received this because you signed up for drop alerts at strongspoon.ca</p>
+      </td></tr>
+      <tr><td style="padding-top:24px;border-top:1px solid #e8e8e8;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`
             });
           } catch(e) { console.error('Waitlist email error:', e.message); }
         }
@@ -1869,63 +1783,61 @@ async function startServer() {
   // Test email route — sends a sample order confirmation
   app.get('/api/send-test-email', async (req, res) => {
     if (!resend) return res.status(503).json({ error: 'Email service not configured' });
-    const to = req.query.to || 'arsh99591@gmail.com';
-    const html = `
-<!DOCTYPE html><html><head>
-  <meta name="color-scheme" content="dark">
-  <meta name="supported-color-schemes" content="dark">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-  <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
-  body{font-family:Arial,sans-serif;line-height:1.6;color:#EFE8D8;margin:0;padding:0;background:#0b1416;}
-  .wrapper{background:#0b1416 !important;padding:30px 15px;}
-  .container{max-width:580px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
-  .header{background:#015A64 !important;padding:36px 30px 28px;text-align:center;}
-  .header h1{margin:10px 0 0;font-size:24px;font-weight:700;font-family:'Playfair Display',Georgia,serif;color:#EFE8D8 !important;}
-  .header p{margin:8px 0 0;font-size:14px;color:rgba(239,232,216,0.75) !important;}
-  .content{background:#0f1e20 !important;padding:32px 30px;}
-  .greeting{font-size:22px;font-weight:700;color:#EFE8D8 !important;margin:0 0 6px;font-family:'Playfair Display',Georgia,serif;}
-  .subtext{color:rgba(239,232,216,0.65) !important;font-size:14px;margin:0 0 4px;}
-  .section-title{color:#015A64 !important;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin:28px 0 10px;border-bottom:1px solid #1e3538;padding-bottom:8px;}
-  .order-badge{background:#162c2f !important;border-left:4px solid #015A64;padding:14px 16px;border-radius:0 10px 10px 0;margin:10px 0 18px;font-size:14px;color:#EFE8D8 !important;}
-  .item-card{background:#162c2f !important;border:1px solid #1e3538;border-radius:10px;padding:14px 16px;margin:10px 0;font-size:14px;color:#EFE8D8 !important;}
-  .total-box{background:#015A64 !important;color:#EFE8D8 !important;padding:18px 16px;text-align:center;font-size:22px;font-weight:700;border-radius:10px;margin:24px 0;}
-  .info-row{background:#162c2f !important;padding:14px 16px;border-radius:10px;font-size:14px;line-height:2;color:#EFE8D8 !important;}
-  .footer{background:#071012 !important;padding:24px 30px;text-align:center;font-size:13px;}
-  .footer-brand{color:#EFE8D8 !important;font-size:15px;font-weight:700;font-family:'Playfair Display',Georgia,serif;}
-  .footer-sub{color:rgba(239,232,216,0.45) !important;font-size:12px;margin-top:6px;}
-</style></head>
-<body><div class="wrapper"><div class="container">
-  <div class="header">
-    ${LOGO_IMG_TAG}
-    <h1>Order Confirmed ✓</h1>
-    <p>Your Strong Spoon order is on its way!</p>
-  </div>
-  <div class="content">
-    <p class="greeting">Hi Arsh!</p>
-    <p class="subtext">Here's your order confirmation from Strong Spoon.</p>
-    <p class="section-title">Order Reference</p>
-    <div class="order-badge"><strong>Order #SS-SAMPLE-001</strong><br>📅 March 25, 2026 at 10:30 AM</div>
-    <p class="section-title">Items Ordered</p>
-    <div class="item-card">
-      <div style="font-weight:700;font-size:15px;">Brownie Issues</div>
-      <div style="color:rgba(239,232,216,0.55);font-size:13px;margin-top:4px;">Toppings: Almonds, Cashews</div>
-      <div style="color:rgba(239,232,216,0.8);font-size:13px;margin-top:6px;">Qty 2 × $11.99 = $23.98</div>
-    </div>
-    <div class="item-card">
-      <div style="font-weight:700;font-size:15px;">Golden Scoop</div>
-      <div style="color:rgba(239,232,216,0.55);font-size:13px;margin-top:4px;">No toppings</div>
-      <div style="color:rgba(239,232,216,0.8);font-size:13px;margin-top:6px;">Qty 1 × $11.99 = $11.99</div>
-    </div>
-    <div class="total-box">Total Paid: $35.97 CAD</div>
-    <p class="section-title">Your Details</p>
-    <div class="info-row">👤 Arsh<br>📧 ${to}<br>📍 Regina, SK</div>
-  </div>
-  <div class="footer">
-    <div class="footer-brand">💪 Strong Spoon</div>
-    <div class="footer-sub">High-Protein Dessert · Regina, SK<br>Questions? Reply to this email</div>
-  </div>
-</div></div></body></html>`;
+    const to = req.query.to || OWNER_EMAIL;
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmed</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#1a1a1a;background:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding:30px 16px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+      <tr><td align="center" style="padding-bottom:24px;border-bottom:2px solid #013e4a;">
+        <div style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:2px;color:#013e4a;">💪 STRONG SPOON</div>
+        <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">Order Confirmed ✓</div>
+      </td></tr>
+      <tr><td style="padding:28px 0 0;">
+        <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:22px;font-weight:700;color:#1a1a1a;">Hi Test Customer!</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#333;">Your order has been confirmed and will be prepared shortly. Thank you for choosing Strong Spoon!</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Order Reference</div>
+            <div style="font-size:16px;font-weight:700;color:#1a1a1a;">#SS-SAMPLE-001</div>
+            <div style="font-size:13px;color:#666;margin-top:4px;">📅 April 10, 2026 at 10:30 AM</div>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;">Items Ordered</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#e8e8e8;margin:0 0 20px;">
+          <thead><tr style="background:#f5f5f5;">
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;font-weight:700;">Item</th>
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;font-weight:700;">Toppings</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="padding:10px 12px;border-bottom:1px solid #e8e8e8;font-size:15px;color:#1a1a1a;font-weight:700;">Brownie Issues ×2</td><td style="padding:10px 12px;border-bottom:1px solid #e8e8e8;font-size:14px;color:#666;">Almonds, Cashews</td></tr>
+            <tr><td style="padding:10px 12px;font-size:15px;color:#1a1a1a;font-weight:700;">Golden Scoop ×1</td><td style="padding:10px 12px;font-size:14px;color:#666;">No toppings</td></tr>
+          </tbody>
+        </table>
+        <p style="margin:0 0 20px;font-size:18px;font-weight:700;color:#013e4a;">Total Paid: $35.97 CAD</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 32px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Your Details</div>
+            <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
+              👤 Test Customer<br>📧 ${to}<br>📞 (306) 555-0199<br>📍 123 Wascana St, Regina, SK
+            </div>
+          </td></tr>
+        </table>
+        <p style="margin:0;font-size:14px;color:#555;">Questions? Simply reply to this email and we'll get back to you.</p>
+      </td></tr>
+      <tr><td style="padding-top:32px;border-top:1px solid #e8e8e8;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
     // Generate sample PDF invoice
     const sampleOrder = {
       order_number: 'SS-SAMPLE-001',
@@ -2014,6 +1926,29 @@ async function startServer() {
     });
     if (error) return res.status(500).json({ success: false, error: error.message });
     res.json({ success: true, message: `Test pickup ready email sent to ${to}` });
+  });
+
+  // Test delivery notification email
+  app.get('/api/send-test-delivery-email', async (req, res) => {
+    if (!resend) return res.status(503).json({ error: 'Email service not configured' });
+    const to = req.query.to || OWNER_EMAIL;
+    const fakeOrder = {
+      order_number: 'SS-DELIVERY-TEST',
+      customer_name: 'Test Customer',
+      customer_email: to,
+      total_amount: '23.98',
+      items: JSON.stringify([
+        { name: 'Brownie Issues', quantity: 2 },
+        { name: 'Power Mix', quantity: 1 }
+      ]),
+      delivered_at: new Date().toISOString()
+    };
+    const result = await sendDeliveryNotification(fakeOrder, null, 'Strong Spoon Team');
+    if (result.success) {
+      res.json({ success: true, message: `Test delivery email sent to ${to}` });
+    } else {
+      res.status(500).json({ success: false, error: result.error });
+    }
   });
 
   // Start the server
