@@ -60,3 +60,7 @@ expertMode = true
 
 [userenv.shared]
 RESEND_FROM_EMAIL = "Strong Spoon <noreply@strongspoon.ca>"
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 60000
