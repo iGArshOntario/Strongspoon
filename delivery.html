@@ -17,6 +17,147 @@
       padding-bottom: 80px;
     }
 
+    /* ── Premium Login Overlay ──────────────────────────────────── */
+    #loginOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at top, #011e22 0%, #000 70%);
+      padding: 24px;
+    }
+    #loginOverlay.hidden { display: none; }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(1,125,142,0.3);
+      border-radius: 20px;
+      padding: 40px 32px;
+      text-align: center;
+      box-shadow: 0 0 60px rgba(1,90,100,0.25), 0 20px 60px rgba(0,0,0,0.5);
+      animation: loginFadeIn 0.5s ease-out;
+    }
+    @keyframes loginFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .login-card.shake {
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-10px); }
+      40%      { transform: translateX(10px); }
+      60%      { transform: translateX(-8px); }
+      80%      { transform: translateX(6px); }
+    }
+
+    .login-lock-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin: 0 auto 20px;
+      box-shadow: 0 4px 20px rgba(1,125,142,0.4);
+    }
+    .login-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #EFE8D8;
+      margin-bottom: 4px;
+    }
+    .login-portal-name {
+      font-size: 0.78rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #017d8e;
+      margin-bottom: 32px;
+    }
+    .login-field-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .login-field-wrap input {
+      width: 100%;
+      padding: 14px 48px 14px 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      color: #EFE8D8;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .login-field-wrap input:focus {
+      outline: none;
+      border-color: #017d8e;
+      background: rgba(1,125,142,0.08);
+    }
+    .login-eye-btn {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #888;
+      font-size: 1rem;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .login-eye-btn:hover { color: #EFE8D8; }
+    .login-error {
+      color: #f44336;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+      min-height: 18px;
+    }
+    .login-submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      color: #EFE8D8;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(1,125,142,0.3);
+    }
+    .login-submit-btn:hover {
+      background: linear-gradient(135deg, #017d8e, #00a08a);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(1,125,142,0.5);
+    }
+    .login-submit-btn:disabled {
+      background: #333;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .login-footer {
+      margin-top: 20px;
+      color: #555;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+    }
+    /* ── End Login Overlay ──────────────────────────────────────── */
+
     .delivery-container {
       max-width: 600px;
       margin: 20px auto;
@@ -350,6 +491,25 @@
   </style>
 </head>
 <body>
+
+  <!-- Premium Login Overlay -->
+  <div id="loginOverlay">
+    <div class="login-card" id="loginCard">
+      <div class="login-lock-icon">🚚</div>
+      <div class="login-brand">Strong Spoon</div>
+      <div class="login-portal-name">Delivery Portal</div>
+      <form onsubmit="event.preventDefault(); attemptLogin();">
+        <div class="login-field-wrap">
+          <input type="password" id="loginPasswordInput" placeholder="Enter access password" autocomplete="current-password">
+          <button class="login-eye-btn" id="loginEyeBtn" type="button" onclick="toggleLoginPwd()">👁</button>
+        </div>
+        <div class="login-error" id="loginError"></div>
+        <button type="submit" class="login-submit-btn" id="loginSubmitBtn">Access Portal</button>
+      </form>
+      <div class="login-footer">Secured · Strong Spoon · Regina, SK</div>
+    </div>
+  </div>
+
   <div class="cart-nav">
     <a href="index.html" class="cart-icon">
       🏠 <span style="font-size: 0.9rem;">Home</span>
@@ -416,26 +576,60 @@
     let cameraStream = null;
     let deliveryCredentials = null;
 
-    function promptDeliveryLogin() {
-      const password = prompt('Enter delivery access password:');
-      if (!password) {
-        return null;
+    // ── Premium Login Overlay ──────────────────────────────────────
+    function toggleLoginPwd() {
+      const input = document.getElementById('loginPasswordInput');
+      const btn = document.getElementById('loginEyeBtn');
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁';
       }
-      const credentials = btoa('delivery:' + password);
-      return credentials;
     }
+
+    async function attemptLogin() {
+      const password = document.getElementById('loginPasswordInput').value.trim();
+      const errorEl = document.getElementById('loginError');
+      const btn = document.getElementById('loginSubmitBtn');
+      const card = document.getElementById('loginCard');
+      if (!password) {
+        errorEl.textContent = 'Please enter your access password.';
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+      errorEl.textContent = '';
+      const creds = btoa('delivery:' + password);
+      try {
+        const res = await fetch('/delivery/orders', { headers: { 'Authorization': 'Basic ' + creds } });
+        if (res.status === 401) {
+          card.classList.remove('shake');
+          void card.offsetWidth;
+          card.classList.add('shake');
+          errorEl.textContent = 'Incorrect password. Please try again.';
+          btn.disabled = false;
+          btn.textContent = 'Access Portal';
+          document.getElementById('loginPasswordInput').value = '';
+          return;
+        }
+        deliveryCredentials = creds;
+        document.getElementById('loginOverlay').classList.add('hidden');
+        loadOrders();
+        setTimeout(() => loadPastDeliveries(), 500);
+      } catch(e) {
+        errorEl.textContent = 'Connection error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Access Portal';
+      }
+    }
+
+    // ── End Login Overlay ──────────────────────────────────────────
 
     async function loadOrders() {
       try {
-        // Get credentials if not already set
-        if (!deliveryCredentials) {
-          deliveryCredentials = promptDeliveryLogin();
-          if (!deliveryCredentials) {
-            document.getElementById('ordersContainer').innerHTML = 
-              '<div class="no-orders"><h2>Login Required</h2><p>Please refresh the page and enter delivery credentials.</p></div>';
-            return;
-          }
-        }
+        if (!deliveryCredentials) return;
 
         const response = await fetch('/delivery/orders', {
           headers: {
@@ -443,12 +637,10 @@
           }
         });
         
-        // Handle authentication failure
         if (response.status === 401) {
-          alert('Invalid delivery credentials. Please try again.');
           deliveryCredentials = null;
-          await loadOrders();
-          loadPastDeliveries();
+          document.getElementById('loginError').textContent = 'Session expired. Please log in again.';
+          document.getElementById('loginOverlay').classList.remove('hidden');
           return;
         }
         
@@ -693,12 +885,10 @@
           }
         });
         
-        if (response.status === 401 && retryOnAuth) {
+        if (response.status === 401) {
           deliveryCredentials = null;
-          deliveryCredentials = promptDeliveryLogin();
-          if (deliveryCredentials) {
-            loadPastDeliveries(false);
-          }
+          document.getElementById('loginError').textContent = 'Session expired. Please log in again.';
+          document.getElementById('loginOverlay').classList.remove('hidden');
           return;
         }
         

@@ -1236,6 +1236,9 @@ app.post('/save-order', async (req, res) => {
       ...orderData,
       order_type: metadata.order_type || 'delivery'
     });
+
+    // Auto-sync drop status based on daily cap
+    await syncDropStatusFromCap();
     
     res.json({
       success: true,
@@ -1248,6 +1251,42 @@ app.post('/save-order', async (req, res) => {
     res.status(500).json({ error: 'Failed to save order' });
   }
 });
+
+// Auto-syncs the drop status (green/yellow/red) based on the daily order cap
+async function syncDropStatusFromCap() {
+  try {
+    const capRow = await pool.query(`SELECT value FROM app_settings WHERE key = 'daily_order_cap'`);
+    const cap = parseInt(capRow.rows[0]?.value || '0');
+    if (cap === 0) return; // 0 = unlimited, skip auto-sync
+
+    const countRow = await pool.query(
+      `SELECT COUNT(*) AS count FROM orders WHERE created_at >= NOW()::date AND order_status != 'test'`
+    );
+    const count = parseInt(countRow.rows[0].count);
+
+    let newStatus;
+    if (count >= cap) {
+      newStatus = 'red';
+    } else if (count >= Math.ceil(cap * 0.7)) {
+      newStatus = 'yellow';
+    } else {
+      newStatus = 'green';
+    }
+
+    const prev = await pool.query("SELECT value FROM drop_settings WHERE key = 'status'");
+    const prevStatus = prev.rows[0]?.value;
+
+    if (newStatus !== prevStatus) {
+      await pool.query(
+        "INSERT INTO drop_settings (key, value) VALUES ('status', $1) ON CONFLICT (key) DO UPDATE SET value = $1",
+        [newStatus]
+      );
+      console.log(`🔄 Drop status auto-synced: ${prevStatus || 'none'} → ${newStatus} (${count}/${cap} orders today)`);
+    }
+  } catch (err) {
+    console.error('Error syncing drop status from cap:', err);
+  }
+}
 
 // Admin authentication - REQUIRED in environment variables
 if (!process.env.ADMIN_PASSWORD) {

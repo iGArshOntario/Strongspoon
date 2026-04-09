@@ -919,8 +919,167 @@
       }
     }
   </style>
+  <style>
+    /* ── Premium Admin Login Overlay ────────────────────────────── */
+    #adminLoginOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at top, #011e22 0%, #000 70%);
+      padding: 24px;
+    }
+    #adminLoginOverlay.hidden { display: none; }
+    .admin-login-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(1,125,142,0.3);
+      border-radius: 20px;
+      padding: 44px 36px;
+      text-align: center;
+      box-shadow: 0 0 80px rgba(1,90,100,0.25), 0 20px 60px rgba(0,0,0,0.5);
+      animation: adminLoginIn 0.5s ease-out;
+    }
+    @keyframes adminLoginIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .admin-login-card.shake {
+      animation: adminShake 0.4s ease;
+    }
+    @keyframes adminShake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-10px); }
+      40%      { transform: translateX(10px); }
+      60%      { transform: translateX(-8px); }
+      80%      { transform: translateX(6px); }
+    }
+    .admin-login-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin: 0 auto 22px;
+      box-shadow: 0 4px 24px rgba(1,125,142,0.45);
+    }
+    .admin-login-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #EFE8D8;
+      margin-bottom: 4px;
+    }
+    .admin-login-subtitle {
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #017d8e;
+      margin-bottom: 36px;
+    }
+    .admin-login-field {
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .admin-login-field input {
+      width: 100%;
+      padding: 14px 48px 14px 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      color: #EFE8D8;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .admin-login-field input:focus {
+      outline: none;
+      border-color: #017d8e;
+      background: rgba(1,125,142,0.08);
+    }
+    .admin-login-eye {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #888;
+      font-size: 1rem;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .admin-login-eye:hover { color: #EFE8D8; }
+    .admin-login-error {
+      color: #f44336;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+      min-height: 20px;
+    }
+    .admin-login-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      color: #EFE8D8;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(1,125,142,0.3);
+    }
+    .admin-login-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #017d8e, #00a08a);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 28px rgba(1,125,142,0.5);
+    }
+    .admin-login-btn:disabled {
+      background: #333;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .admin-login-footer {
+      margin-top: 20px;
+      color: #444;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+    }
+    /* ── End Admin Login Overlay ────────────────────────────────── */
+  </style>
 </head>
 <body>
+
+  <!-- Premium Admin Login Overlay -->
+  <div id="adminLoginOverlay">
+    <div class="admin-login-card" id="adminLoginCard">
+      <div class="admin-login-icon">⚙️</div>
+      <div class="admin-login-brand">Strong Spoon</div>
+      <div class="admin-login-subtitle">Admin Dashboard</div>
+      <form onsubmit="event.preventDefault(); attemptAdminLogin();">
+        <div class="admin-login-field">
+          <input type="password" id="adminPasswordInput" placeholder="Enter admin password" autocomplete="current-password">
+          <button class="admin-login-eye" id="adminEyeBtn" type="button" onclick="toggleAdminPwd()">👁</button>
+        </div>
+        <div class="admin-login-error" id="adminLoginError"></div>
+        <button type="submit" class="admin-login-btn" id="adminLoginBtn">Access Dashboard</button>
+      </form>
+      <div class="admin-login-footer">Restricted Access · Strong Spoon</div>
+    </div>
+  </div>
+
   <div class="cart-nav">
     <a href="index.html" class="cart-icon">
       🏠 <span style="font-size: 0.9rem;">Home</span>
@@ -1208,14 +1367,56 @@
     let adminCredentials = null;
     let selectedDropStatus = 'green';
 
-    function promptAdminLogin() {
-      const password = prompt('Enter admin password:');
-      if (!password) {
-        return null;
+    // ── Premium Admin Login Overlay ────────────────────────────────
+    function toggleAdminPwd() {
+      const input = document.getElementById('adminPasswordInput');
+      const btn = document.getElementById('adminEyeBtn');
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁';
       }
-      const credentials = btoa('admin:' + password);
-      return credentials;
     }
+
+    async function attemptAdminLogin() {
+      const password = document.getElementById('adminPasswordInput').value.trim();
+      const errorEl = document.getElementById('adminLoginError');
+      const btn = document.getElementById('adminLoginBtn');
+      const card = document.getElementById('adminLoginCard');
+      if (!password) {
+        errorEl.textContent = 'Please enter your admin password.';
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+      errorEl.textContent = '';
+      const creds = btoa('admin:' + password);
+      try {
+        const res = await fetch('/admin/orders', { headers: { 'Authorization': 'Basic ' + creds } });
+        if (res.status === 401) {
+          card.classList.remove('shake');
+          void card.offsetWidth;
+          card.classList.add('shake');
+          errorEl.textContent = 'Incorrect password. Please try again.';
+          btn.disabled = false;
+          btn.textContent = 'Access Dashboard';
+          document.getElementById('adminPasswordInput').value = '';
+          return;
+        }
+        adminCredentials = creds;
+        document.getElementById('adminLoginOverlay').classList.add('hidden');
+        loadDropStatus();
+        loadOrders();
+      } catch(e) {
+        errorEl.textContent = 'Connection error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Access Dashboard';
+      }
+    }
+
+    // ── End Admin Login Overlay ────────────────────────────────────
 
     // ── Drop Status Control ──────────────────────────────────────────────────
     async function loadDropStatus() {
@@ -1249,8 +1450,8 @@
 
     async function saveDropStatus() {
       if (!adminCredentials) {
-        adminCredentials = promptAdminLogin();
-        if (!adminCredentials) return;
+        document.getElementById('adminLoginOverlay').classList.remove('hidden');
+        return;
       }
       const nextDropTime = document.getElementById('dropNextTimeInput').value.trim();
       const btn = document.querySelector('.drop-save-btn');
@@ -1377,15 +1578,7 @@
 
     async function loadOrders() {
       try {
-        // Get credentials if not already set
-        if (!adminCredentials) {
-          adminCredentials = promptAdminLogin();
-          if (!adminCredentials) {
-            document.getElementById('ordersContainer').innerHTML = 
-              '<div class="no-orders"><h2>Login Required</h2><p>Please refresh the page and enter admin credentials.</p></div>';
-            return;
-          }
-        }
+        if (!adminCredentials) return;
 
         // Load statistics
         const statsResponse = await fetch('/admin/orders/stats', {
@@ -1409,11 +1602,10 @@
           }
         });
         
-        // Handle authentication failure
         if (response.status === 401) {
-          alert('Invalid admin credentials. Please try again.');
           adminCredentials = null;
-          loadOrders();
+          document.getElementById('adminLoginError').textContent = 'Session expired. Please log in again.';
+          document.getElementById('adminLoginOverlay').classList.remove('hidden');
           return;
         }
         
