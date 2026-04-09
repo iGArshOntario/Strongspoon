@@ -69,7 +69,11 @@ The architecture follows a modern e-commerce pattern with a client-side rich use
 - `GET /api/send-test-delivery-email` — Delivery notification
 - `GET /api/send-test-waitlist-email` — Waitlist drop alert
 
-### UI Fixes & Updates (v71)
+### UI Fixes & Updates (v72)
+- **Website Traffic Analytics** (fully implemented): `track.js` IIFE script injected into all public pages; `page_views` DB table; `/api/track` (public POST) and `/admin/traffic?range=1d|7d|30d|all` (admin GET) endpoints; Traffic section in admin dashboard shows total visits, today's visits, top visited page, top pages bar chart, 24-hour hourly bar chart, and traffic sources; auto-refreshes every 30 seconds with the rest of the dashboard
+- Service worker bumped to v72
+
+### UI Fixes & Updates (v71 — prior)
 - All 4 flavour pages consistent layout: ingredients, image, price, buttons always visible
 - Checkout form spacing fixed: all form-groups have 18px margin-bottom
 - Pickup info box has 20px bottom margin; order-ahead note has 24px bottom margin

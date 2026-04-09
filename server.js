@@ -633,6 +633,17 @@ pool.query(`
   )
 `).catch(err => console.error('Waitlist table error:', err));
 
+// Create page_views table for traffic tracking
+pool.query(`
+  CREATE TABLE IF NOT EXISTS page_views (
+    id SERIAL PRIMARY KEY,
+    page VARCHAR(255),
+    path VARCHAR(500),
+    referrer VARCHAR(500),
+    viewed_at TIMESTAMPTZ DEFAULT NOW()
+  )
+`).catch(err => console.error('Page views table error:', err));
+
 // Create feedback table
 pool.query(`
   CREATE TABLE IF NOT EXISTS feedback (
@@ -656,6 +667,72 @@ app.post('/waitlist', async (req, res) => {
   } catch (err) {
     console.error('Waitlist error:', err);
     res.status(500).json({ error: 'Failed to save' });
+  }
+});
+
+// ─── Traffic Tracking ───────────────────────────────────────────────────────
+
+// Record a page view (public, no auth)
+app.post('/api/track', async (req, res) => {
+  try {
+    const { page, path, referrer } = req.body;
+    await pool.query(
+      'INSERT INTO page_views (page, path, referrer) VALUES ($1, $2, $3)',
+      [
+        (page || 'Unknown').substring(0, 255),
+        (path || '/').substring(0, 500),
+        (referrer || '').substring(0, 500)
+      ]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get traffic data (admin only)
+app.get('/admin/traffic', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Basic ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const decoded = Buffer.from(authHeader.split(' ')[1], 'base64').toString('utf8');
+  const password = decoded.split(':')[1];
+  if (password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Invalid password' });
+  }
+
+  const range = req.query.range || '7d';
+  let where = '';
+  if      (range === '1d')  where = "WHERE viewed_at > NOW() - INTERVAL '24 hours'";
+  else if (range === '7d')  where = "WHERE viewed_at > NOW() - INTERVAL '7 days'";
+  else if (range === '30d') where = "WHERE viewed_at > NOW() - INTERVAL '30 days'";
+
+  try {
+    const [totalRes, todayRes, topPagesRes, hourlyRes, referrersRes] = await Promise.all([
+      pool.query(`SELECT COUNT(*) AS total FROM page_views ${where}`),
+      pool.query(`SELECT COUNT(*) AS count FROM page_views WHERE viewed_at > NOW() - INTERVAL '24 hours'`),
+      pool.query(`SELECT page, COUNT(*) AS count FROM page_views ${where} GROUP BY page ORDER BY count DESC LIMIT 10`),
+      pool.query(`
+        SELECT TO_CHAR(DATE_TRUNC('hour', viewed_at AT TIME ZONE 'America/Toronto'), 'HH12AM') AS hr,
+               COUNT(*) AS count
+        FROM page_views
+        WHERE viewed_at > NOW() - INTERVAL '24 hours'
+        GROUP BY DATE_TRUNC('hour', viewed_at AT TIME ZONE 'America/Toronto')
+        ORDER BY DATE_TRUNC('hour', viewed_at AT TIME ZONE 'America/Toronto')
+      `),
+      pool.query(`SELECT referrer, COUNT(*) AS count FROM page_views ${where} WHERE referrer != '' GROUP BY referrer ORDER BY count DESC LIMIT 5`)
+    ]);
+
+    res.json({
+      total:     parseInt(totalRes.rows[0].total),
+      today:     parseInt(todayRes.rows[0].count),
+      topPages:  topPagesRes.rows,
+      hourly:    hourlyRes.rows,
+      referrers: referrersRes.rows
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

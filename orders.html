@@ -501,6 +501,153 @@
       font-weight: 600;
     }
 
+    /* ── Traffic section ── */
+    .traffic-section {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 25px;
+      margin-top: 30px;
+    }
+
+    .traffic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .traffic-stat {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .traffic-stat .t-label {
+      font-size: 0.78rem;
+      color: #888;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .traffic-stat .t-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #017d8e;
+    }
+
+    .traffic-stat .t-value.orange { color: #ff9800; }
+    .traffic-stat .t-value.green  { color: #4caf50; }
+
+    .traffic-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 700px) { .traffic-two-col { grid-template-columns: 1fr; } }
+
+    .traffic-panel {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .traffic-panel h4 {
+      color: #017d8e;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+    }
+
+    .page-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .page-row .pg-name {
+      width: 130px;
+      font-size: 0.8rem;
+      color: #ccc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+    }
+
+    .page-row .pg-bar-wrap {
+      flex: 1;
+      height: 14px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .page-row .pg-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #015A64, #017d8e);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .page-row .pg-count {
+      width: 36px;
+      text-align: right;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #EFE8D8;
+      flex-shrink: 0;
+    }
+
+    .hourly-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 80px;
+    }
+
+    .hourly-bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .hourly-bar {
+      width: 100%;
+      background: linear-gradient(180deg, #017d8e, #015A64);
+      border-radius: 3px 3px 0 0;
+      min-height: 2px;
+      transition: height 0.5s ease;
+    }
+
+    .hourly-label {
+      font-size: 0.55rem;
+      color: #666;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .referrer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.82rem;
+    }
+
+    .referrer-row:last-child { border-bottom: none; }
+    .referrer-row .ref-name { color: #ccc; }
+    .referrer-row .ref-count { color: #017d8e; font-weight: 600; }
+
+    /* ── Past deliveries ── */
     .past-deliveries-section {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -725,6 +872,50 @@
             <p style="color: #888;">Loading...</p>
           </div>
         </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">🌐 Website Traffic</h2>
+    <div class="traffic-section">
+      <div class="range-tabs" id="trafficRangeTabs">
+        <button class="range-tab active" onclick="loadTraffic('1d')">Last 24 Hours</button>
+        <button class="range-tab" onclick="loadTraffic('7d')">Last 7 Days</button>
+        <button class="range-tab" onclick="loadTraffic('30d')">Last 30 Days</button>
+        <button class="range-tab" onclick="loadTraffic('all')">All Time</button>
+      </div>
+
+      <div class="traffic-grid">
+        <div class="traffic-stat">
+          <div class="t-label">Total Visits (range)</div>
+          <div class="t-value" id="trafficTotal">–</div>
+        </div>
+        <div class="traffic-stat">
+          <div class="t-label">Visits Today</div>
+          <div class="t-value orange" id="trafficToday">–</div>
+        </div>
+        <div class="traffic-stat">
+          <div class="t-label">Most Visited Page</div>
+          <div class="t-value green" id="trafficTopPage" style="font-size:1rem;padding-top:6px;">–</div>
+        </div>
+      </div>
+
+      <div class="traffic-two-col">
+        <div class="traffic-panel">
+          <h4>📄 Top Pages</h4>
+          <div id="topPagesList"><p style="color:#888;font-size:0.85rem;">Loading…</p></div>
+        </div>
+        <div class="traffic-panel">
+          <h4>⏰ Last 24 Hours (Hourly)</h4>
+          <div class="hourly-bars" id="hourlyBars"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:0.6rem;color:#555;">
+            <span>Midnight</span><span>6AM</span><span>Noon</span><span>6PM</span><span>Now</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="traffic-panel" id="referrersPanel" style="display:none;">
+        <h4>🔗 Traffic Sources</h4>
+        <div id="referrersList"></div>
       </div>
     </div>
 
@@ -998,6 +1189,7 @@
         
         // Load analytics, past deliveries and waitlist after successful login
         loadAnalytics('all');
+        loadTraffic('1d');
         loadPastDeliveries();
         loadWaitlist();
         loadFeedback();
@@ -1187,6 +1379,78 @@
       }
     }
     
+    // ── Traffic ──────────────────────────────────────────────────────────────
+    let currentTrafficRange = '1d';
+
+    async function loadTraffic(range) {
+      currentTrafficRange = range || '1d';
+      if (!adminCredentials) return;
+
+      // Update tab highlights (traffic tabs only)
+      document.querySelectorAll('#trafficRangeTabs .range-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event && event.target && event.target.classList.add('active');
+
+      try {
+        const res = await fetch(`/admin/traffic?range=${currentTrafficRange}`, {
+          headers: { 'Authorization': 'Basic ' + adminCredentials }
+        });
+        if (!res.ok) throw new Error('Failed to fetch traffic');
+        const d = await res.json();
+
+        // Stat cards
+        document.getElementById('trafficTotal').textContent = d.total.toLocaleString();
+        document.getElementById('trafficToday').textContent = d.today.toLocaleString();
+        document.getElementById('trafficTopPage').textContent = d.topPages.length ? d.topPages[0].page : '–';
+
+        // Top pages bars
+        const maxCount = Math.max(...d.topPages.map(p => parseInt(p.count)), 1);
+        document.getElementById('topPagesList').innerHTML = d.topPages.length
+          ? d.topPages.map(p => {
+              const pct = Math.round((parseInt(p.count) / maxCount) * 100);
+              return `
+                <div class="page-row">
+                  <span class="pg-name" title="${p.page}">${p.page}</span>
+                  <div class="pg-bar-wrap"><div class="pg-bar-fill" style="width:${pct}%"></div></div>
+                  <span class="pg-count">${p.count}</span>
+                </div>`;
+            }).join('')
+          : '<p style="color:#888;font-size:0.85rem;">No visits yet</p>';
+
+        // Hourly bars (last 24h)
+        const maxH = Math.max(...d.hourly.map(h => parseInt(h.count)), 1);
+        document.getElementById('hourlyBars').innerHTML = d.hourly.length
+          ? d.hourly.map(h => {
+              const pct = Math.round((parseInt(h.count) / maxH) * 100);
+              return `
+                <div class="hourly-bar-wrap">
+                  <div class="hourly-bar" style="height:${pct}%"></div>
+                  <div class="hourly-label">${h.hr}</div>
+                </div>`;
+            }).join('')
+          : '<p style="color:#888;font-size:0.75rem;padding:10px;">No data yet</p>';
+
+        // Referrers
+        const refPanel = document.getElementById('referrersPanel');
+        if (d.referrers && d.referrers.length > 0) {
+          refPanel.style.display = 'block';
+          document.getElementById('referrersList').innerHTML = d.referrers.map(r => `
+            <div class="referrer-row">
+              <span class="ref-name">${r.referrer || 'Direct'}</span>
+              <span class="ref-count">${r.count} visits</span>
+            </div>`).join('');
+        } else {
+          refPanel.style.display = 'none';
+        }
+
+      } catch (err) {
+        console.error('Traffic load error:', err);
+        document.getElementById('trafficTotal').textContent = 'Err';
+        document.getElementById('topPagesList').innerHTML = '<p style="color:#f44336;">Failed to load</p>';
+      }
+    }
+
     // Load Past Deliveries (24 hours)
     async function loadPastDeliveries() {
       try {
@@ -1339,6 +1603,7 @@
       loadAnalytics(document.querySelector('.range-tab.active')?.textContent.toLowerCase().includes('all') ? 'all' : 
                    document.querySelector('.range-tab.active')?.textContent.includes('24') ? '1d' :
                    document.querySelector('.range-tab.active')?.textContent.includes('7') ? '7d' : '14d');
+      loadTraffic(currentTrafficRange);
       loadPastDeliveries();
       loadWaitlist();
       loadFeedback();
