@@ -651,6 +651,7 @@ pool.query(`
     code VARCHAR(50) UNIQUE NOT NULL,
     type VARCHAR(10) NOT NULL CHECK (type IN ('flat','percent')),
     value NUMERIC(8,2) NOT NULL,
+    min_spend NUMERIC(8,2) DEFAULT NULL,
     max_uses INTEGER DEFAULT NULL,
     uses_count INTEGER DEFAULT 0,
     expires_at TIMESTAMPTZ DEFAULT NULL,
@@ -658,6 +659,10 @@ pool.query(`
     created_at TIMESTAMPTZ DEFAULT NOW()
   )
 `).catch(err => console.error('Promo codes table error:', err));
+
+// Add min_spend column if it doesn't exist (safe migration for existing tables)
+pool.query(`ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS min_spend NUMERIC(8,2) DEFAULT NULL`)
+  .catch(err => console.error('Promo min_spend migration error:', err));
 
 // Create app_settings table
 pool.query(`
@@ -854,7 +859,7 @@ app.get('/get-stripe-key', (req, res) => {
 // ── Public: validate promo code ──────────────────────────────────────────────
 app.post('/api/validate-promo', async (req, res) => {
   try {
-    const { code } = req.body;
+    const { code, subtotal } = req.body;
     if (!code) return res.status(400).json({ error: 'No code provided' });
     const result = await pool.query(
       `SELECT * FROM promo_codes WHERE UPPER(code) = UPPER($1) AND active = TRUE`, [code.trim()]
@@ -867,7 +872,26 @@ app.post('/api/validate-promo', async (req, res) => {
     if (promo.max_uses !== null && promo.uses_count >= promo.max_uses) {
       return res.status(400).json({ error: 'This promo code has reached its usage limit' });
     }
-    res.json({ valid: true, type: promo.type, value: parseFloat(promo.value), code: promo.code });
+    // Check minimum spend requirement
+    const minSpend = promo.min_spend ? parseFloat(promo.min_spend) : null;
+    if (minSpend !== null && subtotal !== undefined) {
+      const cartTotal = parseFloat(subtotal) || 0;
+      if (cartTotal < minSpend) {
+        const gap = (minSpend - cartTotal).toFixed(2);
+        return res.status(400).json({
+          error: `Spend $${minSpend.toFixed(2)} to unlock this code — add $${gap} more`,
+          min_spend: minSpend,
+          subtotal: cartTotal
+        });
+      }
+    }
+    res.json({
+      valid: true,
+      type: promo.type,
+      value: parseFloat(promo.value),
+      code: promo.code,
+      min_spend: minSpend
+    });
   } catch (err) {
     console.error('Promo validate error:', err);
     res.status(500).json({ error: 'Server error' });
@@ -941,16 +965,16 @@ app.get('/admin/promo-codes', async (req, res) => {
 app.post('/admin/promo-codes', async (req, res) => {
   if (!requireAdmin(req, res)) return;
   try {
-    const { code, type, value, max_uses, expires_at } = req.body;
+    const { code, type, value, min_spend, max_uses, expires_at } = req.body;
     if (!code || !type || !value) return res.status(400).json({ error: 'code, type, and value required' });
     if (!['flat','percent'].includes(type)) return res.status(400).json({ error: 'type must be flat or percent' });
     if (type === 'percent' && (parseFloat(value) < 1 || parseFloat(value) > 100)) {
       return res.status(400).json({ error: 'Percent value must be between 1–100' });
     }
     const result = await pool.query(
-      `INSERT INTO promo_codes (code, type, value, max_uses, expires_at)
-       VALUES (UPPER($1), $2, $3, $4, $5) RETURNING *`,
-      [code.trim(), type, parseFloat(value), max_uses || null, expires_at || null]
+      `INSERT INTO promo_codes (code, type, value, min_spend, max_uses, expires_at)
+       VALUES (UPPER($1), $2, $3, $4, $5, $6) RETURNING *`,
+      [code.trim(), type, parseFloat(value), min_spend ? parseFloat(min_spend) : null, max_uses || null, expires_at || null]
     );
     res.json({ success: true, promo: result.rows[0] });
   } catch (err) {
@@ -1082,7 +1106,8 @@ app.post('/create-payment-intent', async (req, res) => {
           const promo = promoResult.rows[0];
           const notExpired = !promo.expires_at || new Date(promo.expires_at) > new Date();
           const hasUses = promo.max_uses === null || promo.uses_count < promo.max_uses;
-          if (notExpired && hasUses) {
+          const meetsMinSpend = !promo.min_spend || itemsSubtotal >= parseFloat(promo.min_spend);
+          if (notExpired && hasUses && meetsMinSpend) {
             if (promo.type === 'flat') {
               promoDiscount = Math.min(parseFloat(promo.value), itemsSubtotal);
             } else {

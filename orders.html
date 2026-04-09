@@ -1310,6 +1310,10 @@
           <input type="number" id="newPromoValue" placeholder="e.g. 5" min="0.01" step="0.01">
         </div>
         <div>
+          <label style="color:#888;font-size:0.78rem;display:block;margin-bottom:4px;">Min. Spend $ (optional)</label>
+          <input type="number" id="newPromoMinSpend" placeholder="e.g. 36" min="0" step="0.01">
+        </div>
+        <div>
           <label style="color:#888;font-size:0.78rem;display:block;margin-bottom:4px;">Max Uses (blank = unlimited)</label>
           <input type="number" id="newPromoMaxUses" placeholder="e.g. 50" min="1">
         </div>
@@ -2173,17 +2177,18 @@
         container.innerHTML = `
           <table class="promo-table">
             <thead><tr>
-              <th>Code</th><th>Type</th><th>Value</th><th>Uses</th><th>Expires</th><th>Status</th><th>Actions</th>
+              <th>Code</th><th>Discount</th><th>Min. Spend</th><th>Uses</th><th>Expires</th><th>Status</th><th>Actions</th>
             </tr></thead>
             <tbody>
               ${codes.map(c => {
                 const expiry = c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-CA') : '—';
                 const uses = c.max_uses ? `${c.uses_count}/${c.max_uses}` : `${c.uses_count}/∞`;
                 const discount = c.type === 'flat' ? `$${parseFloat(c.value).toFixed(2)} off` : `${c.value}% off`;
+                const minSpend = c.min_spend ? `$${parseFloat(c.min_spend).toFixed(2)}` : '—';
                 return `<tr>
                   <td><strong style="color:#017d8e;font-family:monospace;letter-spacing:1px;">${c.code}</strong></td>
-                  <td>${c.type}</td>
                   <td>${discount}</td>
+                  <td style="color:${c.min_spend ? '#ffc107' : '#888'}">${minSpend}</td>
                   <td>${uses}</td>
                   <td>${expiry}</td>
                   <td class="${c.active ? 'promo-badge-active' : 'promo-badge-inactive'}">${c.active ? '● Active' : '● Off'}</td>
@@ -2203,6 +2208,7 @@
       const code = document.getElementById('newPromoCode').value.trim();
       const type = document.getElementById('newPromoType').value;
       const value = document.getElementById('newPromoValue').value;
+      const min_spend = document.getElementById('newPromoMinSpend').value || null;
       const max_uses = document.getElementById('newPromoMaxUses').value || null;
       const expires_at = document.getElementById('newPromoExpiry').value || null;
       const msg = document.getElementById('promoCreateMsg');
@@ -2211,13 +2217,13 @@
         const res = await fetch('/admin/promo-codes', {
           method: 'POST',
           headers: { 'Authorization': 'Basic ' + adminCredentials, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code, type, value: parseFloat(value), max_uses: max_uses ? parseInt(max_uses) : null, expires_at })
+          body: JSON.stringify({ code, type, value: parseFloat(value), min_spend: min_spend ? parseFloat(min_spend) : null, max_uses: max_uses ? parseInt(max_uses) : null, expires_at })
         });
         const data = await res.json();
         if (res.ok) {
           msg.textContent = `✅ ${data.promo.code} created!`;
           msg.style.color = '#4caf50';
-          ['newPromoCode','newPromoValue','newPromoMaxUses','newPromoExpiry'].forEach(id => { document.getElementById(id).value = ''; });
+          ['newPromoCode','newPromoValue','newPromoMinSpend','newPromoMaxUses','newPromoExpiry'].forEach(id => { document.getElementById(id).value = ''; });
           loadPromos();
         } else {
           msg.textContent = '❌ ' + (data.error || 'Failed');

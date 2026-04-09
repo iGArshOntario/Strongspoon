@@ -7,7 +7,7 @@ const IS_TEST_MODE = new URLSearchParams(window.location.search).get('test') ===
 let orderType = 'delivery';
 let cartSubtotal = 0;
 let cardBrand = null;
-let appliedPromo = null; // { code, type, value }
+let appliedPromo = null; // { code, type, value, min_spend }
 
 function getDeliveryFee() {
   if (orderType === 'pickup') return 0;
@@ -50,12 +50,14 @@ async function applyPromoCode() {
     const res = await fetch('/api/validate-promo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code })
+      body: JSON.stringify({ code, subtotal: cartSubtotal })
     });
     const data = await res.json();
     if (res.ok && data.valid) {
-      appliedPromo = { code: data.code, type: data.type, value: data.value };
-      msg.textContent = `✅ ${data.code} applied — ${data.type === 'flat' ? '$' + data.value.toFixed(2) + ' off' : data.value + '% off'}`;
+      appliedPromo = { code: data.code, type: data.type, value: data.value, min_spend: data.min_spend };
+      const discountLabel = data.type === 'flat' ? `$${data.value.toFixed(2)} off` : `${data.value}% off`;
+      const minNote = data.min_spend ? ` (min. $${data.min_spend.toFixed(2)})` : '';
+      msg.textContent = `✅ ${data.code} applied — ${discountLabel}${minNote}`;
       msg.style.color = '#4caf50';
       input.disabled = true;
       btn.textContent = 'Remove';
