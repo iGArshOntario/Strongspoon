@@ -614,6 +614,10 @@
             <span class="checkout-fee-label">Amex processing (0.6%)</span>
             <span class="checkout-fee-amount" id="amexFeeDisplay">$0.00</span>
           </div>
+          <div id="promoDiscountRow" class="checkout-fee-row" style="display:none;">
+            <span class="checkout-fee-label" style="color:#4caf50;">🏷️ Promo discount</span>
+            <span class="checkout-fee-amount" id="promoDiscountDisplay" style="color:#4caf50;">-$0.00</span>
+          </div>
           <div class="checkout-total-main">
             <span class="checkout-total-label">Total due</span>
             <div class="checkout-total-right">
@@ -704,6 +708,19 @@
 
           <p class="order-ahead-note" id="orderAheadNote"><span style="color:#EFE8D8;">📅 Select your preferred delivery date</span> <span style="color:#4caf50;">— each cup is prepared fresh for you.</span></p>
 
+          <div class="checkout-section-label">Promo Code</div>
+
+          <div class="form-group" style="margin-bottom:18px;">
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="promoCodeInput" placeholder="Enter code (e.g. LAUNCH10)" autocomplete="off"
+                style="flex:1;text-transform:uppercase;letter-spacing:1px;"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();applyPromoCode();}">
+              <button type="button" id="promoApplyBtn" onclick="applyPromoCode()"
+                style="background:#015A64;color:#EFE8D8;border:none;padding:0 18px;border-radius:8px;font-weight:600;font-size:0.9rem;cursor:pointer;white-space:nowrap;transition:background 0.2s;">Apply</button>
+            </div>
+            <div id="promoMessage" style="font-size:0.82rem;margin-top:6px;font-weight:600;min-height:18px;"></div>
+          </div>
+
           <div class="checkout-section-label">Payment</div>
 
           <div class="form-group">
@@ -747,6 +764,23 @@
       const banner = document.getElementById('testModeBanner');
       if (banner) banner.classList.add('active');
     }
+
+    // Check daily order cap — show sold-out banner if capped
+    (async function checkOrderCap() {
+      try {
+        const res = await fetch('/api/order-status');
+        const status = await res.json();
+        if (status.capped) {
+          const form = document.getElementById('payment-form');
+          const submitBtn = document.getElementById('submit-payment');
+          if (submitBtn) submitBtn.disabled = true;
+          const banner = document.createElement('div');
+          banner.style.cssText = 'background:#f44336;color:#fff;text-align:center;padding:14px 20px;border-radius:10px;font-weight:700;font-size:1rem;margin-bottom:20px;';
+          banner.innerHTML = `🚫 Sold Out for Today — We have reached our daily limit of ${status.cap} orders. Check back tomorrow!`;
+          if (form) form.prepend(banner);
+        }
+      } catch(e) {}
+    })();
   </script>
 <script src="/track.js" defer></script>
 </body>

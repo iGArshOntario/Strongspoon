@@ -501,6 +501,167 @@
       font-weight: 600;
     }
 
+    /* ── Settings + Promo + Customers ── */
+    .settings-section,
+    .promo-section,
+    .customers-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 25px;
+      margin-top: 30px;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .settings-row label {
+      color: #aaa;
+      font-size: 0.9rem;
+      min-width: 160px;
+    }
+
+    .settings-row input[type="number"] {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #EFE8D8;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      width: 110px;
+    }
+
+    .settings-save-btn {
+      background: #015A64;
+      color: #EFE8D8;
+      border: none;
+      padding: 8px 22px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .settings-save-btn:hover { background: #017d8e; }
+
+    .promo-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .promo-form input, .promo-form select {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #EFE8D8;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .promo-form select option { background: #1a1a1a; }
+
+    .promo-create-btn {
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      color: #EFE8D8;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      white-space: nowrap;
+      align-self: end;
+    }
+
+    .promo-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.82rem;
+    }
+
+    .promo-table th {
+      background: rgba(255,255,255,0.06);
+      color: #888;
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+    }
+
+    .promo-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #EFE8D8;
+    }
+
+    .promo-badge-active   { color: #4caf50; font-weight: 600; }
+    .promo-badge-inactive { color: #888; font-weight: 600; }
+
+    .promo-action-btn {
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 4px;
+    }
+
+    .btn-toggle-promo { background: rgba(255,193,7,0.15); color: #ffc107; }
+    .btn-del-promo    { background: rgba(244,67,54,0.15);  color: #f44336; }
+
+    .customer-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .customer-table th {
+      background: rgba(255,255,255,0.06);
+      color: #888;
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+    }
+
+    .customer-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #EFE8D8;
+    }
+
+    .customer-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+    .repeat-badge {
+      background: rgba(0,191,165,0.15);
+      color: #017d8e;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    @media print {
+      body > *:not(#printTicket) { display: none !important; }
+      #printTicket { display: block !important; }
+    }
+
     /* ── Traffic section ── */
     .traffic-section {
       background: rgba(255, 255, 255, 0.03);
@@ -956,7 +1117,65 @@
     <div class="past-deliveries-section" id="feedbackSection">
       <p style="color: #888; text-align: center;">Loading feedback...</p>
     </div>
+
+    <!-- ── SETTINGS ──────────────────────────────────────────────── -->
+    <h2 class="section-title">⚙️ Store Settings</h2>
+    <div class="settings-section">
+      <div class="settings-row">
+        <label>Daily Order Cap</label>
+        <input type="number" id="settingDailyCap" min="0" value="0" placeholder="0 = unlimited">
+        <button class="settings-save-btn" onclick="saveDailyCap()">Save</button>
+        <span id="settingsCapStatus" style="font-size:0.82rem;color:#888;"></span>
+      </div>
+      <p style="color:#666;font-size:0.8rem;margin:0;">Set to 0 for unlimited orders. When the cap is hit, the checkout page will show "Sold Out for Today".</p>
+      <div id="settingsCapLiveCount" style="margin-top:14px;font-size:0.85rem;color:#aaa;"></div>
+    </div>
+
+    <!-- ── PROMO CODES ─────────────────────────────────────────────── -->
+    <h2 class="section-title">🏷️ Promo Codes</h2>
+    <div class="promo-section">
+      <div class="promo-form" id="promoCreateForm">
+        <div>
+          <label style="color:#888;font-size:0.78rem;display:block;margin-bottom:4px;">Code *</label>
+          <input type="text" id="newPromoCode" placeholder="e.g. LAUNCH10" style="text-transform:uppercase;">
+        </div>
+        <div>
+          <label style="color:#888;font-size:0.78rem;display:block;margin-bottom:4px;">Type *</label>
+          <select id="newPromoType">
+            <option value="flat">$ Flat off</option>
+            <option value="percent">% Percent off</option>
+          </select>
+        </div>
+        <div>
+          <label style="color:#888;font-size:0.78rem;display:block;margin-bottom:4px;">Value *</label>
+          <input type="number" id="newPromoValue" placeholder="e.g. 5" min="0.01" step="0.01">
+        </div>
+        <div>
+          <label style="color:#888;font-size:0.78rem;display:block;margin-bottom:4px;">Max Uses (blank = unlimited)</label>
+          <input type="number" id="newPromoMaxUses" placeholder="e.g. 50" min="1">
+        </div>
+        <div>
+          <label style="color:#888;font-size:0.78rem;display:block;margin-bottom:4px;">Expires (optional)</label>
+          <input type="date" id="newPromoExpiry">
+        </div>
+        <div style="align-self:flex-end;">
+          <button class="promo-create-btn" onclick="createPromoCode()">+ Create Code</button>
+        </div>
+      </div>
+      <div id="promoCreateMsg" style="font-size:0.82rem;font-weight:600;margin-bottom:14px;"></div>
+      <div id="promoCodesTable"><p style="color:#888;font-size:0.85rem;">Loading…</p></div>
+    </div>
+
+    <!-- ── CUSTOMERS CRM ───────────────────────────────────────────── -->
+    <h2 class="section-title">👥 Customers</h2>
+    <div class="customers-section">
+      <div id="customersTable"><p style="color:#888;font-size:0.85rem;">Loading…</p></div>
+    </div>
+
   </div>
+
+  <!-- Print ticket (hidden, only shown when printing) -->
+  <div id="printTicket" style="display:none;"></div>
 
   <div id="deliveryProofModal" class="modal">
     <div class="modal-content">
@@ -1212,6 +1431,9 @@
         loadPastDeliveries();
         loadWaitlist();
         loadFeedback();
+        loadSettings();
+        loadPromos();
+        loadCustomers();
         
         // Render orders table
         const container = document.getElementById('ordersContainer');
@@ -1234,6 +1456,7 @@
                 <th>Scheduled For</th>
                 <th>Delivery</th>
                 <th>Order Date</th>
+                <th>Print</th>
               </tr>
             </thead>
             <tbody>
@@ -1304,6 +1527,12 @@
                       ` : '<span style="color: #666; font-size: 0.85rem;">No proof</span>'}
                     </td>
                     <td>${date.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' })}<br>${date.toLocaleTimeString('en-CA', { timeZone: 'America/Toronto' })}</td>
+                    <td>
+                      <button onclick='printTicket(${JSON.stringify(order).replace(/'/g,"\\'")})'
+                        style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#EFE8D8;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.78rem;">
+                        🖨️
+                      </button>
+                    </td>
                   </tr>
                 `;
               }).join('')}
@@ -1647,6 +1876,223 @@
     // Note: loadAnalytics and loadPastDeliveries are now called from within loadOrders
     // after successful authentication to ensure credentials are available
     
+    // ── Print Ticket ──────────────────────────────────────────────────────────
+    function printTicket(order) {
+      let items = [];
+      try { items = Array.isArray(order.items) ? order.items : JSON.parse(order.items || '[]'); } catch(e) {}
+      const date = new Date(order.created_at).toLocaleString('en-CA', { timeZone: 'America/Toronto' });
+      const deliveryDate = order.delivery_date
+        ? new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })
+        : null;
+      const ticket = document.getElementById('printTicket');
+      ticket.innerHTML = `
+        <style>
+          body { font-family: Arial, sans-serif; background: #fff; color: #111; }
+          .pt-header { background: #015A64; color: #fff; padding: 16px 20px; text-align: center; }
+          .pt-header h1 { margin: 0; font-size: 1.4rem; }
+          .pt-header p  { margin: 4px 0 0; font-size: 0.8rem; opacity: 0.8; letter-spacing: 2px; text-transform: uppercase; }
+          .pt-body { padding: 20px; }
+          .pt-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+          .pt-section { margin: 14px 0 6px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: #666; letter-spacing: 1px; }
+          .pt-item { padding: 6px 0; font-size: 0.88rem; }
+          .pt-total { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; padding: 10px 0; border-top: 2px solid #015A64; margin-top: 8px; }
+          .pt-footer { text-align: center; font-size: 0.75rem; color: #999; margin-top: 20px; }
+        </style>
+        <div class="pt-header"><h1>Strong Spoon</h1><p>Order Ticket</p></div>
+        <div class="pt-body">
+          <div class="pt-section">Order</div>
+          <div class="pt-row"><span>Order #</span><strong>${order.order_number}</strong></div>
+          <div class="pt-row"><span>Type</span><strong>${(order.order_type || 'delivery').toUpperCase()}</strong></div>
+          <div class="pt-row"><span>Ordered</span><span>${date}</span></div>
+          ${deliveryDate ? `<div class="pt-row"><span>Scheduled</span><strong style="color:#015A64;">${deliveryDate} — ${order.delivery_time_slot || ''}</strong></div>` : ''}
+          <div class="pt-section">Customer</div>
+          <div class="pt-row"><span>Name</span><span>${order.customer_name || ''}</span></div>
+          <div class="pt-row"><span>Phone</span><span>${order.customer_phone || ''}</span></div>
+          ${order.order_type !== 'pickup' ? `<div class="pt-row"><span>Address</span><span>${order.customer_address || ''}</span></div>` : ''}
+          <div class="pt-section">Items</div>
+          ${items.map(i => `
+            <div class="pt-item">
+              <strong>${i.name}</strong> × ${i.quantity}
+              ${i.toppings && i.toppings.length ? `<div style="color:#555;font-size:0.8rem;margin-left:8px;">+ ${i.toppings.join(', ')}</div>` : ''}
+            </div>
+          `).join('')}
+          <div class="pt-total"><span>Total</span><span>$${parseFloat(order.total_amount).toFixed(2)} CAD</span></div>
+          <div class="pt-footer">strongspoon.ca · Regina, SK · Thank you! 💪</div>
+        </div>
+      `;
+      ticket.style.display = 'block';
+      window.print();
+      ticket.style.display = 'none';
+    }
+
+    // ── Settings ──────────────────────────────────────────────────────────────
+    async function loadSettings() {
+      if (!adminCredentials) return;
+      try {
+        const res = await fetch('/admin/settings', { headers: { 'Authorization': 'Basic ' + adminCredentials } });
+        if (!res.ok) return;
+        const settings = await res.json();
+        const capInput = document.getElementById('settingDailyCap');
+        if (capInput) capInput.value = settings.daily_order_cap || 0;
+        // Show live count
+        const statusRes = await fetch('/api/order-status');
+        const status = await statusRes.json();
+        const liveEl = document.getElementById('settingsCapLiveCount');
+        if (liveEl && status.cap > 0) {
+          liveEl.innerHTML = `📊 Today: <strong>${status.today}</strong> / <strong>${status.cap}</strong> orders ${status.capped ? '<span style="color:#f44336;font-weight:700;">● CAPPED</span>' : '<span style="color:#4caf50;">● Open</span>'}`;
+        } else if (liveEl) {
+          liveEl.textContent = status.cap === 0 ? '📊 Cap is off — unlimited orders.' : '';
+        }
+      } catch(e) { console.error('Settings load error', e); }
+    }
+
+    async function saveDailyCap() {
+      if (!adminCredentials) return;
+      const val = parseInt(document.getElementById('settingDailyCap').value) || 0;
+      const btn = document.querySelector('.settings-save-btn');
+      const msg = document.getElementById('settingsCapStatus');
+      btn.disabled = true;
+      try {
+        await fetch('/admin/settings', {
+          method: 'POST',
+          headers: { 'Authorization': 'Basic ' + adminCredentials, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: 'daily_order_cap', value: val })
+        });
+        msg.textContent = '✅ Saved';
+        msg.style.color = '#4caf50';
+        setTimeout(() => { msg.textContent = ''; }, 2500);
+        loadSettings();
+      } catch(e) {
+        msg.textContent = '❌ Failed';
+        msg.style.color = '#f44336';
+      }
+      btn.disabled = false;
+    }
+
+    // ── Promo Codes ───────────────────────────────────────────────────────────
+    async function loadPromos() {
+      if (!adminCredentials) return;
+      try {
+        const res = await fetch('/admin/promo-codes', { headers: { 'Authorization': 'Basic ' + adminCredentials } });
+        if (!res.ok) return;
+        const { codes } = await res.json();
+        const container = document.getElementById('promoCodesTable');
+        if (!codes.length) { container.innerHTML = '<p style="color:#888;font-size:0.85rem;">No promo codes yet. Create one above.</p>'; return; }
+        container.innerHTML = `
+          <table class="promo-table">
+            <thead><tr>
+              <th>Code</th><th>Type</th><th>Value</th><th>Uses</th><th>Expires</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody>
+              ${codes.map(c => {
+                const expiry = c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-CA') : '—';
+                const uses = c.max_uses ? `${c.uses_count}/${c.max_uses}` : `${c.uses_count}/∞`;
+                const discount = c.type === 'flat' ? `$${parseFloat(c.value).toFixed(2)} off` : `${c.value}% off`;
+                return `<tr>
+                  <td><strong style="color:#017d8e;font-family:monospace;letter-spacing:1px;">${c.code}</strong></td>
+                  <td>${c.type}</td>
+                  <td>${discount}</td>
+                  <td>${uses}</td>
+                  <td>${expiry}</td>
+                  <td class="${c.active ? 'promo-badge-active' : 'promo-badge-inactive'}">${c.active ? '● Active' : '● Off'}</td>
+                  <td>
+                    <button class="promo-action-btn btn-toggle-promo" onclick="togglePromo(${c.id}, ${!c.active})">${c.active ? 'Pause' : 'Enable'}</button>
+                    <button class="promo-action-btn btn-del-promo" onclick="deletePromo(${c.id})">Delete</button>
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>`;
+      } catch(e) { console.error('Promos load error', e); }
+    }
+
+    async function createPromoCode() {
+      if (!adminCredentials) return;
+      const code = document.getElementById('newPromoCode').value.trim();
+      const type = document.getElementById('newPromoType').value;
+      const value = document.getElementById('newPromoValue').value;
+      const max_uses = document.getElementById('newPromoMaxUses').value || null;
+      const expires_at = document.getElementById('newPromoExpiry').value || null;
+      const msg = document.getElementById('promoCreateMsg');
+      if (!code || !value) { msg.textContent = '⚠️ Code and value are required.'; msg.style.color = '#f44336'; return; }
+      try {
+        const res = await fetch('/admin/promo-codes', {
+          method: 'POST',
+          headers: { 'Authorization': 'Basic ' + adminCredentials, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, type, value: parseFloat(value), max_uses: max_uses ? parseInt(max_uses) : null, expires_at })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = `✅ ${data.promo.code} created!`;
+          msg.style.color = '#4caf50';
+          ['newPromoCode','newPromoValue','newPromoMaxUses','newPromoExpiry'].forEach(id => { document.getElementById(id).value = ''; });
+          loadPromos();
+        } else {
+          msg.textContent = '❌ ' + (data.error || 'Failed');
+          msg.style.color = '#f44336';
+        }
+      } catch(e) { msg.textContent = '❌ Server error'; msg.style.color = '#f44336'; }
+    }
+
+    async function togglePromo(id, active) {
+      if (!adminCredentials) return;
+      await fetch(`/admin/promo-codes/${id}`, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Basic ' + adminCredentials, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active })
+      });
+      loadPromos();
+    }
+
+    async function deletePromo(id) {
+      if (!adminCredentials) return;
+      if (!confirm('Delete this promo code?')) return;
+      await fetch(`/admin/promo-codes/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Basic ' + adminCredentials }
+      });
+      loadPromos();
+    }
+
+    // ── Customers CRM ─────────────────────────────────────────────────────────
+    async function loadCustomers() {
+      if (!adminCredentials) return;
+      try {
+        const res = await fetch('/admin/customers', { headers: { 'Authorization': 'Basic ' + adminCredentials } });
+        if (!res.ok) return;
+        const { customers } = await res.json();
+        const container = document.getElementById('customersTable');
+        if (!customers.length) { container.innerHTML = '<p style="color:#888;font-size:0.85rem;">No customers yet.</p>'; return; }
+        container.innerHTML = `
+          <p style="color:#888;font-size:0.82rem;margin-bottom:14px;">${customers.length} unique customer${customers.length > 1 ? 's' : ''}</p>
+          <table class="customer-table">
+            <thead><tr>
+              <th>Customer</th><th>Email</th><th>Phone</th><th>Orders</th><th>Total Spent</th><th>Last Order</th><th>Customer Since</th>
+            </tr></thead>
+            <tbody>
+              ${customers.map(c => {
+                const lastOrder = new Date(c.last_order_at).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' });
+                const firstOrder = new Date(c.first_order_at).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' });
+                const spent = parseFloat(c.total_spent || 0).toFixed(2);
+                const orders = parseInt(c.total_orders);
+                return `<tr>
+                  <td>
+                    <strong>${c.name || '—'}</strong>
+                    ${orders >= 3 ? `<span class="repeat-badge" style="margin-left:6px;">⭐ Loyal</span>` : orders >= 2 ? `<span class="repeat-badge" style="margin-left:6px;background:rgba(255,193,7,0.15);color:#ffc107;">Repeat</span>` : ''}
+                  </td>
+                  <td style="color:#888;">${c.email}</td>
+                  <td style="color:#888;">${c.phone || '—'}</td>
+                  <td style="color:#017d8e;font-weight:700;text-align:center;">${orders}</td>
+                  <td style="font-weight:600;">$${spent}</td>
+                  <td style="color:#aaa;">${lastOrder}</td>
+                  <td style="color:#666;">${firstOrder}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>`;
+      } catch(e) { console.error('Customers load error', e); }
+    }
+
     // Auto-refresh every 30 seconds
     setInterval(() => {
       loadOrders();

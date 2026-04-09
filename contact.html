@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact & FAQ | Strong Spoon</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#015A64">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Strong Spoon">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const launchDate = new Date('2026-04-10T08:00:00-05:00').getTime();
+    const now = new Date().getTime();
+    if (new URLSearchParams(window.location.search).get('preview') === 'strongspoon') {
+      localStorage.setItem('ss_preview', 'true');
+    }
+    if (now < launchDate && localStorage.getItem('ss_preview') !== 'true') {
+      window.location.href = '/countdown.html';
+    }
+  </script>
+  <style>
+    .contact-page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 100px 20px 60px;
+    }
+
+    .contact-hero {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .contact-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      color: #EFE8D8;
+      margin-bottom: 10px;
+    }
+
+    .contact-hero p {
+      color: #888;
+      font-size: 1rem;
+    }
+
+    .contact-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .contact-card h2 {
+      color: #017d8e;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    .contact-item:last-child { margin-bottom: 0; }
+
+    .contact-icon {
+      font-size: 1.2rem;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .contact-item a {
+      color: #017d8e;
+      text-decoration: none;
+    }
+
+    .contact-item a:hover { text-decoration: underline; }
+
+    /* FAQ */
+    .faq-item {
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .faq-item:last-child { border-bottom: none; }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #EFE8D8;
+      font-size: 0.97rem;
+      font-weight: 600;
+      text-align: left;
+      padding: 16px 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      transition: color 0.2s;
+    }
+
+    .faq-question:hover { color: #017d8e; }
+
+    .faq-chevron {
+      font-size: 0.75rem;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+      color: #888;
+    }
+
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.2s;
+      color: #aaa;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+      padding-bottom: 16px;
+    }
+
+    .faq-answer strong { color: #EFE8D8; }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #EFE8D8;
+      padding: 10px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 36px;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover { background: rgba(255,255,255,0.1); }
+  </style>
+</head>
+<body>
+  <script src="track.js"></script>
+
+  <div class="cart-nav">
+    <a href="Html2.html" class="cart-icon">
+      ← <span style="font-size:0.9rem;">Menu</span>
+    </a>
+  </div>
+
+  <div class="contact-page">
+
+    <a href="Html2.html" class="back-btn">← Back to Flavours</a>
+
+    <div class="contact-hero">
+      <h1>Contact & FAQ</h1>
+      <p>Everything you need to know about Strong Spoon</p>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="contact-card">
+      <h2>📬 Get in Touch</h2>
+      <div class="contact-item">
+        <span class="contact-icon">✉️</span>
+        <div>
+          <div>Email us anytime</div>
+          <a href="mailto:Strongspoon.ca@gmail.com">Strongspoon.ca@gmail.com</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📍</span>
+        <div>
+          <div>Based in</div>
+          <strong style="color:#EFE8D8;">Regina, SK, Canada</strong>
+        </div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">⏰</span>
+        <div>
+          <div>Delivery hours</div>
+          <strong style="color:#EFE8D8;">Morning 8AM–12PM · Afternoon 12PM–4PM · Evening 4PM–8PM</strong>
+        </div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">💬</span>
+        <div>
+          <div>We typically reply within</div>
+          <strong style="color:#EFE8D8;">a few hours</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="contact-card">
+      <h2>❓ Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Do you deliver outside Regina, SK?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Right now we are <strong>Regina, SK only</strong>. We prepare every cup fresh for you, so local delivery is essential to the quality. We're working on expanding — stay tuned!
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How much protein is actually in one cup?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Most flavours contain <strong>46g+ of protein per 250g cup</strong> before any toppings are added. The Power Mix (peanut butter) is <strong>~30g+</strong> since it uses peanut butter instead of a protein blend. Adding toppings like nuts will naturally increase the protein content further.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Are the products gluten-free or dairy-free?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Our base is made with a <strong>cultured dairy base</strong>, so it is <strong>not dairy-free</strong>. For gluten: the base itself is gluten-free, but some toppings (like certain nuts processed in shared facilities) may carry cross-contamination risk. If you have a serious allergy, please email us before ordering.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is there any sugar added?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          <strong>No sugar added</strong> — that's one of our core commitments. All sweetness comes naturally from the ingredients. If you add fruit toppings like Apple or Blueberries, they contain natural fruit sugars.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How far in advance must I order?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          We require a minimum of <strong>12 hours advance notice</strong> since every cup is made fresh to order. You can schedule delivery up to several days ahead — just pick your preferred date and time slot at checkout.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What is the delivery fee?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Delivery is <strong>$4.99</strong> for orders under $25. Orders of <strong>$25 or more get free delivery</strong>. Pickup is always free — you can select "Pickup" at checkout.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What if I need to cancel or change my order?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Since every order is prepared fresh, cancellations must be requested at least <strong>6 hours before your scheduled delivery time</strong>. Please email us at <a href="mailto:Strongspoon.ca@gmail.com">Strongspoon.ca@gmail.com</a> as soon as possible and we'll do our best to accommodate you.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Can I get a bundle deal?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Yes! Bundles are automatically applied at checkout:
+          <br><strong>1 cup — $11.99</strong>
+          <br><strong>2 cups — $19.99</strong> (save $4)
+          <br><strong>4 cups — $35.99</strong> (save $12)
+          <br>Mix and match any flavours — the savings apply automatically.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Do you have promo codes?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Yes! We occasionally release promo codes through our social media and for special events. If you have a code, just enter it at checkout before payment and the discount will be applied automatically.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is my payment secure?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Absolutely. All payments are processed through <strong>Stripe</strong>, one of the most trusted payment platforms in the world. We accept Visa, Mastercard, and American Express. We never store your card details — everything is handled by Stripe's secure infrastructure.
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:40px;">
+      <a href="Html2.html" class="btn teal" style="display:inline-block;padding:14px 36px;font-size:1rem;">Order Now 💪</a>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+  </script>
+</body>
+</html>

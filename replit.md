@@ -69,6 +69,14 @@ The architecture follows a modern e-commerce pattern with a client-side rich use
 - `GET /api/send-test-delivery-email` — Delivery notification
 - `GET /api/send-test-waitlist-email` — Waitlist drop alert
 
+### UI Fixes & Updates (v73)
+- **Promo / Discount Code System**: `promo_codes` DB table; `/api/validate-promo` (public POST), `/admin/promo-codes` CRUD endpoints; promo code input field on checkout with real-time validation, discount shown in summary, applied server-side in payment intent; Promo Codes section in admin dashboard (create, toggle active/pause, delete)
+- **Daily Order Cap**: `app_settings` DB table; `/api/order-status` (public GET); `/admin/settings` GET+POST; Settings section in admin dashboard with live today count; checkout shows red "Sold Out for Today" banner and disables submit button when cap hit
+- **Customer CRM in Admin**: `/admin/customers` endpoint aggregates all unique buyers with order count, total spent, first/last order; Customers section in admin dashboard with Loyal/Repeat badges
+- **Print Order Tickets**: 🖨️ button on every order row in admin table; opens browser print dialog with a clean teal-header ticket (order #, type, customer, address, items+toppings, total, footer)
+- **Contact & FAQ page** (`contact.html`): 10-question accordion FAQ (delivery area, protein, gluten-free, sugar, advance notice, delivery fee, cancellations, bundles, promos, payment security); contact info; links to order now; "❓ FAQ" link added to Our Flavours nav
+- Service worker bumped to v73, contact.html added to cache
+
 ### UI Fixes & Updates (v72)
 - **Website Traffic Analytics** (fully implemented): `track.js` IIFE script injected into all public pages; `page_views` DB table; `/api/track` (public POST) and `/admin/traffic?range=1d|7d|30d|all` (admin GET) endpoints; Traffic section in admin dashboard shows total visits, today's visits, top visited page, top pages bar chart, 24-hour hourly bar chart, and traffic sources; auto-refreshes every 30 seconds with the rest of the dashboard
 - Service worker bumped to v72

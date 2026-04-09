@@ -1,13 +1,13 @@
 const DELIVERY_FEE = 4.99;
 const FREE_DELIVERY_THRESHOLD = 25;
-const AMEX_SURCHARGE_RATE = 0.006; // 0.6% — covers the extra Amex processing cost
+const AMEX_SURCHARGE_RATE = 0.006;
 
-// Test mode: ?test=1 in URL charges exactly $1.00 for payment flow testing
 const IS_TEST_MODE = new URLSearchParams(window.location.search).get('test') === '1';
 
 let orderType = 'delivery';
 let cartSubtotal = 0;
 let cardBrand = null;
+let appliedPromo = null; // { code, type, value }
 
 function getDeliveryFee() {
   if (orderType === 'pickup') return 0;
@@ -18,14 +18,73 @@ function getBaseTotal() {
   return Math.round((cartSubtotal + getDeliveryFee()) * 100) / 100;
 }
 
+function getPromoDiscount() {
+  if (!appliedPromo) return 0;
+  if (appliedPromo.type === 'flat') return Math.min(appliedPromo.value, cartSubtotal);
+  return Math.round(cartSubtotal * (appliedPromo.value / 100) * 100) / 100;
+}
+
 function getAmexFee() {
   if (cardBrand !== 'amex') return 0;
-  return Math.round(getBaseTotal() * AMEX_SURCHARGE_RATE * 100) / 100;
+  const afterPromo = Math.max(0, getBaseTotal() - getPromoDiscount());
+  return Math.round(afterPromo * AMEX_SURCHARGE_RATE * 100) / 100;
 }
 
 function getFinalTotal() {
   if (IS_TEST_MODE) return 1.00;
-  return Math.round((getBaseTotal() + getAmexFee()) * 100) / 100;
+  const afterPromo = Math.max(0, getBaseTotal() - getPromoDiscount());
+  return Math.round((afterPromo + getAmexFee()) * 100) / 100;
+}
+
+// Promo code validation
+async function applyPromoCode() {
+  const input = document.getElementById('promoCodeInput');
+  const btn = document.getElementById('promoApplyBtn');
+  const msg = document.getElementById('promoMessage');
+  const code = input ? input.value.trim() : '';
+  if (!code) return;
+  btn.disabled = true;
+  btn.textContent = '…';
+  msg.textContent = '';
+  try {
+    const res = await fetch('/api/validate-promo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (res.ok && data.valid) {
+      appliedPromo = { code: data.code, type: data.type, value: data.value };
+      msg.textContent = `✅ ${data.code} applied — ${data.type === 'flat' ? '$' + data.value.toFixed(2) + ' off' : data.value + '% off'}`;
+      msg.style.color = '#4caf50';
+      input.disabled = true;
+      btn.textContent = 'Remove';
+      btn.disabled = false;
+      btn.onclick = removePromoCode;
+      updateDeliveryFeeDisplay();
+    } else {
+      msg.textContent = data.error || 'Invalid code';
+      msg.style.color = '#f44336';
+      btn.textContent = 'Apply';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    msg.textContent = 'Could not validate code';
+    msg.style.color = '#f44336';
+    btn.textContent = 'Apply';
+    btn.disabled = false;
+  }
+}
+
+function removePromoCode() {
+  appliedPromo = null;
+  const input = document.getElementById('promoCodeInput');
+  const btn = document.getElementById('promoApplyBtn');
+  const msg = document.getElementById('promoMessage');
+  if (input) { input.value = ''; input.disabled = false; }
+  if (btn) { btn.textContent = 'Apply'; btn.onclick = applyPromoCode; }
+  if (msg) { msg.textContent = ''; }
+  updateDeliveryFeeDisplay();
 }
 
 function updateDeliveryFeeDisplay() {
@@ -34,6 +93,8 @@ function updateDeliveryFeeDisplay() {
   const freeRow = document.getElementById('freeDeliveryRow');
   const amexRow = document.getElementById('amexFeeRow');
   const amexDisplay = document.getElementById('amexFeeDisplay');
+  const promoRow = document.getElementById('promoDiscountRow');
+  const promoDisplay = document.getElementById('promoDiscountDisplay');
   const totalEl = document.getElementById('checkoutTotal');
 
   if (orderType === 'pickup') {
@@ -50,6 +111,10 @@ function updateDeliveryFeeDisplay() {
   const amexFee = getAmexFee();
   if (amexRow) amexRow.style.display = amexFee > 0 ? 'flex' : 'none';
   if (amexDisplay) amexDisplay.textContent = `$${amexFee.toFixed(2)}`;
+
+  const discount = getPromoDiscount();
+  if (promoRow) promoRow.style.display = discount > 0 ? 'flex' : 'none';
+  if (promoDisplay) promoDisplay.textContent = `-$${discount.toFixed(2)}`;
 
   const total = getFinalTotal();
   if (totalEl) {
@@ -299,6 +364,7 @@ form.addEventListener('submit', async (e) => {
     deliveryFee: getDeliveryFee(),
     cardBrand: cardBrand || 'unknown',
     testMode: IS_TEST_MODE,
+    promoCode: appliedPromo ? appliedPromo.code : null,
   };
 
   try {

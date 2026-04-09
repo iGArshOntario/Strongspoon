@@ -644,6 +644,29 @@ pool.query(`
   )
 `).catch(err => console.error('Page views table error:', err));
 
+// Create promo_codes table
+pool.query(`
+  CREATE TABLE IF NOT EXISTS promo_codes (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    type VARCHAR(10) NOT NULL CHECK (type IN ('flat','percent')),
+    value NUMERIC(8,2) NOT NULL,
+    max_uses INTEGER DEFAULT NULL,
+    uses_count INTEGER DEFAULT 0,
+    expires_at TIMESTAMPTZ DEFAULT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )
+`).catch(err => console.error('Promo codes table error:', err));
+
+// Create app_settings table
+pool.query(`
+  CREATE TABLE IF NOT EXISTS app_settings (
+    key VARCHAR(100) PRIMARY KEY,
+    value TEXT NOT NULL
+  )
+`).catch(err => console.error('App settings table error:', err));
+
 // Create feedback table
 pool.query(`
   CREATE TABLE IF NOT EXISTS feedback (
@@ -828,9 +851,161 @@ app.get('/get-stripe-key', (req, res) => {
   });
 });
 
+// ── Public: validate promo code ──────────────────────────────────────────────
+app.post('/api/validate-promo', async (req, res) => {
+  try {
+    const { code } = req.body;
+    if (!code) return res.status(400).json({ error: 'No code provided' });
+    const result = await pool.query(
+      `SELECT * FROM promo_codes WHERE UPPER(code) = UPPER($1) AND active = TRUE`, [code.trim()]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Invalid promo code' });
+    const promo = result.rows[0];
+    if (promo.expires_at && new Date(promo.expires_at) < new Date()) {
+      return res.status(400).json({ error: 'This promo code has expired' });
+    }
+    if (promo.max_uses !== null && promo.uses_count >= promo.max_uses) {
+      return res.status(400).json({ error: 'This promo code has reached its usage limit' });
+    }
+    res.json({ valid: true, type: promo.type, value: parseFloat(promo.value), code: promo.code });
+  } catch (err) {
+    console.error('Promo validate error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ── Public: daily order cap status ───────────────────────────────────────────
+app.get('/api/order-status', async (req, res) => {
+  try {
+    const capRow = await pool.query(`SELECT value FROM app_settings WHERE key = 'daily_order_cap'`);
+    const cap = capRow.rows.length ? parseInt(capRow.rows[0].value) : 0;
+    if (!cap || cap === 0) return res.json({ capped: false, cap: 0, today: 0 });
+    const todayRow = await pool.query(
+      `SELECT COUNT(*) AS count FROM orders WHERE created_at >= NOW()::date AND order_status != 'test'`
+    );
+    const today = parseInt(todayRow.rows[0].count);
+    res.json({ capped: today >= cap, cap, today });
+  } catch (err) {
+    console.error('Order status error:', err);
+    res.json({ capped: false });
+  }
+});
+
+// ── Admin: app settings ───────────────────────────────────────────────────────
+function requireAdmin(req, res) {
+  if (!ADMIN_PASSWORD) { res.status(503).json({ error: 'Admin not configured' }); return false; }
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Basic ')) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+    res.status(401).json({ error: 'Authentication required' }); return false;
+  }
+  const [username, password] = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+  if (username !== 'admin' || password !== ADMIN_PASSWORD) {
+    res.status(401).json({ error: 'Invalid credentials' }); return false;
+  }
+  return true;
+}
+
+app.get('/admin/settings', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const result = await pool.query('SELECT key, value FROM app_settings');
+    const settings = {};
+    result.rows.forEach(r => { settings[r.key] = r.value; });
+    res.json(settings);
+  } catch (err) { res.status(500).json({ error: 'Failed to load settings' }); }
+});
+
+app.post('/admin/settings', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const { key, value } = req.body;
+    if (!key) return res.status(400).json({ error: 'Key required' });
+    await pool.query(
+      `INSERT INTO app_settings (key, value) VALUES ($1, $2)
+       ON CONFLICT (key) DO UPDATE SET value = $2`, [key, String(value)]
+    );
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Failed to save setting' }); }
+});
+
+// ── Admin: promo codes CRUD ───────────────────────────────────────────────────
+app.get('/admin/promo-codes', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const result = await pool.query('SELECT * FROM promo_codes ORDER BY created_at DESC');
+    res.json({ codes: result.rows });
+  } catch (err) { res.status(500).json({ error: 'Failed to load promo codes' }); }
+});
+
+app.post('/admin/promo-codes', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const { code, type, value, max_uses, expires_at } = req.body;
+    if (!code || !type || !value) return res.status(400).json({ error: 'code, type, and value required' });
+    if (!['flat','percent'].includes(type)) return res.status(400).json({ error: 'type must be flat or percent' });
+    if (type === 'percent' && (parseFloat(value) < 1 || parseFloat(value) > 100)) {
+      return res.status(400).json({ error: 'Percent value must be between 1–100' });
+    }
+    const result = await pool.query(
+      `INSERT INTO promo_codes (code, type, value, max_uses, expires_at)
+       VALUES (UPPER($1), $2, $3, $4, $5) RETURNING *`,
+      [code.trim(), type, parseFloat(value), max_uses || null, expires_at || null]
+    );
+    res.json({ success: true, promo: result.rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(400).json({ error: 'Code already exists' });
+    console.error('Create promo error:', err);
+    res.status(500).json({ error: 'Failed to create promo code' });
+  }
+});
+
+app.patch('/admin/promo-codes/:id', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const { active } = req.body;
+    await pool.query('UPDATE promo_codes SET active = $1 WHERE id = $2', [active, req.params.id]);
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Failed to update promo code' }); }
+});
+
+app.delete('/admin/promo-codes/:id', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    await pool.query('DELETE FROM promo_codes WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Failed to delete promo code' }); }
+});
+
+// ── Admin: customers CRM ──────────────────────────────────────────────────────
+app.get('/admin/customers', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const result = await pool.query(`
+      SELECT
+        customer_email AS email,
+        MAX(customer_name) AS name,
+        MAX(customer_phone) AS phone,
+        COUNT(*) AS total_orders,
+        SUM(CAST(total_amount AS NUMERIC)) AS total_spent,
+        MAX(created_at) AS last_order_at,
+        MIN(created_at) AS first_order_at,
+        STRING_AGG(DISTINCT order_status, ', ') AS statuses
+      FROM orders
+      WHERE customer_email IS NOT NULL AND customer_email != ''
+      GROUP BY customer_email
+      ORDER BY total_orders DESC, total_spent DESC
+    `);
+    res.json({ customers: result.rows });
+  } catch (err) {
+    console.error('Customers error:', err);
+    res.status(500).json({ error: 'Failed to load customers' });
+  }
+});
+
 app.post('/create-payment-intent', async (req, res) => {
   try {
-    const { customer, items, orderType, deliveryDate, deliveryTimeSlot, cardBrand, testMode } = req.body;
+    const { customer, items, orderType, deliveryDate, deliveryTimeSlot, cardBrand, testMode, promoCode } = req.body;
     
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
@@ -894,7 +1069,35 @@ app.post('/create-payment-intent', async (req, res) => {
     const bundleBase = getBundleBaseTotal(totalCups);
     const itemsSubtotal = Math.round((bundleBase + toppingsFee) * 100) / 100;
     const deliveryFee = (orderType === 'pickup') ? 0 : (itemsSubtotal < 25 ? 4.99 : 0);
-    const baseTotal = Math.round((itemsSubtotal + deliveryFee) * 100) / 100;
+
+    // Apply promo code discount (server-side validation)
+    let promoDiscount = 0;
+    let validatedPromo = null;
+    if (promoCode) {
+      try {
+        const promoResult = await pool.query(
+          `SELECT * FROM promo_codes WHERE UPPER(code) = UPPER($1) AND active = TRUE`, [promoCode.trim()]
+        );
+        if (promoResult.rows.length > 0) {
+          const promo = promoResult.rows[0];
+          const notExpired = !promo.expires_at || new Date(promo.expires_at) > new Date();
+          const hasUses = promo.max_uses === null || promo.uses_count < promo.max_uses;
+          if (notExpired && hasUses) {
+            if (promo.type === 'flat') {
+              promoDiscount = Math.min(parseFloat(promo.value), itemsSubtotal);
+            } else {
+              promoDiscount = Math.round(itemsSubtotal * (parseFloat(promo.value) / 100) * 100) / 100;
+            }
+            promoDiscount = Math.round(promoDiscount * 100) / 100;
+            validatedPromo = promo;
+          }
+        }
+      } catch (promoErr) {
+        console.warn('Promo validation error (non-fatal):', promoErr.message);
+      }
+    }
+
+    const baseTotal = Math.max(0, Math.round((itemsSubtotal + deliveryFee - promoDiscount) * 100) / 100);
     const amexFee = (cardBrand === 'amex') ? Math.round(baseTotal * 0.006 * 100) / 100 : 0;
     const serverTotal = Math.round((baseTotal + amexFee) * 100) / 100;
 
@@ -924,9 +1127,16 @@ app.post('/create-payment-intent', async (req, res) => {
         amex_fee: amexFee > 0 ? amexFee.toFixed(2) : '0',
         card_brand: cardBrand || 'unknown',
         pricing: `Flat rate $${getCurrentPrice().toFixed(2)} per cup (tax included)`,
-        test_mode: isTestMode ? 'true' : 'false'
+        test_mode: isTestMode ? 'true' : 'false',
+        promo_code: validatedPromo ? validatedPromo.code : '',
+        promo_discount: promoDiscount > 0 ? promoDiscount.toFixed(2) : '0'
       },
     });
+
+    // Increment promo code uses
+    if (validatedPromo) {
+      await pool.query('UPDATE promo_codes SET uses_count = uses_count + 1 WHERE id = $1', [validatedPromo.id]);
+    }
 
     console.log('Payment Intent Created:', paymentIntent.id, 
                 'Amount:', serverTotal.toFixed(2), 'CAD',
@@ -934,6 +1144,8 @@ app.post('/create-payment-intent', async (req, res) => {
 
     res.json({
       clientSecret: paymentIntent.client_secret,
+      promoDiscount,
+      promoCode: validatedPromo ? validatedPromo.code : null
     });
   } catch (error) {
     console.error('Payment Intent Error:', error);
