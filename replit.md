@@ -69,6 +69,9 @@ The architecture follows a modern e-commerce pattern with a client-side rich use
 - `GET /api/send-test-delivery-email` — Delivery notification
 - `GET /api/send-test-waitlist-email` — Waitlist drop alert
 
+### UI Fixes & Updates (v74)
+- **Savings line items in checkout**: Bundle discount and promo discount now each appear as separate `-$X.XX` line items in the order summary; a green "💚 You save $X.XX" highlighted row appears below them whenever any savings are active (bundle + promo combined); floating savings banner removed in favour of inline rows; service worker bumped to v74
+
 ### UI Fixes & Updates (v73)
 - **Promo / Discount Code System**: `promo_codes` DB table; `/api/validate-promo` (public POST), `/admin/promo-codes` CRUD endpoints; promo code input field on checkout with real-time validation, discount shown in summary, applied server-side in payment intent; Promo Codes section in admin dashboard (create, toggle active/pause, delete)
 - **Daily Order Cap**: `app_settings` DB table; `/api/order-status` (public GET); `/admin/settings` GET+POST; Settings section in admin dashboard with live today count; checkout shows red "Sold Out for Today" banner and disables submit button when cap hit

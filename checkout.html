@@ -614,9 +614,17 @@
             <span class="checkout-fee-label">Amex processing (0.6%)</span>
             <span class="checkout-fee-amount" id="amexFeeDisplay">$0.00</span>
           </div>
+          <div id="bundleSavingsRow" class="checkout-fee-row" style="display:none;">
+            <span class="checkout-fee-label" style="color:#4caf50;">🎁 Bundle discount</span>
+            <span class="checkout-fee-amount" id="bundleSavingsDisplay" style="color:#4caf50;">-$0.00</span>
+          </div>
           <div id="promoDiscountRow" class="checkout-fee-row" style="display:none;">
             <span class="checkout-fee-label" style="color:#4caf50;">🏷️ Promo discount</span>
             <span class="checkout-fee-amount" id="promoDiscountDisplay" style="color:#4caf50;">-$0.00</span>
+          </div>
+          <div id="totalSavingsRow" style="display:none; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#1a3a1a,#0d2e0d); border:1.5px solid #4caf50; border-radius:10px; padding:10px 14px; margin:6px 0 4px; font-weight:700; font-size:0.95rem;">
+            <span style="color:#4caf50; letter-spacing:0.3px;">💚 You save</span>
+            <span id="totalSavingsDisplay" style="color:#4caf50; font-size:1.05rem; font-weight:800;">$0.00</span>
           </div>
           <div class="checkout-total-main">
             <span class="checkout-total-label">Total due</span>

@@ -8,6 +8,7 @@ let orderType = 'delivery';
 let cartSubtotal = 0;
 let cardBrand = null;
 let appliedPromo = null; // { code, type, value, min_spend }
+let totalCupsGlobal = 0;
 
 function getDeliveryFee() {
   if (orderType === 'pickup') return 0;
@@ -118,6 +119,20 @@ function updateDeliveryFeeDisplay() {
   if (promoRow) promoRow.style.display = discount > 0 ? 'flex' : 'none';
   if (promoDisplay) promoDisplay.textContent = `-$${discount.toFixed(2)}`;
 
+  // Bundle savings row
+  const bundleSavingsRow = document.getElementById('bundleSavingsRow');
+  const bundleSavingsDisplay = document.getElementById('bundleSavingsDisplay');
+  const bundleSavings = getBundleSavings(totalCupsGlobal);
+  if (bundleSavingsRow) bundleSavingsRow.style.display = bundleSavings > 0 ? 'flex' : 'none';
+  if (bundleSavingsDisplay) bundleSavingsDisplay.textContent = `-$${bundleSavings.toFixed(2)}`;
+
+  // "You save" total row — shown when any savings exist
+  const totalSavingsRow = document.getElementById('totalSavingsRow');
+  const totalSavingsDisplay = document.getElementById('totalSavingsDisplay');
+  const totalSavings = Math.round((bundleSavings + discount) * 100) / 100;
+  if (totalSavingsRow) totalSavingsRow.style.display = totalSavings > 0 ? 'flex' : 'none';
+  if (totalSavingsDisplay) totalSavingsDisplay.textContent = `$${totalSavings.toFixed(2)}`;
+
   const total = getFinalTotal();
   if (totalEl) {
     totalEl.textContent = `$${total.toFixed(2)}`;
@@ -184,6 +199,7 @@ function renderCheckoutItems() {
   }
 
   const totalCups = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+  totalCupsGlobal = totalCups;
   const savings = getBundleSavings(totalCups);
 
   checkoutItemsContainer.innerHTML = cart.items.map((item, i) => {
@@ -210,14 +226,7 @@ function renderCheckoutItems() {
   updateDeliveryFeeDisplay();
 
   const savingsEl = document.getElementById('checkoutSavingsBanner');
-  if (savingsEl) {
-    if (savings > 0) {
-      savingsEl.innerHTML = `🎉 Bundle savings applied — <strong>$${savings.toFixed(2)} off</strong>`;
-      savingsEl.style.display = 'block';
-    } else {
-      savingsEl.style.display = 'none';
-    }
-  }
+  if (savingsEl) savingsEl.style.display = 'none';
 
   if (taxIncludedEl) {
     taxIncludedEl.style.display = OFFER_MODE ? 'block' : 'none';
