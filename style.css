@@ -132,15 +132,38 @@ body {
 -------------------------------------------------- */
 .hero {
   margin-top: 40px;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse at center, rgba(1,90,100,0.14) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero > * {
+  position: relative;
+  z-index: 1;
 }
 
 .logo {
   width: 280px;
   max-width: 90%;
-  border-radius: 12px;
-  box-shadow: 0 4px 25px rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow:
+    0 0 0 1px rgba(1,125,142,0.3),
+    0 0 30px rgba(1,90,100,0.65),
+    0 0 70px rgba(1,90,100,0.28),
+    0 8px 24px rgba(0,0,0,0.55);
   animation: scaleIn 0.8s ease-out;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .logo-link {
@@ -165,7 +188,12 @@ body {
 }
 
 .logo:hover {
-  transform: scale(1.05);
+  transform: scale(1.04);
+  box-shadow:
+    0 0 0 1px rgba(1,125,142,0.5),
+    0 0 40px rgba(1,90,100,0.85),
+    0 0 90px rgba(1,90,100,0.4),
+    0 10px 30px rgba(0,0,0,0.6);
 }
 
 .tagline {
@@ -174,6 +202,7 @@ body {
   font-weight: 800;
   letter-spacing: 2px;
   margin-top: 30px;
+  margin-bottom: 0;
   text-transform: uppercase;
   color: #EFE8D8;
   animation: slideUp 1s ease-out 0.3s both;
@@ -183,6 +212,16 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: slideUp 1s ease-out 0.3s both, gradientShift 8s ease infinite;
+}
+
+.tagline-accent {
+  display: block;
+  width: 52px;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent, #017d8e, transparent);
+  margin: 10px auto 0;
+  border-radius: 2px;
+  opacity: 0.75;
 }
 
 @media (max-width: 768px) {
@@ -3732,13 +3771,13 @@ input[type="radio"]:checked + label,
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: rgba(239,232,216,0.45);
-  font-size: 0.72rem;
+  color: rgba(239,232,216,0.65);
+  font-size: 0.75rem;
   font-weight: 500;
   text-decoration: none;
   transition: color 0.2s;
   padding: 6px 2px;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
 }
 .review-nav-link:hover { color: #017d8e; }
 
