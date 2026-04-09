@@ -651,7 +651,7 @@ pool.query(`
     code VARCHAR(50) UNIQUE NOT NULL,
     type VARCHAR(10) NOT NULL CHECK (type IN ('flat','percent')),
     value NUMERIC(8,2) NOT NULL,
-    min_spend NUMERIC(8,2) DEFAULT NULL,
+    min_spend NUMERIC(8,2),
     max_uses INTEGER DEFAULT NULL,
     uses_count INTEGER DEFAULT 0,
     expires_at TIMESTAMPTZ DEFAULT NULL,
@@ -661,7 +661,7 @@ pool.query(`
 `).catch(err => console.error('Promo codes table error:', err));
 
 // Add min_spend column if it doesn't exist (safe migration for existing tables)
-pool.query(`ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS min_spend NUMERIC(8,2) DEFAULT NULL`)
+pool.query(`ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS min_spend NUMERIC(8,2)`)
   .catch(err => console.error('Promo min_spend migration error:', err));
 
 // Create app_settings table
