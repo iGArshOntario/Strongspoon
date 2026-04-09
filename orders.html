@@ -812,6 +812,25 @@
       </div>
     </div>
 
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:10px;">
+      <h2 class="section-title" style="margin:0;">📋 All Orders</h2>
+      <button id="exportCsvBtn" onclick="exportOrders()" style="
+        background: linear-gradient(135deg, #015A64, #017d8e);
+        color: #fff;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(1,125,142,0.4);
+        transition: opacity 0.2s;
+      ">⬇️ Export to Spreadsheet</button>
+    </div>
+
     <div class="orders-table">
       <div id="ordersContainer" class="loading">
         Loading orders...
@@ -1379,6 +1398,37 @@
       }
     }
     
+    // ── CSV Export ───────────────────────────────────────────────────────────
+    async function exportOrders() {
+      const btn = document.getElementById('exportCsvBtn');
+      const original = btn.innerHTML;
+      btn.innerHTML = '⏳ Preparing…';
+      btn.style.opacity = '0.7';
+      btn.disabled = true;
+      try {
+        const res = await fetch('/admin/orders/export', {
+          headers: { 'Authorization': 'Basic ' + adminCredentials }
+        });
+        if (!res.ok) throw new Error('Export failed');
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const today = new Date().toISOString().slice(0, 10);
+        a.download = `StrongSpoon_Orders_${today}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        btn.innerHTML = '✅ Downloaded!';
+        setTimeout(() => { btn.innerHTML = original; btn.style.opacity = '1'; btn.disabled = false; }, 2500);
+      } catch (err) {
+        console.error('Export error:', err);
+        btn.innerHTML = '❌ Failed';
+        setTimeout(() => { btn.innerHTML = original; btn.style.opacity = '1'; btn.disabled = false; }, 2500);
+      }
+    }
+
     // ── Traffic ──────────────────────────────────────────────────────────────
     let currentTrafficRange = '1d';
 

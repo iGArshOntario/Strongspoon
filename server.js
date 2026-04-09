@@ -1258,6 +1258,78 @@ app.get('/admin/orders', async (req, res) => {
 });
 
 
+// Export all orders as CSV (admin endpoint)
+app.get('/admin/orders/export', async (req, res) => {
+  try {
+    if (!ADMIN_PASSWORD) return res.status(503).json({ error: 'Admin not configured' });
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    const credentials = Buffer.from(authHeader.split(' ')[1], 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    if (username !== 'admin' || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const result = await pool.query(`
+      SELECT
+        order_number, customer_name, customer_email, customer_phone,
+        customer_address, items, total_amount, order_status, order_type,
+        delivery_date, delivery_time_slot, delivery_person, delivered_at,
+        stripe_payment_id, created_at
+      FROM orders
+      ORDER BY created_at ASC
+    `);
+
+    const escape = (v) => {
+      if (v === null || v === undefined) return '';
+      const s = String(v).replace(/"/g, '""');
+      return /[,"\n\r]/.test(s) ? `"${s}"` : s;
+    };
+
+    const headers = [
+      'Order #', 'Date', 'Customer Name', 'Email', 'Phone', 'Address',
+      'Items', 'Toppings', 'Total (CAD)', 'Status', 'Type',
+      'Delivery Date', 'Time Slot', 'Delivered By', 'Delivered At',
+      'Stripe Payment ID'
+    ];
+
+    const rows = result.rows.map(o => {
+      let itemsSummary = '';
+      let toppingsSummary = '';
+      try {
+        const items = Array.isArray(o.items) ? o.items : JSON.parse(o.items || '[]');
+        itemsSummary = items.map(i => `${i.name || 'Item'} x${i.quantity || 1}`).join('; ');
+        const allToppings = items.flatMap(i => i.toppings || []);
+        toppingsSummary = allToppings.length ? [...new Set(allToppings)].join(', ') : 'None';
+      } catch (e) {}
+      const createdAt = o.created_at ? new Date(o.created_at).toLocaleString('en-CA', { timeZone: 'America/Toronto' }) : '';
+      const deliveredAt = o.delivered_at ? new Date(o.delivered_at).toLocaleString('en-CA', { timeZone: 'America/Toronto' }) : '';
+      const deliveryDate = o.delivery_date ? new Date(o.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto' }) : '';
+      return [
+        o.order_number, createdAt, o.customer_name, o.customer_email, o.customer_phone,
+        o.customer_address, itemsSummary, toppingsSummary,
+        o.total_amount ? `$${parseFloat(o.total_amount).toFixed(2)}` : '',
+        o.order_status, o.order_type, deliveryDate, o.delivery_time_slot,
+        o.delivery_person, deliveredAt, o.stripe_payment_id
+      ].map(escape).join(',');
+    });
+
+    const csv = [headers.join(','), ...rows].join('\r\n');
+    const filename = `StrongSpoon_Orders_${new Date().toISOString().slice(0,10)}.csv`;
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send('\uFEFF' + csv); // BOM for Excel UTF-8
+  } catch (error) {
+    console.error('CSV export error:', error);
+    res.status(500).json({ error: 'Failed to export orders' });
+  }
+});
+
 // Get order statistics (admin endpoint)
 app.get('/admin/orders/stats', async (req, res) => {
   try {
