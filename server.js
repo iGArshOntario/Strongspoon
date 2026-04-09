@@ -651,7 +651,7 @@ pool.query(`
     code VARCHAR(50) UNIQUE NOT NULL,
     type VARCHAR(10) NOT NULL CHECK (type IN ('flat','percent')),
     value NUMERIC(8,2) NOT NULL,
-    min_spend NUMERIC(8,2),
+    min_spend TEXT,
     max_uses INTEGER DEFAULT NULL,
     uses_count INTEGER DEFAULT 0,
     expires_at TIMESTAMPTZ DEFAULT NULL,
@@ -661,7 +661,7 @@ pool.query(`
 `).catch(err => console.error('Promo codes table error:', err));
 
 // Add min_spend column if it doesn't exist (safe migration for existing tables)
-pool.query(`ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS min_spend NUMERIC(8,2)`)
+pool.query(`ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS min_spend TEXT`)
   .catch(err => console.error('Promo min_spend migration error:', err));
 
 // Create app_settings table
@@ -974,7 +974,7 @@ app.post('/admin/promo-codes', async (req, res) => {
     const result = await pool.query(
       `INSERT INTO promo_codes (code, type, value, min_spend, max_uses, expires_at)
        VALUES (UPPER($1), $2, $3, $4, $5, $6) RETURNING *`,
-      [code.trim(), type, parseFloat(value), min_spend ? parseFloat(min_spend) : null, max_uses || null, expires_at || null]
+      [code.trim(), type, parseFloat(value), min_spend ? String(parseFloat(min_spend)) : null, max_uses || null, expires_at || null]
     );
     res.json({ success: true, promo: result.rows[0] });
   } catch (err) {
