@@ -4114,3 +4114,25 @@ input[type="radio"]:checked + label,
   font-size: 0.78rem;
 }
 
+/* ── Individual Flavour Page Launch Badge ──────────────────── */
+.product-launch-badge {
+  display: inline-block;
+  background: linear-gradient(90deg, #f5c842, #e8a800);
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  padding: 7px 18px;
+  border-radius: 50px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.product-launch-badge.plb-live {
+  background: linear-gradient(90deg, #ff4444, #ff7700) !important;
+  color: #fff !important;
+  animation: pulseBadge 1.4s ease-in-out infinite;
+  text-shadow: none;
+}
+
