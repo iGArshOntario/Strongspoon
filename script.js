@@ -122,9 +122,11 @@ class ShoppingCart {
   getTotal() {
     const totalCups = this.items.reduce((sum, item) => sum + item.quantity, 0);
     const bundleBase = getBundleBaseTotal(totalCups);
-    // Flat $1 for any toppings in the order — no matter how many toppings or cups
+    // Flat $1 for any toppings — free during 24-hour launch window
     const hasToppings = this.items.some(item => item.toppings && item.toppings.length > 0);
-    const toppingsFee = hasToppings ? 1 : 0;
+    const isLaunch = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
+                     Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
+    const toppingsFee = (hasToppings && !isLaunch) ? 1 : 0;
     return Math.round((bundleBase + toppingsFee) * 100) / 100;
   }
 

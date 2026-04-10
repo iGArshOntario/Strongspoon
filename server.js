@@ -1075,8 +1075,10 @@ app.post('/create-payment-intent', async (req, res) => {
       });
     }
 
-    // Flat $1 topping fee for the whole order, regardless of how many toppings or cups
-    const toppingsFee = anyToppings ? 1 : 0;
+    // Flat $1 topping fee — free during 24-hour launch window
+    const isLaunchDay = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
+                        Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
+    const toppingsFee = (anyToppings && !isLaunchDay) ? 1 : 0;
 
     // Bundle pricing: 1 cup $11.99 | 2 cups $19.99 | 4 cups $35.99
     function getBundleBaseTotal(cups) {

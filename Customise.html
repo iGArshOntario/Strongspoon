@@ -239,6 +239,20 @@
   <script src="products.js"></script>
   <script src="script.js"></script>
   <script src="customise-page.js"></script>
+  <script>
+    (function() {
+      const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
+      const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
+      const ts = Date.now();
+      if (ts >= launchStart && ts < launchEnd) {
+        document.querySelectorAll('.free-badge').forEach(function(el) {
+          el.textContent = '🎉 FREE today!';
+          el.style.background = 'linear-gradient(90deg,#4caf50,#2e7d32)';
+          el.style.color = '#fff';
+        });
+      }
+    })();
+  </script>
 <script src="/track.js" defer></script>
 </body>
 </html>
