@@ -51,7 +51,7 @@
   <!-- Launch Special Deal Section -->
   <section class="launch-deal-section" id="launchDealSection" style="display:none;">
     <div class="launch-deal-inner">
-      <div class="launch-deal-badge" id="launchDealBadge">🚀 LAUNCH SPECIAL</div>
+      <p class="launch-deal-badge" id="launchDealBadge">Opening Offer</p>
       <div class="launch-deal-pricing">
         <span class="launch-deal-was">$11.99</span>
         <span class="launch-deal-arrow-right">→</span>
@@ -60,9 +60,9 @@
       </div>
       <p class="launch-deal-when" id="launchDealWhen"></p>
       <div class="launch-deal-perks">
-        <span>✓ Tax Included</span>
-        <span>✓ All Toppings Free</span>
-        <span>✓ Regina, SK Only</span>
+        <span>Tax included</span>
+        <span>Toppings free</span>
+        <span>Regina, SK</span>
       </div>
     </div>
   </section>
@@ -191,13 +191,13 @@
       const when    = document.getElementById('launchDealWhen');
       if (ts < launchStart) {
         section.style.display = '';
-        badge.textContent = '🚀 LAUNCH SPECIAL — TOMORROW';
-        when.textContent = 'Apr 10 · 8 AM – Apr 11 · 8 AM CST · 24 Hours Only';
+        badge.textContent = 'Opening Offer — Tomorrow';
+        when.textContent = 'Apr 10 · 8 AM – Apr 11 · 8 AM CST';
       } else if (ts < launchEnd) {
         section.style.display = '';
-        badge.textContent = '🔥 LAUNCH SPECIAL — LIVE NOW';
+        badge.textContent = 'Opening Offer — Live Now';
         badge.classList.add('launch-deal-badge-live');
-        when.textContent = 'Today Only · Ends Apr 11 at 8 AM CST';
+        when.textContent = 'Ends Apr 11 at 8 AM CST';
       }
     })();
 

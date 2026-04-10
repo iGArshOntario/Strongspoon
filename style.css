@@ -3925,55 +3925,32 @@ input[type="radio"]:checked + label,
 
 /* ── Launch Special Deal Section (Homepage) ─────────────── */
 .launch-deal-section {
-  max-width: 480px;
+  max-width: 420px;
   margin: 0 auto 10px;
   padding: 0 16px;
   animation: slideUp 0.7s ease-out 0.5s both;
 }
 
 .launch-deal-inner {
-  background: linear-gradient(135deg, #0a1f1f 0%, #051212 100%);
-  border: 1.5px solid #f5c842;
-  border-radius: 20px;
-  padding: 22px 24px 18px;
+  background: transparent;
+  border: 1px solid rgba(245,200,66,0.18);
+  border-radius: 16px;
+  padding: 22px 24px 20px;
   text-align: center;
-  box-shadow: 0 0 30px rgba(245,200,66,0.12), 0 0 60px rgba(1,90,100,0.15), inset 0 1px 0 rgba(245,200,66,0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.launch-deal-inner::before {
-  content: '';
-  position: absolute;
-  top: -40px; left: 50%;
-  transform: translateX(-50%);
-  width: 200px; height: 80px;
-  background: radial-gradient(ellipse, rgba(245,200,66,0.08) 0%, transparent 70%);
-  pointer-events: none;
 }
 
 .launch-deal-badge {
-  display: inline-block;
-  background: linear-gradient(90deg, #f5c842, #e8a800);
-  color: #000;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  padding: 5px 14px;
-  border-radius: 50px;
-  margin-bottom: 14px;
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
+  color: rgba(245,200,66,0.55);
+  margin-bottom: 14px;
 }
 
 .launch-deal-badge-live {
-  background: linear-gradient(90deg, #ff4444, #ff6600) !important;
-  color: #fff !important;
-  animation: pulseBadge 1.4s ease-in-out infinite;
-}
-
-@keyframes pulseBadge {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255,68,68,0.4); }
-  50%       { box-shadow: 0 0 0 8px rgba(255,68,68,0); }
+  color: rgba(245,200,66,0.7) !important;
 }
 
 .launch-deal-pricing {
@@ -3985,104 +3962,98 @@ input[type="radio"]:checked + label,
 }
 
 .launch-deal-was {
-  font-size: 1.1rem;
-  color: rgba(239,232,216,0.4);
+  font-size: 1rem;
+  color: rgba(239,232,216,0.3);
   text-decoration: line-through;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .launch-deal-arrow-right {
-  color: #f5c842;
-  font-size: 1rem;
-  opacity: 0.7;
+  color: rgba(239,232,216,0.2);
+  font-size: 0.9rem;
 }
 
 .launch-deal-now {
   font-size: 2.8rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, #f5c842, #ffdd55, #e8a800);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  color: #f5c842;
   line-height: 1;
   font-family: 'Playfair Display', serif;
 }
 
 .launch-deal-unit {
-  font-size: 0.95rem;
-  color: rgba(239,232,216,0.6);
+  font-size: 0.85rem;
+  color: rgba(239,232,216,0.45);
   font-weight: 400;
   align-self: flex-end;
   margin-bottom: 6px;
 }
 
 .launch-deal-when {
-  font-size: 0.78rem;
-  color: rgba(239,232,216,0.55);
-  margin: 0 0 12px;
+  font-size: 0.72rem;
+  color: rgba(239,232,216,0.38);
+  margin: 0 0 14px;
   letter-spacing: 0.3px;
 }
 
 .launch-deal-perks {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .launch-deal-perks span {
-  font-size: 0.68rem;
-  color: #4caf50;
-  font-weight: 600;
-  letter-spacing: 0.2px;
+  font-size: 0.65rem;
+  color: rgba(239,232,216,0.38);
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+.launch-deal-perks span::after {
+  content: ' ·';
+  opacity: 0.5;
+}
+
+.launch-deal-perks span:last-child::after {
+  content: '';
 }
 
 @media (max-width: 400px) {
   .launch-deal-now { font-size: 2.2rem; }
-  .launch-deal-perks { gap: 8px; }
-  .launch-deal-perks span { font-size: 0.62rem; }
 }
 
 /* ── Flavour Page Launch Banner ───────────────────────────── */
 .flavour-launch-banner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: linear-gradient(90deg, rgba(10,31,31,0.9), rgba(5,18,18,0.9));
-  border: 1.5px solid rgba(245,200,66,0.5);
-  border-radius: 14px;
-  padding: 11px 16px;
-  margin-top: 14px;
-  text-align: left;
-  max-width: 520px;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 0 20px rgba(245,200,66,0.08);
+  text-align: center;
+  font-size: 0.72rem;
+  color: rgba(239,232,216,0.4);
+  letter-spacing: 0.3px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(245,200,66,0.1);
+  border-bottom: 1px solid rgba(245,200,66,0.1);
+  margin: 14px auto;
+  max-width: 480px;
 }
 
-.flavour-launch-banner.flb-live {
-  border-color: rgba(255,100,0,0.6);
-  box-shadow: 0 0 20px rgba(255,100,0,0.12);
-  animation: pulseBadge 2s ease-in-out infinite;
-}
+.flavour-launch-banner.flb-live { }
 
-.flb-icon {
-  font-size: 1.4rem;
-  flex-shrink: 0;
-}
+.flb-icon { display: none; }
 
 .flb-text {
-  font-size: 0.8rem;
-  color: rgba(239,232,216,0.85);
+  font-size: 0.72rem;
+  color: rgba(239,232,216,0.4);
   line-height: 1.5;
 }
 
-.flb-text strong { color: #EFE8D8; }
+.flb-text strong {
+  color: rgba(239,232,216,0.55);
+  font-weight: 500;
+}
 
 .flb-price {
   color: #f5c842;
-  font-weight: 800;
-  font-size: 1rem;
+  font-weight: 600;
 }
 
 /* ── Flavour Card Price Badge ─────────────────────────────── */
@@ -4093,21 +4064,19 @@ input[type="radio"]:checked + label,
 }
 
 .fp-was {
-  color: rgba(239,232,216,0.35);
-  font-size: 0.72rem;
-  margin-right: 4px;
+  color: rgba(239,232,216,0.28);
+  font-size: 0.7rem;
+  margin-right: 5px;
+  text-decoration: line-through;
 }
 
 .fp-now {
   color: #f5c842;
-  font-weight: 700;
-  font-size: 0.88rem;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
-.fp-live {
-  color: #ff9800;
-  animation: pulseBadge 1.8s ease-in-out infinite;
-}
+.fp-live { }
 
 .fp-regular {
   color: rgba(239,232,216,0.5);
@@ -4117,12 +4086,13 @@ input[type="radio"]:checked + label,
 /* ── Individual Flavour Page Launch Badge ──────────────────── */
 .product-launch-badge {
   display: inline-block;
-  background: linear-gradient(90deg, #f5c842, #e8a800);
-  color: #000;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  padding: 7px 18px;
+  background: transparent;
+  border: 1px solid rgba(245,200,66,0.2);
+  color: rgba(245,200,66,0.55);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 2px;
+  padding: 5px 14px;
   border-radius: 50px;
   margin-top: 10px;
   margin-bottom: 6px;
@@ -4130,9 +4100,7 @@ input[type="radio"]:checked + label,
 }
 
 .product-launch-badge.plb-live {
-  background: linear-gradient(90deg, #ff4444, #ff7700) !important;
-  color: #fff !important;
-  animation: pulseBadge 1.4s ease-in-out infinite;
-  text-shadow: none;
+  border-color: rgba(245,200,66,0.28);
+  color: rgba(245,200,66,0.65);
 }
 

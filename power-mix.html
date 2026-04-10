@@ -115,17 +115,17 @@
       if (ts >= launchStart && ts < launchEnd) {
         priceEl.innerHTML = '<s style="font-size:0.62em;opacity:0.38;vertical-align:middle;margin-right:6px">$11.99</s><span style="color:#f5c842">$7</span>';
         badge.style.display = 'inline-block';
-        badge.textContent = '🔥 LAUNCH SPECIAL — TODAY ONLY · Tax & Toppings Included';
+        badge.textContent = 'Opening offer · Today only';
         badge.classList.add('plb-live');
         var tiers = document.querySelectorAll('.qty-tier-price');
         var qtys = [1,2,4];
         tiers.forEach(function(el,i){ el.textContent = '$'+(7*qtys[i]).toFixed(2); });
         document.querySelectorAll('.qty-tier-save').forEach(function(el){ el.style.display='none'; });
         var note = document.querySelector('.qty-picker-note');
-        if(note) note.textContent = 'Launch day price — $7 per cup · Today only';
+        if(note) note.textContent = 'Opening offer — $7 per cup today only';
       } else if (ts < launchStart) {
         badge.style.display = 'inline-block';
-        badge.innerHTML = '🚀 Launch Special Tomorrow — <strong>$7/cup</strong> · Apr 10 · 8AM–Apr 11 · 8AM CST';
+        badge.innerHTML = 'Opening offer tomorrow — $7 / cup';
       }
     })();
   </script>

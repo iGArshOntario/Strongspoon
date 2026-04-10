@@ -135,13 +135,13 @@
       var priceBadgeHTML = '';
       if (ts < launchStart) {
         banner.style.display = '';
-        banner.innerHTML = '<span class="flb-icon">🚀</span><span class="flb-text"><strong>Launch Special Tomorrow</strong> — Every cup <s style="opacity:.5">$11.99</s> <span class="flb-price">$7</span> · Apr 10 only · Tax & Toppings Included</span>';
+        banner.innerHTML = '<span class="flb-text">Opening offer — every cup <s>$11.99</s> <span class="flb-price">$7</span> · Tomorrow only · Tax &amp; toppings included</span>';
         priceBadgeHTML = '<s class="fp-was">$11.99</s> <span class="fp-now">$7 tomorrow</span>';
       } else if (ts < launchEnd) {
         banner.style.display = '';
-        banner.innerHTML = '<span class="flb-icon">🔥</span><span class="flb-text"><strong>Launch Special LIVE NOW</strong> — Every cup <s style="opacity:.5">$11.99</s> <span class="flb-price">$7</span> · Today only · Tax & Toppings Included</span>';
+        banner.innerHTML = '<span class="flb-text">Opening offer — every cup <s>$11.99</s> <span class="flb-price">$7</span> · Today only · Tax &amp; toppings included</span>';
         banner.classList.add('flb-live');
-        priceBadgeHTML = '<s class="fp-was">$11.99</s> <span class="fp-now fp-live">$7 today!</span>';
+        priceBadgeHTML = '<s class="fp-was">$11.99</s> <span class="fp-now fp-live">$7</span>';
       } else {
         priceBadgeHTML = '<span class="fp-regular">$11.99 / cup</span>';
       }
