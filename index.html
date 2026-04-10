@@ -191,13 +191,13 @@
       const when    = document.getElementById('launchDealWhen');
       if (ts < launchStart) {
         section.style.display = '';
-        badge.textContent = 'Opening Offer — Tomorrow';
+        badge.textContent = 'Launch Day — Tomorrow';
         when.textContent = 'Apr 10 · 8 AM – Apr 11 · 8 AM CST';
       } else if (ts < launchEnd) {
         section.style.display = '';
-        badge.textContent = 'Opening Offer — Live Now';
+        badge.textContent = 'Launch Day — Live Now';
         badge.classList.add('launch-deal-badge-live');
-        when.textContent = 'Ends Apr 11 at 8 AM CST';
+        when.textContent = 'Today only · Ends Apr 11 at 8 AM CST';
       }
     })();
 

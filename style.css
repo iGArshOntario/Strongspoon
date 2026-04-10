@@ -3932,25 +3932,30 @@ input[type="radio"]:checked + label,
 }
 
 .launch-deal-inner {
-  background: transparent;
-  border: 1px solid rgba(245,200,66,0.18);
-  border-radius: 16px;
-  padding: 22px 24px 20px;
+  background: linear-gradient(160deg, #0d2020 0%, #071515 100%);
+  border: 1.5px solid rgba(245,200,66,0.35);
+  border-radius: 18px;
+  padding: 24px 24px 20px;
   text-align: center;
+  box-shadow: 0 0 40px rgba(245,200,66,0.07);
 }
 
 .launch-deal-badge {
-  display: block;
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 2.5px;
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(245,200,66,0.55);
-  margin-bottom: 14px;
+  color: #000;
+  background: #f5c842;
+  padding: 4px 14px;
+  border-radius: 50px;
+  margin-bottom: 16px;
 }
 
 .launch-deal-badge-live {
-  color: rgba(245,200,66,0.7) !important;
+  background: #f5c842;
+  color: #000;
 }
 
 .launch-deal-pricing {
@@ -3958,40 +3963,43 @@ input[type="radio"]:checked + label,
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .launch-deal-was {
-  font-size: 1rem;
-  color: rgba(239,232,216,0.3);
+  font-size: 1.1rem;
+  color: rgba(239,232,216,0.35);
   text-decoration: line-through;
   font-weight: 400;
 }
 
 .launch-deal-arrow-right {
-  color: rgba(239,232,216,0.2);
-  font-size: 0.9rem;
+  color: rgba(245,200,66,0.5);
+  font-size: 1rem;
 }
 
 .launch-deal-now {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #f5c842;
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #f5c842 0%, #ffe066 50%, #e8a800 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   line-height: 1;
   font-family: 'Playfair Display', serif;
 }
 
 .launch-deal-unit {
-  font-size: 0.85rem;
-  color: rgba(239,232,216,0.45);
+  font-size: 0.9rem;
+  color: rgba(239,232,216,0.55);
   font-weight: 400;
   align-self: flex-end;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 }
 
 .launch-deal-when {
-  font-size: 0.72rem;
-  color: rgba(239,232,216,0.38);
+  font-size: 0.73rem;
+  color: rgba(239,232,216,0.5);
   margin: 0 0 14px;
   letter-spacing: 0.3px;
 }
@@ -3999,61 +4007,63 @@ input[type="radio"]:checked + label,
 .launch-deal-perks {
   display: flex;
   justify-content: center;
-  gap: 6px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
 .launch-deal-perks span {
-  font-size: 0.65rem;
-  color: rgba(239,232,216,0.38);
-  font-weight: 400;
-  letter-spacing: 0.3px;
+  font-size: 0.67rem;
+  color: rgba(239,232,216,0.55);
+  font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
-.launch-deal-perks span::after {
-  content: ' ·';
-  opacity: 0.5;
-}
-
-.launch-deal-perks span:last-child::after {
-  content: '';
+.launch-deal-perks span::before {
+  content: '✓ ';
+  color: #f5c842;
+  font-weight: 700;
 }
 
 @media (max-width: 400px) {
-  .launch-deal-now { font-size: 2.2rem; }
+  .launch-deal-now { font-size: 2.4rem; }
+  .launch-deal-perks { gap: 8px; }
 }
 
 /* ── Flavour Page Launch Banner ───────────────────────────── */
 .flavour-launch-banner {
-  text-align: center;
-  font-size: 0.72rem;
-  color: rgba(239,232,216,0.4);
-  letter-spacing: 0.3px;
-  padding: 10px 0;
-  border-top: 1px solid rgba(245,200,66,0.1);
-  border-bottom: 1px solid rgba(245,200,66,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, rgba(13,32,32,0.95), rgba(7,21,21,0.95));
+  border: 1px solid rgba(245,200,66,0.3);
+  border-radius: 12px;
+  padding: 10px 18px;
   margin: 14px auto;
-  max-width: 480px;
+  max-width: 520px;
 }
 
-.flavour-launch-banner.flb-live { }
+.flavour-launch-banner.flb-live {
+  border-color: rgba(245,200,66,0.4);
+}
 
 .flb-icon { display: none; }
 
 .flb-text {
-  font-size: 0.72rem;
-  color: rgba(239,232,216,0.4);
+  font-size: 0.78rem;
+  color: rgba(239,232,216,0.75);
   line-height: 1.5;
+  text-align: center;
 }
 
 .flb-text strong {
-  color: rgba(239,232,216,0.55);
-  font-weight: 500;
+  color: #EFE8D8;
+  font-weight: 600;
 }
 
 .flb-price {
   color: #f5c842;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
 /* ── Flavour Card Price Badge ─────────────────────────────── */
@@ -4086,13 +4096,13 @@ input[type="radio"]:checked + label,
 /* ── Individual Flavour Page Launch Badge ──────────────────── */
 .product-launch-badge {
   display: inline-block;
-  background: transparent;
-  border: 1px solid rgba(245,200,66,0.2);
-  color: rgba(245,200,66,0.55);
-  font-size: 0.6rem;
-  font-weight: 400;
-  letter-spacing: 2px;
-  padding: 5px 14px;
+  background: rgba(245,200,66,0.12);
+  border: 1px solid rgba(245,200,66,0.4);
+  color: #f5c842;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  padding: 6px 16px;
   border-radius: 50px;
   margin-top: 10px;
   margin-bottom: 6px;
@@ -4100,7 +4110,8 @@ input[type="radio"]:checked + label,
 }
 
 .product-launch-badge.plb-live {
-  border-color: rgba(245,200,66,0.28);
-  color: rgba(245,200,66,0.65);
+  background: rgba(245,200,66,0.15);
+  border-color: rgba(245,200,66,0.5);
+  color: #f5c842;
 }
 
