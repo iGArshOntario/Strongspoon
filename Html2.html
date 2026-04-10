@@ -27,6 +27,7 @@
       <h1 class="premium-title">Our Flavours</h1>
       <p class="premium-subtitle">Handcrafted with love, packed with protein</p>
       <div id="dropStatusBanner" class="drop-status-banner" style="display:none; margin-top:14px;"></div>
+      <div id="flavourLaunchBanner" class="flavour-launch-banner" style="display:none;"></div>
       <div class="header-decoration" style="margin-top:18px;"></div>
     </div>
 
@@ -36,6 +37,7 @@
         <h3 class="flavour-name">Brownie Issues</h3>
         <p class="flavour-desc">Chocolate indulgence</p>
         <span class="flavour-tag">CHOCOLATE</span>
+        <span class="flavour-price-badge" id="priceBadge1"></span>
         <span class="flavour-arrow">→</span>
       </a>
       
@@ -44,6 +46,7 @@
         <h3 class="flavour-name">Power Mix</h3>
         <p class="flavour-desc">Nutty protein boost</p>
         <span class="flavour-tag">PEANUT BUTTER</span>
+        <span class="flavour-price-badge" id="priceBadge2"></span>
         <span class="flavour-arrow">→</span>
       </a>
       
@@ -52,6 +55,7 @@
         <h3 class="flavour-name">Golden Scoop</h3>
         <p class="flavour-desc">Classic smooth vanilla</p>
         <span class="flavour-tag">VANILLA</span>
+        <span class="flavour-price-badge" id="priceBadge3"></span>
         <span class="flavour-arrow">→</span>
       </a>
       
@@ -60,6 +64,7 @@
         <h3 class="flavour-name">Spoon Crumble</h3>
         <p class="flavour-desc">Cookie crunch delight</p>
         <span class="flavour-tag">COOKIE</span>
+        <span class="flavour-price-badge" id="priceBadge4"></span>
         <span class="flavour-arrow">→</span>
       </a>
     </div>
@@ -120,6 +125,31 @@
     }
     refreshDropStatus();
     setInterval(refreshDropStatus, 30000);
+
+    // Launch banner + price badges
+    (function() {
+      const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
+      const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
+      const ts = Date.now();
+      const banner = document.getElementById('flavourLaunchBanner');
+      var priceBadgeHTML = '';
+      if (ts < launchStart) {
+        banner.style.display = '';
+        banner.innerHTML = '<span class="flb-icon">🚀</span><span class="flb-text"><strong>Launch Special Tomorrow</strong> — Every cup <s style="opacity:.5">$11.99</s> <span class="flb-price">$7</span> · Apr 10 only · Tax & Toppings Included</span>';
+        priceBadgeHTML = '<s class="fp-was">$11.99</s> <span class="fp-now">$7 tomorrow</span>';
+      } else if (ts < launchEnd) {
+        banner.style.display = '';
+        banner.innerHTML = '<span class="flb-icon">🔥</span><span class="flb-text"><strong>Launch Special LIVE NOW</strong> — Every cup <s style="opacity:.5">$11.99</s> <span class="flb-price">$7</span> · Today only · Tax & Toppings Included</span>';
+        banner.classList.add('flb-live');
+        priceBadgeHTML = '<s class="fp-was">$11.99</s> <span class="fp-now fp-live">$7 today!</span>';
+      } else {
+        priceBadgeHTML = '<span class="fp-regular">$11.99 / cup</span>';
+      }
+      ['priceBadge1','priceBadge2','priceBadge3','priceBadge4'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.innerHTML = priceBadgeHTML;
+      });
+    })();
 
     // Intercept all flavour card clicks when sold out
     document.getElementById('flavour-grid').addEventListener('click', function(e) {

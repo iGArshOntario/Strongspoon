@@ -48,6 +48,25 @@
     <button class="location-btn hero-location-btn" onclick="showLocationPopup()">📍 Regina, SK</button>
   </section>
 
+  <!-- Launch Special Deal Section -->
+  <section class="launch-deal-section" id="launchDealSection" style="display:none;">
+    <div class="launch-deal-inner">
+      <div class="launch-deal-badge" id="launchDealBadge">🚀 LAUNCH SPECIAL</div>
+      <div class="launch-deal-pricing">
+        <span class="launch-deal-was">$11.99</span>
+        <span class="launch-deal-arrow-right">→</span>
+        <span class="launch-deal-now">$7</span>
+        <span class="launch-deal-unit">/ cup</span>
+      </div>
+      <p class="launch-deal-when" id="launchDealWhen"></p>
+      <div class="launch-deal-perks">
+        <span>✓ Tax Included</span>
+        <span>✓ All Toppings Free</span>
+        <span>✓ Regina, SK Only</span>
+      </div>
+    </div>
+  </section>
+
   <section class="about">
     <p>
       <strong>Strong Spoon</strong> is a high-protein, handcrafted dessert made for people who want to eat healthy without giving up taste. Every cup is packed with natural ingredients, balanced macros, and smooth, creamy texture — designed to fuel your workouts, your mornings, or your late-night cravings.
@@ -161,6 +180,26 @@
         } else { alert('Something went wrong.'); this.textContent = 'Send Me an Alert'; this.disabled = false; }
       } catch(err) { alert('Network error.'); this.textContent = 'Send Me an Alert'; this.disabled = false; }
     };
+
+    // Launch special deal visibility
+    (function() {
+      const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
+      const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
+      const ts = Date.now();
+      const section = document.getElementById('launchDealSection');
+      const badge   = document.getElementById('launchDealBadge');
+      const when    = document.getElementById('launchDealWhen');
+      if (ts < launchStart) {
+        section.style.display = '';
+        badge.textContent = '🚀 LAUNCH SPECIAL — TOMORROW';
+        when.textContent = 'Apr 10 · 8 AM – Apr 11 · 8 AM CST · 24 Hours Only';
+      } else if (ts < launchEnd) {
+        section.style.display = '';
+        badge.textContent = '🔥 LAUNCH SPECIAL — LIVE NOW';
+        badge.classList.add('launch-deal-badge-live');
+        when.textContent = 'Today Only · Ends Apr 11 at 8 AM CST';
+      }
+    })();
 
     // Check if website should be in countdown mode
     const launchDate = new Date('2026-04-10T08:00:00-05:00').getTime();
