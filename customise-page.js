@@ -160,12 +160,14 @@ if (customiseForm) {
       .filter(t => t !== null);
 
     const hasToppings = selectedToppings.length > 0;
+    const isLaunchNow = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
+                        Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
 
     pendingItem = {
       id: product.id,
       name: product.name,
       description: product.description,
-      price: product.price + (hasToppings ? 1 : 0),
+      price: product.price + (hasToppings && !isLaunchNow ? 1 : 0),
       toppings: selectedToppings,
       image: product.image
     };

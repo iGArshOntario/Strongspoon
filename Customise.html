@@ -181,23 +181,23 @@
     <div class="cart-popup qty-picker-popup">
       <div class="cart-popup-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
       <h2 class="cart-popup-title">How many cups?</h2>
-      <p class="qty-picker-note">Bundle price applies to your total cart</p>
+      <p class="qty-picker-note" id="qtyPickerNote">Bundle price applies to your total cart</p>
       <div class="qty-tier-cards">
         <button class="qty-tier-card" data-qty="1">
           <span class="qty-tier-qty">1 cup</span>
-          <span class="qty-tier-price">$11.99</span>
+          <span class="qty-tier-price" id="qtyPrice1">$11.99</span>
         </button>
         <button class="qty-tier-card popular" data-qty="2">
-          <div class="qty-tier-badge">Most popular</div>
+          <div class="qty-tier-badge" id="qtyBadge2">Most popular</div>
           <span class="qty-tier-qty">2 cups</span>
-          <span class="qty-tier-price">$19.99</span>
-          <span class="qty-tier-save">Save $4</span>
+          <span class="qty-tier-price" id="qtyPrice2">$19.99</span>
+          <span class="qty-tier-save" id="qtySave2">Save $4</span>
         </button>
         <button class="qty-tier-card best-val" data-qty="4">
-          <div class="qty-tier-badge best">Best value</div>
+          <div class="qty-tier-badge best" id="qtyBadge4">Best value</div>
           <span class="qty-tier-qty">4 cups</span>
-          <span class="qty-tier-price">$35.99</span>
-          <span class="qty-tier-save">Save $12</span>
+          <span class="qty-tier-price" id="qtyPrice4">$35.99</span>
+          <span class="qty-tier-save" id="qtySave4">Save $12</span>
         </button>
       </div>
       <div class="qty-picker-actions">
@@ -245,11 +245,25 @@
       const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
       const ts = Date.now();
       if (ts >= launchStart && ts < launchEnd) {
+        // Topping badges → FREE
         document.querySelectorAll('.free-badge').forEach(function(el) {
           el.textContent = '🎉 FREE today!';
           el.style.background = 'linear-gradient(90deg,#4caf50,#2e7d32)';
           el.style.color = '#fff';
         });
+        // Qty picker popup prices → launch prices ($7 flat, no bundle)
+        var p1 = document.getElementById('qtyPrice1');
+        var p2 = document.getElementById('qtyPrice2');
+        var p4 = document.getElementById('qtyPrice4');
+        var s2 = document.getElementById('qtySave2');
+        var s4 = document.getElementById('qtySave4');
+        var note = document.getElementById('qtyPickerNote');
+        if (p1) p1.textContent = '$7';
+        if (p2) { p2.textContent = '$14'; }
+        if (p4) { p4.textContent = '$28'; }
+        if (s2) s2.style.display = 'none';
+        if (s4) s4.style.display = 'none';
+        if (note) note.textContent = '🔥 Launch special — $7 per cup today only';
       }
     })();
   </script>
