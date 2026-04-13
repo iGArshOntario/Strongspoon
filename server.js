@@ -749,7 +749,7 @@ app.get('/admin/traffic', async (req, res) => {
         GROUP BY DATE_TRUNC('hour', viewed_at AT TIME ZONE 'America/Toronto')
         ORDER BY DATE_TRUNC('hour', viewed_at AT TIME ZONE 'America/Toronto')
       `),
-      pool.query(`SELECT referrer, COUNT(*) AS count FROM page_views ${where} WHERE referrer != '' GROUP BY referrer ORDER BY count DESC LIMIT 5`)
+      pool.query(`SELECT referrer, COUNT(*) AS count FROM page_views ${where ? where + " AND referrer != ''" : "WHERE referrer != ''"} GROUP BY referrer ORDER BY count DESC LIMIT 5`)
     ]);
 
     res.json({
