@@ -214,6 +214,100 @@
       cursor: default;
     }
 
+    .reschedule-btn {
+      background: rgba(245,200,66,0.1);
+      border: 1px solid rgba(245,200,66,0.3);
+      color: #f5c842;
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      font-weight: 600;
+      transition: all 0.18s ease;
+      display: block;
+    }
+    .reschedule-btn:hover { background: rgba(245,200,66,0.2); border-color: #f5c842; }
+
+    /* Reschedule modal */
+    #rescheduleModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    #rescheduleModal.active { display: flex; }
+    .reschedule-modal-box {
+      background: #0f1e20;
+      border: 1.5px solid rgba(245,200,66,0.25);
+      border-radius: 18px;
+      padding: 30px 28px;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 16px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+    }
+    .reschedule-modal-box h3 {
+      font-size: 1.15rem; font-weight: 700; color: #EFE8D8; margin: 0 0 4px;
+    }
+    .reschedule-modal-box .rs-order-num {
+      font-size: 0.82rem; color: #f5c842; margin: 0 0 20px; opacity: 0.85;
+    }
+    .reschedule-modal-box label {
+      display: block; font-size: 0.75rem; font-weight: 700; color: #aaa;
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+    }
+    .reschedule-modal-box input[type="date"],
+    .reschedule-modal-box select {
+      width: 100%; box-sizing: border-box;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+      color: #EFE8D8; border-radius: 8px; padding: 10px 12px;
+      font-size: 0.9rem; margin-bottom: 16px; cursor: pointer;
+    }
+    .reschedule-modal-box input[type="date"]:focus,
+    .reschedule-modal-box select:focus { outline: none; border-color: #f5c842; }
+    .rs-actions { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .rs-btn-cancel {
+      flex: 1; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; border: 1px solid rgba(255,255,255,0.15);
+      background: transparent; color: #aaa;
+    }
+    .rs-btn-cancel:hover { background: rgba(255,255,255,0.05); }
+    .rs-btn-save {
+      flex: 1; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; border: 1px solid rgba(1,125,142,0.5);
+      background: rgba(1,90,100,0.25); color: #017d8e;
+    }
+    .rs-btn-save:hover { background: rgba(1,90,100,0.45); }
+    .rs-btn-notify {
+      flex: 1.4; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; border: none;
+      background: #f5c842; color: #000;
+    }
+    .rs-btn-notify:hover { background: #ffe066; }
+    .rs-btn-notify:disabled, .rs-btn-save:disabled { opacity: 0.55; cursor: default; }
+
+    /* Order quick-search */
+    .order-search-bar {
+      display: flex; gap: 10px; align-items: center; margin-bottom: 18px;
+    }
+    .order-search-bar input {
+      flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+      color: #EFE8D8; border-radius: 8px; padding: 9px 14px; font-size: 0.9rem;
+    }
+    .order-search-bar input::placeholder { color: rgba(239,232,216,0.35); }
+    .order-search-bar input:focus { outline: none; border-color: #017d8e; }
+    .order-search-bar button {
+      background: rgba(1,90,100,0.25); border: 1px solid rgba(1,125,142,0.5);
+      color: #017d8e; border-radius: 8px; padding: 9px 18px;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    }
+    .order-search-bar button:hover { background: rgba(1,90,100,0.45); }
+
     /* Pickup ready modal */
     #pickupReadyModal {
       display: none;
@@ -1132,7 +1226,7 @@
       </div>
     </div>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:10px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
       <h2 class="section-title" style="margin:0;">📋 All Orders</h2>
       <button id="exportCsvBtn" onclick="exportOrders()" style="
         background: linear-gradient(135deg, #015A64, #017d8e);
@@ -1149,6 +1243,12 @@
         box-shadow: 0 2px 8px rgba(1,125,142,0.4);
         transition: opacity 0.2s;
       ">⬇️ Export to Spreadsheet</button>
+    </div>
+
+    <div class="order-search-bar">
+      <input type="text" id="orderSearchInput" placeholder="Search by order # or customer name…" oninput="filterOrders(this.value)">
+      <button onclick="filterOrders(document.getElementById('orderSearchInput').value)">🔍 Search</button>
+      <button onclick="document.getElementById('orderSearchInput').value=''; filterOrders('');" style="background:transparent;border:1px solid rgba(255,255,255,0.12);color:#888;">✕ Clear</button>
     </div>
 
     <div class="orders-table">
@@ -1351,6 +1451,28 @@
   </div>
 
   <!-- Pickup Ready Notification Modal -->
+  <!-- Reschedule Modal -->
+  <div id="rescheduleModal">
+    <div class="reschedule-modal-box">
+      <h3>📅 Reschedule Delivery</h3>
+      <p class="rs-order-num" id="rsOrderLabel"></p>
+      <label>New Delivery Date</label>
+      <input type="date" id="rsDate">
+      <label>Time Window</label>
+      <select id="rsSlot">
+        <option value="Morning 8AM-12PM">Morning 8AM–12PM</option>
+        <option value="Afternoon 12PM-4PM">Afternoon 12PM–4PM</option>
+        <option value="Evening 4PM-8PM">Evening 4PM–8PM</option>
+      </select>
+      <div id="rsFeedback" style="font-size:0.8rem;min-height:18px;margin-bottom:8px;"></div>
+      <div class="rs-actions">
+        <button class="rs-btn-cancel" onclick="closeRescheduleModal()">Cancel</button>
+        <button class="rs-btn-save" id="rsSaveBtn" onclick="doReschedule(false)">Save Date</button>
+        <button class="rs-btn-notify" id="rsNotifyBtn" onclick="doReschedule(true)">Save & Notify Customer</button>
+      </div>
+    </div>
+  </div>
+
   <div id="pickupReadyModal">
     <div class="pickup-modal-box">
       <p class="pickup-modal-title">📲 Notify Ready for Pickup</p>
@@ -1528,6 +1650,92 @@
     function closePickupModal() {
       document.getElementById('pickupReadyModal').classList.remove('active');
       currentPickupOrderId = null;
+    }
+
+    // ── Reschedule Modal ────────────────────────────────────────────────────
+    let currentRescheduleOrderId = null;
+
+    function openRescheduleModal(orderId, orderNum, customerName, currentDate, currentSlot) {
+      currentRescheduleOrderId = orderId;
+      document.getElementById('rsOrderLabel').textContent = orderNum + (customerName ? ' — ' + customerName : '');
+      document.getElementById('rsDate').value = currentDate || '';
+      const slotEl = document.getElementById('rsSlot');
+      slotEl.value = currentSlot || 'Morning 8AM-12PM';
+      if (!slotEl.value) slotEl.selectedIndex = 0;
+      document.getElementById('rsFeedback').textContent = '';
+      document.getElementById('rsFeedback').style.color = '';
+      document.getElementById('rsSaveBtn').disabled = false;
+      document.getElementById('rsNotifyBtn').disabled = false;
+      document.getElementById('rsSaveBtn').textContent = 'Save Date';
+      document.getElementById('rsNotifyBtn').textContent = 'Save & Notify Customer';
+      document.getElementById('rescheduleModal').classList.add('active');
+    }
+
+    function closeRescheduleModal() {
+      document.getElementById('rescheduleModal').classList.remove('active');
+      currentRescheduleOrderId = null;
+    }
+
+    async function doReschedule(notify) {
+      const orderId = currentRescheduleOrderId;
+      const date = document.getElementById('rsDate').value;
+      const slot = document.getElementById('rsSlot').value;
+      const feedback = document.getElementById('rsFeedback');
+      const saveBtn = document.getElementById('rsSaveBtn');
+      const notifyBtn = document.getElementById('rsNotifyBtn');
+      if (!date) { feedback.textContent = 'Please select a date.'; feedback.style.color = '#f55'; return; }
+      saveBtn.disabled = true; notifyBtn.disabled = true;
+      if (notify) notifyBtn.textContent = 'Saving…';
+      else saveBtn.textContent = 'Saving…';
+      feedback.textContent = '';
+      try {
+        const saveRes = await fetch(`/admin/orders/${orderId}/reschedule`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Basic ' + adminCredentials },
+          body: JSON.stringify({ delivery_date: date, delivery_time_slot: slot })
+        });
+        if (!saveRes.ok) { const d = await saveRes.json(); throw new Error(d.error || 'Save failed'); }
+        if (notify) {
+          notifyBtn.textContent = 'Sending email…';
+          const emailRes = await fetch(`/admin/orders/${orderId}/reschedule-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Basic ' + adminCredentials },
+            body: JSON.stringify({ delivery_date: date, delivery_time_slot: slot })
+          });
+          const emailData = await emailRes.json();
+          if (!emailRes.ok) throw new Error(emailData.error || 'Email failed');
+          feedback.textContent = '✓ Date saved & customer notified!';
+          feedback.style.color = '#4caf50';
+        } else {
+          feedback.textContent = '✓ Delivery date updated.';
+          feedback.style.color = '#4caf50';
+        }
+        setTimeout(() => { closeRescheduleModal(); loadOrders(); }, 1200);
+      } catch (err) {
+        feedback.textContent = '✗ ' + err.message;
+        feedback.style.color = '#f55';
+        saveBtn.disabled = false; notifyBtn.disabled = false;
+        saveBtn.textContent = 'Save Date';
+        notifyBtn.textContent = 'Save & Notify Customer';
+      }
+    }
+
+    // Close reschedule modal on backdrop click
+    document.getElementById('rescheduleModal').addEventListener('click', function(e) {
+      if (e.target === this) closeRescheduleModal();
+    });
+
+    // ── Order Search / Filter ───────────────────────────────────────────────
+    let _allOrderRows = [];
+
+    function filterOrders(query) {
+      const q = (query || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#ordersContainer table tbody tr');
+      if (!rows.length) return;
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = (!q || text.includes(q)) ? '' : 'none';
+      });
     }
 
     async function sendPickupReadyEmail() {
@@ -1709,7 +1917,8 @@
                       ${order.delivery_date ? `
                         <div style="font-weight: 600; color: #017d8e;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}</div>
                         <div style="color: #aaa; font-size: 0.85rem;">⏰ ${order.delivery_time_slot || 'Not specified'}</div>
-                      ` : '<span style="color: #666; font-size: 0.85rem;">Not scheduled</span>'}
+                        ${order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "${order.delivery_date ? order.delivery_date.split("T")[0] : ""}", "${(order.delivery_time_slot||'').replace(/"/g,"&quot;")}") '>✏️ Reschedule</button>` : ''}
+                      ` : (order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "", "") '>✏️ Set Date</button>` : '<span style="color: #666; font-size: 0.85rem;">Pickup</span>')}
                     </td>
                     <td>
                       ${order.order_type === 'pickup' && order.order_status !== 'completed' ? `

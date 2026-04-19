@@ -68,6 +68,16 @@ The architecture follows a modern e-commerce pattern with a client-side rich use
 - `GET /api/send-test-pickup-email` — Pickup ready notification
 - `GET /api/send-test-delivery-email` — Delivery notification
 - `GET /api/send-test-waitlist-email` — Waitlist drop alert
+- `GET /api/send-test-reschedule-email` — Delivery reschedule confirmation
+- `GET /api/send-test-reminder-email` — 24-hour delivery reminder
+
+### Delivery Rescheduling & Reminders (v82)
+- **Admin Reschedule UI**: Each delivery order row in the admin dashboard has a gold "✏️ Reschedule" button. Clicking opens a modal to pick a new date and time window. Two actions: "Save Date" (no email) and "Save & Notify Customer" (saves + sends reschedule confirmation email to customer).
+- **Admin Order Search**: Search bar above the orders table filters by order number or customer name in real time.
+- **Reschedule Email**: Professional email sent to customer when admin clicks "Save & Notify". Includes new date, time slot, address, and order items.
+- **24-Hour Reminder Email**: Automated reminder sent ~24 hours before scheduled delivery. Runs every 30 minutes via server cron. Each order gets reminded once (tracked via `reminder_sent` column). Resets to `FALSE` when delivery date is rescheduled.
+- **DB**: `reminder_sent BOOLEAN DEFAULT FALSE` added to orders table.
+- **Endpoints**: `PATCH /admin/orders/:id/reschedule`, `POST /admin/orders/:id/reschedule-email`
 
 ### UI Fixes & Updates (v74)
 - **Savings line items in checkout**: Bundle discount and promo discount now each appear as separate `-$X.XX` line items in the order summary; a green "💚 You save $X.XX" highlighted row appears below them whenever any savings are active (bundle + promo combined); floating savings banner removed in favour of inline rows; service worker bumped to v74

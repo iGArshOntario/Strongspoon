@@ -582,6 +582,151 @@ async function sendDeliveryNotification(orderData, deliveryProof, deliveryPerson
   }
 }
 
+// ── Reschedule confirmation email ─────────────────────────────────────────
+async function sendRescheduleEmail(orderData, newDate, newSlot) {
+  if (!resend) return { success: false, reason: 'No email service' };
+  try {
+    let items = [];
+    try { items = Array.isArray(orderData.items) ? orderData.items : JSON.parse(orderData.items || '[]'); } catch (e) {}
+    const itemsHTML = items.map(item => `
+      <tr><td style="padding:10px 12px;border-bottom:1px solid #e8e8e8;font-size:15px;color:#1a1a1a;font-weight:700;">${item.name || 'Item'} ×${item.quantity || 1}</td></tr>
+    `).join('');
+    const formattedDate = new Date(newDate + 'T12:00:00').toLocaleDateString('en-CA', { timeZone: 'America/Toronto', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const emailHTML = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Delivery Rescheduled</title></head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#1a1a1a;background:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding:30px 16px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+      <tr><td align="center" style="padding-bottom:24px;border-bottom:2px solid #013e4a;">
+        <div style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:2px;color:#013e4a;">💪 STRONG SPOON</div>
+        <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">Delivery Rescheduled</div>
+      </td></tr>
+      <tr><td style="padding:28px 0 0;">
+        <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:22px;font-weight:700;color:#1a1a1a;">Hi ${orderData.customer_name}!</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#333;">Your delivery date has been updated. Here are your new delivery details:</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Updated Delivery Info</div>
+            <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
+              📦 <strong>Order:</strong> ${orderData.order_number}<br>
+              📅 <strong>New Date:</strong> ${formattedDate}<br>
+              ⏰ <strong>Time Slot:</strong> ${newSlot || 'To be confirmed'}<br>
+              📍 <strong>Address:</strong> ${orderData.customer_address || 'On file'}
+            </div>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;">Your Items</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#e8e8e8;margin:0 0 20px;"><tbody>${itemsHTML}</tbody></table>
+        <p style="margin:24px 0 0;font-size:14px;color:#555;">Questions? Simply reply to this email and we'll get back to you right away.</p>
+      </td></tr>
+      <tr><td style="padding-top:32px;border-top:1px solid #e8e8e8;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [orderData.customer_email],
+      subject: `📅 Your Delivery Has Been Rescheduled — ${orderData.order_number}`,
+      html: emailHTML
+    });
+    if (error) { console.error('Reschedule email error:', error); return { success: false, error }; }
+    console.log('✅ Reschedule email sent:', data.id);
+    return { success: true, emailId: data.id };
+  } catch (err) {
+    console.error('sendRescheduleEmail error:', err);
+    return { success: false, error: err.message };
+  }
+}
+
+// ── 24-hour delivery reminder email ──────────────────────────────────────────
+async function sendDeliveryReminderEmail(orderData) {
+  if (!resend) return { success: false, reason: 'No email service' };
+  try {
+    let items = [];
+    try { items = Array.isArray(orderData.items) ? orderData.items : JSON.parse(orderData.items || '[]'); } catch (e) {}
+    const itemsHTML = items.map(item => `
+      <tr><td style="padding:10px 12px;border-bottom:1px solid #e8e8e8;font-size:15px;color:#1a1a1a;font-weight:700;">${item.name || 'Item'} ×${item.quantity || 1}</td></tr>
+    `).join('');
+    const formattedDate = new Date(orderData.delivery_date + 'T12:00:00').toLocaleDateString('en-CA', { timeZone: 'America/Toronto', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const emailHTML = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Delivery Tomorrow</title></head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#1a1a1a;background:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding:30px 16px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+      <tr><td align="center" style="padding-bottom:24px;border-bottom:2px solid #013e4a;">
+        <div style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:2px;color:#013e4a;">💪 STRONG SPOON</div>
+        <div style="font-family:Arial,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#017d8e;margin-top:4px;">Your Delivery Is Coming Tomorrow!</div>
+      </td></tr>
+      <tr><td style="padding:28px 0 0;">
+        <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:22px;font-weight:700;color:#1a1a1a;">Hi ${orderData.customer_name}!</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#333;">Just a friendly reminder — your Strong Spoon order is arriving <strong>tomorrow</strong>. Make sure someone is available to receive it!</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+          <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Delivery Details</div>
+            <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
+              📦 <strong>Order:</strong> ${orderData.order_number}<br>
+              📅 <strong>Date:</strong> ${formattedDate}<br>
+              ⏰ <strong>Window:</strong> ${orderData.delivery_time_slot || 'To be confirmed'}<br>
+              📍 <strong>Address:</strong> ${orderData.customer_address || 'On file'}
+            </div>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;">Your Order</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#e8e8e8;margin:0 0 20px;"><tbody>${itemsHTML}</tbody></table>
+        <p style="margin:24px 0 0;font-size:14px;color:#555;">Need to make any changes? Reply to this email as soon as possible.</p>
+      </td></tr>
+      <tr><td style="padding-top:32px;border-top:1px solid #e8e8e8;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [orderData.customer_email],
+      subject: `🚚 Reminder: Your Strong Spoon Delivery Is Tomorrow — ${orderData.order_number}`,
+      html: emailHTML
+    });
+    if (error) { console.error('Reminder email error:', error); return { success: false, error }; }
+    console.log('✅ Delivery reminder sent to', orderData.customer_email);
+    return { success: true, emailId: data.id };
+  } catch (err) {
+    console.error('sendDeliveryReminderEmail error:', err);
+    return { success: false, error: err.message };
+  }
+}
+
+// ── 24-hour delivery reminder cron (runs every 30 min) ───────────────────────
+setInterval(async () => {
+  try {
+    const result = await pool.query(`
+      SELECT * FROM orders
+      WHERE order_type = 'delivery'
+        AND order_status != 'delivered'
+        AND reminder_sent = FALSE
+        AND delivery_date IS NOT NULL
+        AND delivery_date::timestamp AT TIME ZONE 'America/Toronto'
+            BETWEEN (NOW() AT TIME ZONE 'America/Toronto' + INTERVAL '20 hours')
+                AND (NOW() AT TIME ZONE 'America/Toronto' + INTERVAL '26 hours')
+    `);
+    for (const order of result.rows) {
+      const emailResult = await sendDeliveryReminderEmail(order);
+      if (emailResult.success) {
+        await pool.query('UPDATE orders SET reminder_sent = TRUE WHERE id = $1', [order.id]);
+        console.log(`✅ 24h reminder sent for order ${order.order_number}`);
+      }
+    }
+  } catch (err) {
+    console.error('Reminder cron error:', err.message);
+  }
+}, 30 * 60 * 1000);
+
 const PRODUCTS = {
   'brownie': {
     id: 'brownie',
@@ -643,6 +788,10 @@ pool.query(`
     viewed_at TIMESTAMPTZ DEFAULT NOW()
   )
 `).catch(err => console.error('Page views table error:', err));
+
+// Add reminder_sent column if it doesn't exist
+pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS reminder_sent BOOLEAN DEFAULT FALSE`)
+  .catch(err => console.error('reminder_sent column error:', err));
 
 // Create promo_codes table
 pool.query(`
@@ -2009,6 +2158,95 @@ app.put('/admin/orders/:id/status', async (req, res) => {
     console.error('Error updating order status:', error);
     res.status(500).json({ error: 'Failed to update order status' });
   }
+});
+
+// ── Reschedule delivery date (admin) ─────────────────────────────────────────
+app.patch('/admin/orders/:id/reschedule', async (req, res) => {
+  try {
+    if (!ADMIN_PASSWORD) return res.status(503).json({ error: 'Admin not configured' });
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) return res.status(401).json({ error: 'Unauthorized' });
+    const credentials = Buffer.from(authHeader.split(' ')[1], 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    if (username !== 'admin' || password !== ADMIN_PASSWORD) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const { id } = req.params;
+    const { delivery_date, delivery_time_slot } = req.body;
+    if (!delivery_date) return res.status(400).json({ error: 'delivery_date required' });
+
+    const result = await pool.query(
+      `UPDATE orders SET delivery_date = $1, delivery_time_slot = $2, reminder_sent = FALSE WHERE id = $3
+       RETURNING id, order_number, customer_name, customer_email, customer_address, items, total_amount, delivery_date, delivery_time_slot, order_type`,
+      [delivery_date, delivery_time_slot || null, id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Order not found' });
+    res.json({ success: true, order: result.rows[0] });
+  } catch (err) {
+    console.error('Reschedule error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Send reschedule confirmation email (admin-triggered) ──────────────────────
+app.post('/admin/orders/:id/reschedule-email', async (req, res) => {
+  try {
+    if (!ADMIN_PASSWORD) return res.status(503).json({ error: 'Admin not configured' });
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) return res.status(401).json({ error: 'Unauthorized' });
+    const credentials = Buffer.from(authHeader.split(' ')[1], 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
+    if (username !== 'admin' || password !== ADMIN_PASSWORD) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const { id } = req.params;
+    const { delivery_date, delivery_time_slot } = req.body;
+    if (!delivery_date) return res.status(400).json({ error: 'delivery_date required' });
+
+    const orderRes = await pool.query('SELECT * FROM orders WHERE id = $1', [id]);
+    if (orderRes.rows.length === 0) return res.status(404).json({ error: 'Order not found' });
+
+    const order = orderRes.rows[0];
+    const result = await sendRescheduleEmail(order, delivery_date, delivery_time_slot);
+    if (!result.success) return res.status(500).json({ error: 'Email failed to send', detail: result.error });
+    res.json({ success: true, message: `Reschedule email sent to ${order.customer_email}` });
+  } catch (err) {
+    console.error('Reschedule email error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Test reschedule email ──────────────────────────────────────────────────────
+app.get('/api/send-test-reschedule-email', async (req, res) => {
+  if (!resend) return res.status(503).json({ error: 'Email service not configured' });
+  const to = req.query.to || OWNER_EMAIL;
+  const fakeOrder = {
+    order_number: 'SS-RESCHEDULE-TEST',
+    customer_name: 'Test Customer',
+    customer_email: to,
+    customer_address: '123 Main Street, Regina, SK',
+    total_amount: '23.98',
+    items: JSON.stringify([{ name: 'Brownie Issues', quantity: 2 }, { name: 'Power Mix', quantity: 1 }])
+  };
+  const result = await sendRescheduleEmail(fakeOrder, '2026-04-20', 'Afternoon 12PM-4PM');
+  if (result.success) res.json({ success: true, message: `Test reschedule email sent to ${to}` });
+  else res.status(500).json({ success: false, error: result.error });
+});
+
+// ── Test 24h delivery reminder email ──────────────────────────────────────────
+app.get('/api/send-test-reminder-email', async (req, res) => {
+  if (!resend) return res.status(503).json({ error: 'Email service not configured' });
+  const to = req.query.to || OWNER_EMAIL;
+  const fakeOrder = {
+    order_number: 'SS-REMINDER-TEST',
+    customer_name: 'Test Customer',
+    customer_email: to,
+    customer_address: '123 Main Street, Regina, SK',
+    delivery_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    delivery_time_slot: 'Morning 8AM-12PM',
+    items: JSON.stringify([{ name: 'Brownie Issues', quantity: 2 }, { name: 'Power Mix', quantity: 1 }])
+  };
+  const result = await sendDeliveryReminderEmail(fakeOrder);
+  if (result.success) res.json({ success: true, message: `Test reminder email sent to ${to}` });
+  else res.status(500).json({ success: false, error: result.error });
 });
 
 // Get orders for delivery (authenticated endpoint for delivery personnel)
