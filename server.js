@@ -77,7 +77,7 @@ function generateInvoicePDF(orderData) {
       if (orderData.delivery_date) {
         doc.fillColor(DARK).font('Helvetica-Bold').fontSize(9).text('DELIVERY DATE', 350, 132);
         doc.fillColor(GREY).font('Helvetica').fontSize(9)
-           .text(`${orderData.delivery_date}  ${orderData.delivery_time_slot || ''}`, 350, 145);
+           .text(`${orderData.delivery_date}`, 350, 145);
       }
 
       // ── Divider ──────────────────────────────────────────────────────────
@@ -277,8 +277,7 @@ async function sendOwnerAlertEmail(orderData) {
           <tr><td style="background:#f0fafa;border-left:4px solid #015A64;padding:16px 20px;border-radius:0 8px 8px 0;">
             <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;margin-bottom:8px;">Scheduled Delivery</div>
             <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
-              📅 ${orderData.delivery_date}<br>
-              🕐 ${orderData.delivery_time_slot || '—'}
+              📅 ${orderData.delivery_date}
             </div>
           </td></tr>
         </table>
@@ -611,7 +610,6 @@ async function sendRescheduleEmail(orderData, newDate, newSlot) {
             <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
               📦 <strong>Order:</strong> ${orderData.order_number}<br>
               📅 <strong>New Date:</strong> ${formattedDate}<br>
-              ⏰ <strong>Time Slot:</strong> ${newSlot || 'To be confirmed'}<br>
               📍 <strong>Address:</strong> ${orderData.customer_address || 'On file'}
             </div>
           </td></tr>
@@ -671,7 +669,6 @@ async function sendDeliveryReminderEmail(orderData) {
             <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
               📦 <strong>Order:</strong> ${orderData.order_number}<br>
               📅 <strong>Date:</strong> ${formattedDate}<br>
-              ⏰ <strong>Window:</strong> ${orderData.delivery_time_slot || 'To be confirmed'}<br>
               📍 <strong>Address:</strong> ${orderData.customer_address || 'On file'}
             </div>
           </td></tr>

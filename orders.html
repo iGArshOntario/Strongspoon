@@ -1458,12 +1458,6 @@
       <p class="rs-order-num" id="rsOrderLabel"></p>
       <label>New Delivery Date</label>
       <input type="date" id="rsDate">
-      <label>Time Window</label>
-      <select id="rsSlot">
-        <option value="Morning 8AM-12PM">Morning 8AM–12PM</option>
-        <option value="Afternoon 12PM-4PM">Afternoon 12PM–4PM</option>
-        <option value="Evening 4PM-8PM">Evening 4PM–8PM</option>
-      </select>
       <div id="rsFeedback" style="font-size:0.8rem;min-height:18px;margin-bottom:8px;"></div>
       <div class="rs-actions">
         <button class="rs-btn-cancel" onclick="closeRescheduleModal()">Cancel</button>
@@ -1655,13 +1649,10 @@
     // ── Reschedule Modal ────────────────────────────────────────────────────
     let currentRescheduleOrderId = null;
 
-    function openRescheduleModal(orderId, orderNum, customerName, currentDate, currentSlot) {
+    function openRescheduleModal(orderId, orderNum, customerName, currentDate) {
       currentRescheduleOrderId = orderId;
       document.getElementById('rsOrderLabel').textContent = orderNum + (customerName ? ' — ' + customerName : '');
       document.getElementById('rsDate').value = currentDate || '';
-      const slotEl = document.getElementById('rsSlot');
-      slotEl.value = currentSlot || 'Morning 8AM-12PM';
-      if (!slotEl.value) slotEl.selectedIndex = 0;
       document.getElementById('rsFeedback').textContent = '';
       document.getElementById('rsFeedback').style.color = '';
       document.getElementById('rsSaveBtn').disabled = false;
@@ -1679,7 +1670,6 @@
     async function doReschedule(notify) {
       const orderId = currentRescheduleOrderId;
       const date = document.getElementById('rsDate').value;
-      const slot = document.getElementById('rsSlot').value;
       const feedback = document.getElementById('rsFeedback');
       const saveBtn = document.getElementById('rsSaveBtn');
       const notifyBtn = document.getElementById('rsNotifyBtn');
@@ -1692,7 +1682,7 @@
         const saveRes = await fetch(`/admin/orders/${orderId}/reschedule`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Basic ' + adminCredentials },
-          body: JSON.stringify({ delivery_date: date, delivery_time_slot: slot })
+          body: JSON.stringify({ delivery_date: date })
         });
         if (!saveRes.ok) { const d = await saveRes.json(); throw new Error(d.error || 'Save failed'); }
         if (notify) {
@@ -1700,7 +1690,7 @@
           const emailRes = await fetch(`/admin/orders/${orderId}/reschedule-email`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Basic ' + adminCredentials },
-            body: JSON.stringify({ delivery_date: date, delivery_time_slot: slot })
+            body: JSON.stringify({ delivery_date: date })
           });
           const emailData = await emailRes.json();
           if (!emailRes.ok) throw new Error(emailData.error || 'Email failed');
@@ -1916,9 +1906,8 @@
                     <td>
                       ${order.delivery_date ? `
                         <div style="font-weight: 600; color: #017d8e;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}</div>
-                        <div style="color: #aaa; font-size: 0.85rem;">⏰ ${order.delivery_time_slot || 'Not specified'}</div>
-                        ${order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "${order.delivery_date ? order.delivery_date.split("T")[0] : ""}", "${(order.delivery_time_slot||'').replace(/"/g,"&quot;")}") '>✏️ Reschedule</button>` : ''}
-                      ` : (order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "", "") '>✏️ Set Date</button>` : '<span style="color: #666; font-size: 0.85rem;">Pickup</span>')}
+                        ${order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "${order.delivery_date ? order.delivery_date.split("T")[0] : ""}") '>✏️ Reschedule</button>` : ''}
+                      ` : (order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "") '>✏️ Set Date</button>` : '<span style="color: #666; font-size: 0.85rem;">Pickup</span>')}
                     </td>
                     <td>
                       ${order.order_type === 'pickup' && order.order_status !== 'completed' ? `
@@ -2309,7 +2298,7 @@
           <div class="pt-row"><span>Order #</span><strong>${order.order_number}</strong></div>
           <div class="pt-row"><span>Type</span><strong>${(order.order_type || 'delivery').toUpperCase()}</strong></div>
           <div class="pt-row"><span>Ordered</span><span>${date}</span></div>
-          ${deliveryDate ? `<div class="pt-row"><span>Scheduled</span><strong style="color:#015A64;">${deliveryDate} — ${order.delivery_time_slot || ''}</strong></div>` : ''}
+          ${deliveryDate ? `<div class="pt-row"><span>Scheduled</span><strong style="color:#015A64;">${deliveryDate}</strong></div>` : ''}
           <div class="pt-section">Customer</div>
           <div class="pt-row"><span>Name</span><span>${order.customer_name || ''}</span></div>
           <div class="pt-row"><span>Phone</span><span>${order.customer_phone || ''}</span></div>
