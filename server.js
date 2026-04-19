@@ -687,7 +687,15 @@ async function sendDeliveryReminderEmail(orderData) {
         </table>
         <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#015A64;">Your Order</p>
         <table width="100%" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#e8e8e8;margin:0 0 20px;"><tbody>${itemsHTML}</tbody></table>
-        <p style="margin:24px 0 0;font-size:14px;color:#555;">Need to make any changes? Reply to this email as soon as possible.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 0;">
+          <tr><td style="background:#f5fafa;border:1px solid #e0eeee;border-radius:10px;padding:18px 20px;text-align:center;">
+            <p style="margin:0 0 4px;font-size:13px;color:#555;">Need to change your delivery date?</p>
+            <a href="https://strongspoon.ca/manage-order.html?order=${encodeURIComponent(orderData.order_number)}&email=${encodeURIComponent(orderData.customer_email)}"
+               style="display:inline-block;background:#015A64;color:#ffffff;text-decoration:none;padding:11px 28px;border-radius:8px;font-weight:700;font-size:14px;margin-top:6px;">
+              📅 Manage My Order
+            </a>
+          </td></tr>
+        </table>
       </td></tr>
       <tr><td style="padding-top:32px;border-top:1px solid #e8e8e8;text-align:center;">
         <p style="margin:0;font-size:12px;color:#999;letter-spacing:1px;">STRONG SPOON &nbsp;·&nbsp; Regina, SK &nbsp;·&nbsp; strongspoon.ca</p>
@@ -2603,6 +2611,15 @@ async function startServer() {
             <div style="font-size:15px;color:#1a1a1a;line-height:1.9;">
               👤 Test Customer<br>📧 ${to}<br>📞 (306) 555-0199<br>📍 123 Wascana St, Regina, SK
             </div>
+          </td></tr>
+        </table>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+          <tr><td style="background:#f5fafa;border:1px solid #e0eeee;border-radius:10px;padding:18px 20px;text-align:center;">
+            <p style="margin:0 0 6px;font-size:13px;color:#555;">Need to change your delivery date?</p>
+            <a href="https://strongspoon.ca/manage-order.html?order=SS-SAMPLE-001&email=${encodeURIComponent(to)}"
+               style="display:inline-block;background:#015A64;color:#ffffff;text-decoration:none;padding:11px 28px;border-radius:8px;font-weight:700;font-size:14px;margin-top:4px;">
+              📅 Manage My Order
+            </a>
           </td></tr>
         </table>
         <p style="margin:0;font-size:14px;color:#555;">Questions? Simply reply to this email and we'll get back to you.</p>
