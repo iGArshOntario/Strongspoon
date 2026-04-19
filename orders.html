@@ -1905,7 +1905,7 @@
                     </td>
                     <td>
                       ${order.delivery_date ? `
-                        <div style="font-weight: 600; color: #017d8e;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                        <div style="font-weight: 600; color: #017d8e;">📅 ${new Date(order.delivery_date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}</div>
                         ${order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "${order.delivery_date ? order.delivery_date.split("T")[0] : ""}") '>✏️ Reschedule</button>` : ''}
                       ` : (order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "") '>✏️ Set Date</button>` : '<span style="color: #666; font-size: 0.85rem;">Pickup</span>')}
                     </td>
@@ -2276,7 +2276,7 @@
       try { items = Array.isArray(order.items) ? order.items : JSON.parse(order.items || '[]'); } catch(e) {}
       const date = new Date(order.created_at).toLocaleString('en-CA', { timeZone: 'America/Toronto' });
       const deliveryDate = order.delivery_date
-        ? new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })
+        ? new Date(order.delivery_date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })
         : null;
       const ticket = document.getElementById('printTicket');
       ticket.innerHTML = `

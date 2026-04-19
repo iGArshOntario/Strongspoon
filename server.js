@@ -1752,7 +1752,7 @@ app.get('/admin/orders/export', async (req, res) => {
       } catch (e) {}
       const createdAt = o.created_at ? new Date(o.created_at).toLocaleString('en-CA', { timeZone: 'America/Toronto' }) : '';
       const deliveredAt = o.delivered_at ? new Date(o.delivered_at).toLocaleString('en-CA', { timeZone: 'America/Toronto' }) : '';
-      const deliveryDate = o.delivery_date ? new Date(o.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto' }) : '';
+      const deliveryDate = o.delivery_date ? new Date(o.delivery_date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-CA', { timeZone: 'America/Toronto' }) : '';
       return [
         o.order_number, createdAt, o.customer_name, o.customer_email, o.customer_phone,
         o.customer_address, itemsSummary, toppingsSummary,
