@@ -71,7 +71,15 @@ The architecture follows a modern e-commerce pattern with a client-side rich use
 - `GET /api/send-test-reschedule-email` — Delivery reschedule confirmation
 - `GET /api/send-test-reminder-email` — 24-hour delivery reminder
 
-### Delivery Rescheduling & Reminders (v82)
+### Customer Self-Service Reschedule (v82)
+- **manage-order.html**: Standalone page where customers look up their order by order number + email, see their current delivery date, pick a new date, and submit. Auto-populates from URL params (`?order=XXX&email=YYY`).
+- **"Manage My Order" button** added to order confirmation email (delivery orders only). Links directly to manage-order.html pre-filled with the customer's order number and email.
+- **POST /api/customer/order-lookup**: Public endpoint. Validates order# + email, returns order details if found and not yet delivered.
+- **POST /api/customer/reschedule**: Public endpoint. Updates delivery_date, resets reminder_sent, sends reschedule confirmation email to customer, and sends owner alert email to Strongspoon.ca@gmail.com.
+- Owner receives an email immediately when any customer self-reschedules, showing name, address, order#, and new date.
+- Admin dashboard shows the updated date automatically.
+
+### Delivery Rescheduling & Reminders (v81)
 - **Admin Reschedule UI**: Each delivery order row in the admin dashboard has a gold "✏️ Reschedule" button. Clicking opens a modal to pick a new date and time window. Two actions: "Save Date" (no email) and "Save & Notify Customer" (saves + sends reschedule confirmation email to customer).
 - **Admin Order Search**: Search bar above the orders table filters by order number or customer name in real time.
 - **Reschedule Email**: Professional email sent to customer when admin clicks "Save & Notify". Includes new date, time slot, address, and order items.

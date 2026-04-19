@@ -402,6 +402,18 @@ async function sendOrderConfirmation(orderData) {
           </td></tr>
         </table>
 
+        ${orderData.order_type === 'delivery' ? `
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+          <tr><td style="background:#f5fafa;border:1px solid #e0eeee;border-radius:10px;padding:18px 20px;text-align:center;">
+            <p style="margin:0 0 6px;font-size:13px;color:#555;">Need to change your delivery date?</p>
+            <a href="https://strongspoon.ca/manage-order.html?order=${encodeURIComponent(orderData.order_number)}&email=${encodeURIComponent(orderData.customer_email)}"
+               style="display:inline-block;background:#015A64;color:#ffffff;text-decoration:none;padding:11px 28px;border-radius:8px;font-weight:700;font-size:14px;margin-top:4px;">
+              📅 Manage My Order
+            </a>
+          </td></tr>
+        </table>
+        ` : ''}
+
         <p style="margin:0;font-size:14px;color:#555;">Questions? Simply reply to this email and we'll get back to you.</p>
       </td></tr>
 
@@ -2208,6 +2220,92 @@ app.post('/admin/orders/:id/reschedule-email', async (req, res) => {
   } catch (err) {
     console.error('Reschedule email error:', err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Customer: look up order by order_number + email ───────────────────────────
+app.post('/api/customer/order-lookup', async (req, res) => {
+  try {
+    const { order_number, email } = req.body;
+    if (!order_number || !email) return res.status(400).json({ error: 'order_number and email required' });
+    const result = await pool.query(
+      `SELECT id, order_number, customer_name, customer_email, customer_address, items, total_amount,
+              delivery_date, order_type, order_status
+       FROM orders
+       WHERE UPPER(order_number) = UPPER($1) AND LOWER(customer_email) = LOWER($2)`,
+      [order_number.trim(), email.trim()]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'No order found with that order number and email.' });
+    const order = result.rows[0];
+    if (order.order_status === 'delivered') return res.status(400).json({ error: 'This order has already been delivered and cannot be rescheduled.' });
+    if (order.order_type !== 'delivery') return res.status(400).json({ error: 'This order is a pickup and does not have a delivery date.' });
+    res.json({ order });
+  } catch (err) {
+    console.error('Order lookup error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ── Customer: self-service reschedule ─────────────────────────────────────────
+app.post('/api/customer/reschedule', async (req, res) => {
+  try {
+    const { order_number, email, new_date } = req.body;
+    if (!order_number || !email || !new_date) return res.status(400).json({ error: 'order_number, email and new_date required' });
+
+    // Validate date is in the future
+    const today = new Date().toISOString().split('T')[0];
+    if (new_date <= today) return res.status(400).json({ error: 'Please choose a future date.' });
+
+    // Find and verify the order
+    const orderRes = await pool.query(
+      `SELECT * FROM orders WHERE UPPER(order_number) = UPPER($1) AND LOWER(customer_email) = LOWER($2)`,
+      [order_number.trim(), email.trim()]
+    );
+    if (orderRes.rows.length === 0) return res.status(404).json({ error: 'Order not found.' });
+    const order = orderRes.rows[0];
+    if (order.order_status === 'delivered') return res.status(400).json({ error: 'Order already delivered.' });
+    if (order.order_type !== 'delivery') return res.status(400).json({ error: 'Pickup orders cannot be rescheduled.' });
+
+    // Update the delivery date and reset reminder
+    await pool.query(
+      `UPDATE orders SET delivery_date = $1, delivery_time_slot = NULL, reminder_sent = FALSE WHERE id = $2`,
+      [new_date, order.id]
+    );
+
+    // Send confirmation email to customer (non-blocking)
+    const updatedOrder = { ...order, delivery_date: new_date, delivery_time_slot: null };
+    sendRescheduleEmail(updatedOrder, new_date, null).catch(e => console.error('Reschedule email error:', e));
+
+    // Notify the owner (non-blocking)
+    const formattedDate = new Date(new_date + 'T12:00:00').toLocaleDateString('en-CA', {
+      timeZone: 'America/Toronto', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    if (resend) {
+      resend.emails.send({
+        from: FROM_EMAIL,
+        to: [OWNER_EMAIL],
+        subject: `🔄 Customer Rescheduled — ${order.order_number}`,
+        html: `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;color:#1a1a1a;padding:20px;">
+          <div style="max-width:520px;margin:auto;">
+            <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:#013e4a;margin-bottom:16px;">💪 STRONG SPOON — Delivery Rescheduled</div>
+            <p style="font-size:15px;margin-bottom:16px;">A customer has rescheduled their own delivery:</p>
+            <table style="border-collapse:collapse;width:100%;margin-bottom:16px;">
+              <tr><td style="padding:8px 12px;background:#f0fafa;font-weight:700;width:40%;border:1px solid #e0e0e0;">Order #</td><td style="padding:8px 12px;border:1px solid #e0e0e0;">${order.order_number}</td></tr>
+              <tr><td style="padding:8px 12px;background:#f0fafa;font-weight:700;border:1px solid #e0e0e0;">Customer</td><td style="padding:8px 12px;border:1px solid #e0e0e0;">${order.customer_name}</td></tr>
+              <tr><td style="padding:8px 12px;background:#f0fafa;font-weight:700;border:1px solid #e0e0e0;">Email</td><td style="padding:8px 12px;border:1px solid #e0e0e0;">${order.customer_email}</td></tr>
+              <tr><td style="padding:8px 12px;background:#f0fafa;font-weight:700;border:1px solid #e0e0e0;">Address</td><td style="padding:8px 12px;border:1px solid #e0e0e0;">${order.customer_address || '—'}</td></tr>
+              <tr><td style="padding:8px 12px;background:#f0fafa;font-weight:700;border:1px solid #e0e0e0;">New Date</td><td style="padding:8px 12px;border:1px solid #e0e0e0;color:#015A64;font-weight:700;">${formattedDate}</td></tr>
+            </table>
+            <p style="font-size:13px;color:#777;">Check the admin dashboard to confirm.</p>
+          </div>
+        </body></html>`
+      }).catch(e => console.error('Owner reschedule alert error:', e));
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Customer reschedule error:', err);
+    res.status(500).json({ error: 'Server error. Please try again.' });
   }
 });
 

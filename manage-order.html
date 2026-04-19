@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Order | Strong Spoon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="strongspoon-logo.jpeg" type="image/jpeg">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000;
+      color: #EFE8D8;
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 16px 60px;
+    }
+    .logo-row {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .logo-row img {
+      width: 72px; height: 72px; border-radius: 16px; object-fit: cover;
+      border: 2px solid rgba(1,125,142,0.4);
+    }
+    .logo-row h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; color: #EFE8D8; margin-top: 10px; letter-spacing: 1px;
+    }
+    .logo-row p { font-size: 0.78rem; color: #888; margin-top: 3px; letter-spacing: 1.5px; text-transform: uppercase; }
+
+    .card {
+      background: #0d1a1c;
+      border: 1px solid rgba(1,125,142,0.25);
+      border-radius: 20px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem; color: #EFE8D8; margin-bottom: 6px;
+    }
+    .card-sub { font-size: 0.82rem; color: #888; margin-bottom: 24px; line-height: 1.5; }
+
+    label {
+      display: block; font-size: 0.72rem; font-weight: 600; color: #aaa;
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 7px;
+    }
+    input[type="text"], input[type="email"], input[type="date"] {
+      width: 100%; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12); color: #EFE8D8;
+      border-radius: 10px; padding: 12px 14px; font-size: 0.92rem;
+      font-family: 'Poppins', sans-serif; margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="date"]:focus {
+      outline: none; border-color: #017d8e;
+    }
+    input::placeholder { color: rgba(239,232,216,0.3); }
+
+    .btn-primary {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:disabled { opacity: 0.5; cursor: default; }
+
+    .error-msg {
+      background: rgba(244,67,54,0.12); border: 1px solid rgba(244,67,54,0.3);
+      color: #f44336; border-radius: 8px; padding: 10px 14px;
+      font-size: 0.83rem; margin-bottom: 16px; display: none;
+    }
+
+    /* Order details section */
+    .order-info { display: none; }
+    .order-info-box {
+      background: rgba(1,90,100,0.12); border: 1px solid rgba(1,125,142,0.25);
+      border-radius: 12px; padding: 16px 18px; margin-bottom: 20px;
+    }
+    .order-info-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: #017d8e; margin-bottom: 10px;
+    }
+    .order-info-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      font-size: 0.88rem; margin-bottom: 7px; gap: 8px;
+    }
+    .order-info-row span:first-child { color: #888; flex-shrink: 0; }
+    .order-info-row strong { color: #EFE8D8; text-align: right; }
+    .items-list { margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 10px; }
+    .item-row { font-size: 0.83rem; color: #bbb; margin-bottom: 4px; }
+
+    .divider { height: 1px; background: rgba(255,255,255,0.07); margin: 20px 0; }
+
+    .current-date-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3);
+      color: #f5c842; border-radius: 8px; padding: 7px 12px;
+      font-size: 0.83rem; font-weight: 600; margin-bottom: 20px;
+    }
+
+    /* Success screen */
+    .success-screen {
+      display: none; text-align: center; padding: 10px 0;
+    }
+    .success-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(76,175,80,0.15); border: 2px solid rgba(76,175,80,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; margin: 0 auto 16px;
+    }
+    .success-screen h2 {
+      font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px;
+    }
+    .success-screen p { font-size: 0.85rem; color: #888; line-height: 1.6; }
+    .success-screen .new-date {
+      display: inline-block; margin: 16px 0;
+      background: rgba(76,175,80,0.12); border: 1px solid rgba(76,175,80,0.3);
+      color: #4caf50; border-radius: 8px; padding: 8px 16px; font-size: 0.9rem; font-weight: 600;
+    }
+
+    .footer-note {
+      margin-top: 28px; text-align: center;
+      font-size: 0.75rem; color: rgba(239,232,216,0.3); line-height: 1.6;
+    }
+    .footer-note a { color: #017d8e; text-decoration: none; }
+
+    @media (max-width: 480px) {
+      .card { padding: 24px 18px; }
+      body { padding: 28px 12px 50px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo-row">
+    <img src="strongspoon-logo.jpeg" alt="Strong Spoon">
+    <h1>Strong Spoon</h1>
+    <p>Manage Your Order</p>
+  </div>
+
+  <div class="card">
+
+    <!-- Step 1: Lookup form -->
+    <div id="lookupSection">
+      <h2 class="card-title">Find Your Order</h2>
+      <p class="card-sub">Enter your order number and email address to manage your delivery.</p>
+
+      <div class="error-msg" id="lookupError"></div>
+
+      <label>Order Number</label>
+      <input type="text" id="orderNumInput" placeholder="e.g. ORD-1234567890" autocomplete="off">
+
+      <label>Email Address</label>
+      <input type="email" id="emailInput" placeholder="The email you ordered with">
+
+      <button class="btn-primary" id="lookupBtn" onclick="lookupOrder()">Find My Order →</button>
+    </div>
+
+    <!-- Step 2: Order details + new date -->
+    <div class="order-info" id="orderSection">
+      <h2 class="card-title">Reschedule Delivery</h2>
+      <p class="card-sub" id="orderSubtitle"></p>
+
+      <div class="order-info-box">
+        <div class="order-info-label">Order Details</div>
+        <div class="order-info-row"><span>Order #</span><strong id="infoOrderNum">—</strong></div>
+        <div class="order-info-row"><span>Name</span><strong id="infoName">—</strong></div>
+        <div class="order-info-row"><span>Delivery to</span><strong id="infoAddress">—</strong></div>
+        <div class="items-list" id="infoItems"></div>
+      </div>
+
+      <div id="currentDateBadge" class="current-date-badge" style="display:none;">
+        📅 Currently scheduled: <span id="currentDateText"></span>
+      </div>
+
+      <div class="divider"></div>
+
+      <label>New Delivery Date</label>
+      <input type="date" id="newDateInput">
+
+      <div class="error-msg" id="rescheduleError"></div>
+
+      <button class="btn-primary" id="rescheduleBtn" onclick="submitReschedule()">Confirm New Date & Notify Me</button>
+
+      <p style="margin-top:14px;font-size:0.75rem;color:#666;text-align:center;">
+        A confirmation email will be sent to you. We'll also be notified of the change.
+      </p>
+    </div>
+
+    <!-- Step 3: Success -->
+    <div class="success-screen" id="successSection">
+      <div class="success-icon">✓</div>
+      <h2>All Set!</h2>
+      <div class="new-date" id="successDate"></div>
+      <p>Your delivery has been rescheduled. We've sent a confirmation to your email and our team has been notified.</p>
+      <p style="margin-top:12px;">Questions? Email us at <a href="mailto:Strongspoon.ca@gmail.com" style="color:#017d8e;">Strongspoon.ca@gmail.com</a></p>
+    </div>
+
+  </div>
+
+  <p class="footer-note">
+    Strong Spoon · Regina, SK · <a href="https://strongspoon.ca">strongspoon.ca</a>
+  </p>
+
+  <script src="track.js" defer></script>
+  <script>
+    let foundOrder = null;
+
+    // Pre-fill from URL params (e.g. from confirmation email link)
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('order')) document.getElementById('orderNumInput').value = params.get('order');
+      if (params.get('email')) document.getElementById('emailInput').value = params.get('email');
+      // Auto-lookup if both are present
+      if (params.get('order') && params.get('email')) {
+        document.addEventListener('DOMContentLoaded', function() {}, { once: true });
+        lookupOrder();
+      }
+    })();
+
+    async function lookupOrder() {
+      const orderNum = document.getElementById('orderNumInput').value.trim();
+      const email    = document.getElementById('emailInput').value.trim();
+      const errEl    = document.getElementById('lookupError');
+      const btn      = document.getElementById('lookupBtn');
+      errEl.style.display = 'none';
+
+      if (!orderNum || !email) {
+        errEl.textContent = 'Please enter both your order number and email address.';
+        errEl.style.display = 'block'; return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Looking up…';
+      try {
+        const res = await fetch('/api/customer/order-lookup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order_number: orderNum, email })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.error || 'Order not found. Please check your order number and email.';
+          errEl.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'Find My Order →'; return;
+        }
+        foundOrder = data.order;
+        showOrderSection(data.order);
+      } catch (e) {
+        errEl.textContent = 'Connection error. Please try again.';
+        errEl.style.display = 'block';
+      }
+      btn.disabled = false; btn.textContent = 'Find My Order →';
+    }
+
+    function showOrderSection(order) {
+      document.getElementById('lookupSection').style.display = 'none';
+      document.getElementById('orderSection').style.display = 'block';
+
+      document.getElementById('orderSubtitle').textContent =
+        'Hi ' + (order.customer_name || 'there') + '! Choose a new delivery date below.';
+      document.getElementById('infoOrderNum').textContent = order.order_number;
+      document.getElementById('infoName').textContent = order.customer_name || '—';
+      document.getElementById('infoAddress').textContent = order.customer_address || '—';
+
+      // Items
+      let items = [];
+      try { items = Array.isArray(order.items) ? order.items : JSON.parse(order.items || '[]'); } catch (e) {}
+      document.getElementById('infoItems').innerHTML = items.map(i =>
+        `<div class="item-row">• ${i.name || 'Item'} × ${i.quantity || 1}</div>`
+      ).join('');
+
+      // Current date
+      if (order.delivery_date) {
+        const d = new Date(order.delivery_date + 'T12:00:00').toLocaleDateString('en-CA', {
+          timeZone: 'America/Toronto', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+        });
+        document.getElementById('currentDateText').textContent = d;
+        document.getElementById('currentDateBadge').style.display = '';
+        // Pre-set min date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('newDateInput').min = tomorrow.toISOString().split('T')[0];
+        // Pre-fill with the current date + 1 day
+        const existingDate = new Date(order.delivery_date + 'T12:00:00');
+        existingDate.setDate(existingDate.getDate() + 1);
+        document.getElementById('newDateInput').value = existingDate.toISOString().split('T')[0];
+      } else {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('newDateInput').min = tomorrow.toISOString().split('T')[0];
+      }
+    }
+
+    async function submitReschedule() {
+      const newDate = document.getElementById('newDateInput').value;
+      const errEl   = document.getElementById('rescheduleError');
+      const btn     = document.getElementById('rescheduleBtn');
+      errEl.style.display = 'none';
+
+      if (!newDate) {
+        errEl.textContent = 'Please select a new delivery date.';
+        errEl.style.display = 'block'; return;
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      if (newDate <= today) {
+        errEl.textContent = 'Please choose a future date (tomorrow or later).';
+        errEl.style.display = 'block'; return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        const res = await fetch('/api/customer/reschedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            order_number: foundOrder.order_number,
+            email: foundOrder.customer_email,
+            new_date: newDate
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.error || 'Could not reschedule. Please contact us.';
+          errEl.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'Confirm New Date & Notify Me'; return;
+        }
+        // Show success
+        const formatted = new Date(newDate + 'T12:00:00').toLocaleDateString('en-CA', {
+          timeZone: 'America/Toronto', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+        });
+        document.getElementById('successDate').textContent = '📅 ' + formatted;
+        document.getElementById('orderSection').style.display = 'none';
+        document.getElementById('successSection').style.display = 'block';
+      } catch (e) {
+        errEl.textContent = 'Connection error. Please try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Confirm New Date & Notify Me';
+      }
+    }
+
+    // Allow Enter key on lookup form
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        if (document.getElementById('lookupSection').style.display !== 'none' &&
+            document.getElementById('lookupSection').style.display !== '') {
+          lookupOrder();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
