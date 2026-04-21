@@ -14,7 +14,59 @@
   <link rel="stylesheet" href="style.css">
   <style>
     body {
-      padding-bottom: 80px;
+      padding-bottom: calc(80px + env(safe-area-inset-bottom));
+      padding-top: env(safe-area-inset-top);
+    }
+
+    /* Hide the global floating cart/home icon on this page — we have our own header */
+    .cart-nav { display: none !important; }
+
+    /* iOS zoom prevention: any input >= 16px never auto-zooms */
+    input, select, textarea, button { font-size: 16px; }
+
+    /* ── Mobile header bar (Home + Logout) ──────────────────────── */
+    .portal-header-bar {
+      position: sticky;
+      top: 0;
+      z-index: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      padding-top: calc(10px + env(safe-area-inset-top));
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(1,125,142,0.2);
+    }
+    .header-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: 22px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: #EFE8D8;
+      min-height: 40px;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .header-btn:active { transform: scale(0.95); }
+    .header-btn.home-btn { color: #4fd1c5; border-color: rgba(1,125,142,0.35); }
+    .header-btn.home-btn:hover { background: rgba(1,125,142,0.18); }
+    .header-btn.logout-header { color: #ff6b6b; border-color: rgba(244,67,54,0.3); }
+    .header-btn.logout-header:hover { background: rgba(244,67,54,0.15); }
+    .header-portal-label {
+      color: #888;
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
     }
 
     /* ── Premium Login Overlay ──────────────────────────────────── */
@@ -160,8 +212,20 @@
 
     .delivery-container {
       max-width: 600px;
-      margin: 20px auto;
-      padding: 20px;
+      margin: 16px auto;
+      padding: 16px;
+    }
+
+    /* Phone-tight spacing under 480px */
+    @media (max-width: 480px) {
+      .delivery-container { padding: 12px; margin: 8px auto; }
+      .delivery-title { font-size: 1.5rem; }
+      .delivery-subtitle { font-size: 0.82rem; }
+      .order-card { padding: 16px 14px; }
+      .summary-stat { padding: 12px 4px; }
+      .summary-stat .num { font-size: 1.4rem; }
+      .summary-stat .lbl { font-size: 0.62rem; letter-spacing: 1px; }
+      .header-portal-label { display: none; } /* free up space on tiny phones */
     }
 
     .delivery-header {
@@ -543,6 +607,17 @@
       gap: 10px;
       margin-bottom: 20px;
       animation: fadeIn 0.6s ease-out;
+      position: sticky;
+      top: 60px;
+      z-index: 400;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 8px 0;
+      margin-left: -4px;
+      margin-right: -4px;
+      padding-left: 4px;
+      padding-right: 4px;
     }
     .summary-stat {
       flex: 1;
@@ -759,12 +834,10 @@
     </div>
   </div>
 
-  <button class="logout-btn hidden" id="logoutBtn" onclick="doLogout()">🚪 Logout</button>
-
-  <div class="cart-nav">
-    <a href="index.html" class="cart-icon">
-      🏠 <span style="font-size: 0.9rem;">Home</span>
-    </a>
+  <div class="portal-header-bar">
+    <a href="index.html" class="header-btn home-btn">🏠 Home</a>
+    <span class="header-portal-label">Delivery Portal</span>
+    <button class="header-btn logout-header" id="logoutBtn" onclick="doLogout()" style="visibility:hidden;">🚪 Logout</button>
   </div>
 
   <div class="delivery-container">
@@ -893,7 +966,7 @@
         }
         deliveryCredentials = creds;
         document.getElementById('loginOverlay').classList.add('hidden');
-        document.getElementById('logoutBtn').classList.remove('hidden');
+        document.getElementById('logoutBtn').style.visibility = 'visible';
         loadOrders();
         setTimeout(() => loadPastDeliveries(), 500);
         startAutoRefresh();
@@ -908,7 +981,7 @@
       if (!confirm('Log out of the delivery portal?')) return;
       deliveryCredentials = null;
       stopAutoRefresh();
-      document.getElementById('logoutBtn').classList.add('hidden');
+      document.getElementById('logoutBtn').style.visibility = 'hidden';
       document.getElementById('summaryBar').style.display = 'none';
       document.getElementById('refreshTag').style.display = 'none';
       document.getElementById('ordersContainer').innerHTML = '<div class="loading-state">Logged out</div>';
