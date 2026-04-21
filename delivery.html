@@ -569,16 +569,30 @@
     }
     .contact-link:active { background: rgba(1,125,142,0.25); transform: scale(0.98); }
     .contact-link:hover { background: rgba(1,125,142,0.18); border-color: #017d8e; }
-    .map-link { color: #4fd1c5; font-weight: 600; }
+    .map-link {
+      color: #4fd1c5;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+    }
+    .map-link .map-text {
+      flex: 1;
+      min-width: 0;
+      word-break: break-word;
+      line-height: 1.35;
+    }
     .map-link .contact-cta {
-      float: right;
+      flex-shrink: 0;
       background: #015A64;
       color: #fff;
-      padding: 3px 10px;
-      border-radius: 5px;
+      padding: 6px 12px;
+      border-radius: 6px;
       font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.5px;
+      white-space: nowrap;
     }
     .phone-link { flex: 1; text-align: center; font-weight: 600; }
     .contact-row {
@@ -1318,7 +1332,8 @@
                 <div class="customer-name">👤 ${order.customer_name}</div>
                 ${order.customer_address ? `
                   <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(order.customer_address)}" target="_blank" rel="noopener" class="contact-link map-link">
-                    📍 ${order.customer_address} <span class="contact-cta">→ Navigate</span>
+                    <span class="map-text">📍 ${order.customer_address}</span>
+                    <span class="contact-cta">Navigate →</span>
                   </a>
                 ` : ''}
                 ${order.customer_phone ? `
