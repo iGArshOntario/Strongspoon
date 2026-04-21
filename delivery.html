@@ -804,6 +804,160 @@
     }
     .clear-route-btn.active { display: block; }
 
+    /* ── Scope selector (segmented) ──────────────────────────────── */
+    .scope-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+    .scope-btn {
+      padding: 10px 4px;
+      background: rgba(0,0,0,0.4);
+      color: #aaa;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .scope-btn:active { transform: scale(0.96); }
+    .scope-btn.active {
+      background: linear-gradient(135deg, #f5c842, #d4a017);
+      color: #000;
+      border-color: #f5c842;
+      box-shadow: 0 4px 12px rgba(245,200,66,0.3);
+    }
+
+    .pick-list {
+      display: none;
+      max-height: 280px;
+      overflow-y: auto;
+      margin-top: 12px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 6px;
+    }
+    .pick-list.active { display: block; }
+    .pick-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .pick-item:last-child { border-bottom: none; }
+    .pick-item:active { background: rgba(1,125,142,0.15); }
+    .pick-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #f5c842;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .pick-item-info { flex: 1; min-width: 0; }
+    .pick-item-name { color: #EFE8D8; font-weight: 600; font-size: 0.92rem; }
+    .pick-item-meta { color: #888; font-size: 0.78rem; margin-top: 2px; }
+    .pick-actions {
+      display: flex;
+      gap: 8px;
+      padding: 6px 4px;
+      margin-top: 4px;
+    }
+    .pick-quick-btn {
+      flex: 1;
+      padding: 6px;
+      background: rgba(255,255,255,0.05);
+      color: #aaa;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .pick-quick-btn:hover { color: #f5c842; border-color: rgba(245,200,66,0.3); }
+
+    /* ── Collapsible order cards ─────────────────────────────────── */
+    .order-card {
+      padding: 0;
+      cursor: default;
+      overflow: hidden;
+    }
+    .order-card-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: rgba(1,125,142,0.15);
+      transition: background 0.2s;
+    }
+    .order-card-summary:active { background: rgba(1,125,142,0.1); }
+    .order-card.expanded .order-card-summary {
+      background: rgba(1,125,142,0.08);
+      border-bottom: 1px solid rgba(1,125,142,0.2);
+    }
+    .summary-main { flex: 1; min-width: 0; }
+    .summary-line1 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .summary-line1 .order-number { font-size: 0.92rem; }
+    .summary-line2 {
+      color: #EFE8D8;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .summary-chevron {
+      color: #888;
+      font-size: 1.1rem;
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+    .order-card.expanded .summary-chevron { transform: rotate(180deg); color: #017d8e; }
+    .order-details {
+      display: none;
+      padding: 16px;
+      animation: slideDown 0.25s ease-out;
+    }
+    .order-card.expanded .order-details { display: block; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .urgency-pill {
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .urgency-pill.today { background: #f44336; color: #fff; }
+    .urgency-pill.tomorrow { background: #f5c842; color: #000; }
+    .urgency-pill.upcoming { background: rgba(1,125,142,0.25); color: #4fd1c5; }
+    .route-position-badge {
+      position: static;
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(245,200,66,0.4);
+      border: none;
+      font-size: 0.95rem;
+    }
+
     /* ── Auto-refresh indicator ─────────────────────────────────── */
     .refresh-tag {
       text-align: center;
@@ -869,10 +1023,25 @@
       </div>
       <div class="route-panel-body">
         <div style="color:#888;font-size:0.85rem;margin-bottom:6px;">
-          Pick how many you'll deliver, and we'll sort them closest-first from your starting point.
+          Choose which orders to plan, and we'll sort them closest-first from your starting point.
         </div>
-        <label class="route-field">How many orders?</label>
-        <input type="number" id="routeCount" class="route-input" min="1" max="50" value="10">
+        <label class="route-field">Which orders?</label>
+        <div class="scope-selector">
+          <button class="scope-btn active" data-scope="today" onclick="setScope('today')">🔥 Today</button>
+          <button class="scope-btn" data-scope="tomorrow" onclick="setScope('tomorrow')">📅 Tomorrow</button>
+          <button class="scope-btn" data-scope="all" onclick="setScope('all')">📋 All</button>
+          <button class="scope-btn" data-scope="pick" onclick="setScope('pick')">✅ Pick</button>
+        </div>
+        <div id="scopeHint" style="color:#888;font-size:0.78rem;margin-top:6px;text-align:center;">All orders scheduled for today will be optimized</div>
+
+        <div class="pick-list" id="pickList">
+          <div class="pick-actions">
+            <button type="button" class="pick-quick-btn" onclick="pickAll(true)">Select all</button>
+            <button type="button" class="pick-quick-btn" onclick="pickAll(false)">Clear</button>
+          </div>
+          <div id="pickListItems"></div>
+        </div>
+
         <label class="route-field">Starting from (address or postal code)</label>
         <input type="text" id="routeStart" class="route-input" placeholder="e.g. your kitchen address" value="Regina, SK">
         <button class="plan-route-btn" id="planRouteBtn" onclick="planRoute()">🚀 Optimize Route</button>
@@ -1008,9 +1177,86 @@
     // ── Plan My Route ──────────────────────────────────────────────
     let plannedRoute = null; // array of order IDs in optimized order
     let lastLoadedOrders = []; // raw orders cached for replanning
+    let routeScope = 'today'; // today | tomorrow | all | pick
+    let pickedIds = new Set();
+    const expandedCards = new Set(); // order IDs currently expanded
 
     function toggleRoutePanel() {
       document.getElementById('routePanel').classList.toggle('expanded');
+    }
+
+    function setScope(scope) {
+      routeScope = scope;
+      document.querySelectorAll('.scope-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.scope === scope);
+      });
+      const hint = document.getElementById('scopeHint');
+      const pickList = document.getElementById('pickList');
+      const todayCount = countOrdersForScope('today');
+      const tomCount = countOrdersForScope('tomorrow');
+      const allCount = lastLoadedOrders.filter(o => o.customer_address).length;
+      if (scope === 'today') { hint.textContent = `${todayCount} order${todayCount===1?'':'s'} scheduled for today will be optimized`; pickList.classList.remove('active'); }
+      else if (scope === 'tomorrow') { hint.textContent = `${tomCount} order${tomCount===1?'':'s'} scheduled for tomorrow will be optimized`; pickList.classList.remove('active'); }
+      else if (scope === 'all') { hint.textContent = `All ${allCount} pending order${allCount===1?'':'s'} will be optimized`; pickList.classList.remove('active'); }
+      else if (scope === 'pick') { hint.textContent = `Tap to select the orders you want to deliver`; pickList.classList.add('active'); renderPickList(); }
+    }
+
+    function countOrdersForScope(scope) {
+      const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+      const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+      return lastLoadedOrders.filter(o => {
+        if (!o.customer_address || !o.delivery_date) return false;
+        const d = o.delivery_date.split('T')[0];
+        return scope === 'today' ? d === todayStr : d === tomorrowStr;
+      }).length;
+    }
+
+    function renderPickList() {
+      const container = document.getElementById('pickListItems');
+      const items = lastLoadedOrders.filter(o => o.customer_address);
+      if (!items.length) { container.innerHTML = '<div style="padding:12px;color:#888;text-align:center;font-size:0.85rem;">No deliverable orders</div>'; return; }
+      container.innerHTML = items.map(o => {
+        const dStr = o.delivery_date ? o.delivery_date.split('T')[0] : '';
+        const dLabel = dStr ? new Date(dStr + 'T12:00:00').toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric' }) : 'No date';
+        const checked = pickedIds.has(o.id) ? 'checked' : '';
+        return `
+          <label class="pick-item">
+            <input type="checkbox" data-oid="${o.id}" ${checked} onchange="togglePick(${o.id}, this.checked)">
+            <div class="pick-item-info">
+              <div class="pick-item-name">${o.customer_name}</div>
+              <div class="pick-item-meta">${o.order_number} · ${dLabel}</div>
+            </div>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function togglePick(id, checked) {
+      if (checked) pickedIds.add(id); else pickedIds.delete(id);
+      const hint = document.getElementById('scopeHint');
+      hint.textContent = `${pickedIds.size} order${pickedIds.size===1?'':'s'} selected`;
+    }
+
+    function pickAll(yes) {
+      const items = lastLoadedOrders.filter(o => o.customer_address);
+      if (yes) items.forEach(o => pickedIds.add(o.id));
+      else pickedIds.clear();
+      renderPickList();
+      togglePick(); // refresh hint
+      document.getElementById('scopeHint').textContent = `${pickedIds.size} order${pickedIds.size===1?'':'s'} selected`;
+    }
+
+    function getCandidatesForScope() {
+      const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+      const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+      const withAddr = lastLoadedOrders.filter(o => o.customer_address && o.customer_address.trim());
+      if (routeScope === 'today') return withAddr.filter(o => o.delivery_date && o.delivery_date.split('T')[0] === todayStr);
+      if (routeScope === 'tomorrow') return withAddr.filter(o => o.delivery_date && o.delivery_date.split('T')[0] === tomorrowStr);
+      if (routeScope === 'all') return withAddr;
+      if (routeScope === 'pick') return withAddr.filter(o => pickedIds.has(o.id));
+      return withAddr;
     }
 
     async function geocodeAddress(addr) {
@@ -1067,7 +1313,6 @@
     async function planRoute() {
       const btn = document.getElementById('planRouteBtn');
       const status = document.getElementById('routeStatus');
-      const count = Math.max(1, parseInt(document.getElementById('routeCount').value) || 10);
       const startAddr = document.getElementById('routeStart').value.trim() || 'Regina, SK';
 
       if (!lastLoadedOrders.length) {
@@ -1076,17 +1321,17 @@
         return;
       }
 
+      const candidates = getCandidatesForScope();
+      if (!candidates.length) {
+        const scopeLabels = { today: "today", tomorrow: "tomorrow", all: "any pending", pick: "selected" };
+        status.textContent = `No ${scopeLabels[routeScope]} orders with addresses to plan.`;
+        status.classList.add('active');
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = '⏳ Geocoding addresses...';
       status.classList.add('active');
-
-      // Pick first N orders that have addresses (by current sort order: soonest delivery first)
-      const candidates = lastLoadedOrders.filter(o => o.customer_address && o.customer_address.trim()).slice(0, count);
-      if (!candidates.length) {
-        status.textContent = 'No orders with delivery addresses found.';
-        btn.disabled = false; btn.textContent = '🚀 Optimize Route';
-        return;
-      }
 
       status.textContent = `Looking up ${candidates.length} addresses + your start point...`;
 
@@ -1282,68 +1527,77 @@
         plannedRoute.forEach((id, idx) => { routePos[id] = idx + 1; });
       }
 
+      const todayStr2 = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+      const tomorrow2 = new Date(); tomorrow2.setDate(tomorrow2.getDate() + 1);
+      const tomorrowStr2 = tomorrow2.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+
       container.innerHTML = orders.map(order => {
-          // Safely parse items with fallback
-          let items = [];
-          try {
-            if (Array.isArray(order.items)) {
-              items = order.items;
-            } else if (typeof order.items === 'string' && order.items.trim()) {
-              items = JSON.parse(order.items);
-            } else if (order.items && typeof order.items === 'object') {
-              items = [order.items];
-            }
-          } catch (e) {
-            console.error('Failed to parse items:', e);
-            items = [];
-          }
-          if (!Array.isArray(items)) items = [];
-          
-          const date = new Date(order.created_at);
-          
-          const posBadge = routePos[order.id] ? `<div class="route-position-badge">${routePos[order.id]}</div>` : '';
-          return `
-            <div class="order-card">
+        let items = [];
+        try {
+          if (Array.isArray(order.items)) items = order.items;
+          else if (typeof order.items === 'string' && order.items.trim()) items = JSON.parse(order.items);
+          else if (order.items && typeof order.items === 'object') items = [order.items];
+        } catch (e) { items = []; }
+        if (!Array.isArray(items)) items = [];
+
+        const orderedAt = new Date(order.created_at);
+        const isExpanded = expandedCards.has(order.id);
+        const posBadge = routePos[order.id] ? `<div class="route-position-badge">${routePos[order.id]}</div>` : '';
+
+        // Urgency pill based on delivery date
+        let urgencyPill = '';
+        let dateLabel = '';
+        if (order.delivery_date) {
+          const dStr = order.delivery_date.split('T')[0];
+          const dObj = new Date(dStr + 'T12:00:00');
+          const dCanada = dObj.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+          if (dCanada === todayStr2) urgencyPill = '<span class="urgency-pill today">🔥 TODAY</span>';
+          else if (dCanada === tomorrowStr2) urgencyPill = '<span class="urgency-pill tomorrow">📅 TOMORROW</span>';
+          else urgencyPill = `<span class="urgency-pill upcoming">${dObj.toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric' })}</span>`;
+          dateLabel = dObj.toLocaleDateString('en-CA', { timeZone: 'America/Toronto', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        }
+
+        // Total cups in this order
+        const cupCount = items.reduce((s, it) => s + (parseInt(it.quantity) || 1), 0);
+
+        return `
+          <div class="order-card ${isExpanded ? 'expanded' : ''}" data-oid="${order.id}">
+            <div class="order-card-summary" onclick="toggleOrderCard(${order.id})">
               ${posBadge}
-              <div class="order-card-header">
-                <span class="order-number">${order.order_number}</span>
-                <span class="order-status-badge">${order.order_status}</span>
-              </div>
-              
-              ${order.delivery_date ? (() => {
-                const dStr = order.delivery_date.split('T')[0];
-                const dObj = new Date(dStr + 'T12:00:00');
-                const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
-                const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
-                const tomorrowStr = tomorrow.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
-                const dCanada = dObj.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
-                let urgencyBadge = '';
-                if (dCanada === todayStr) urgencyBadge = '<span style="background:#f44336;color:#fff;padding:3px 10px;border-radius:6px;font-size:0.72rem;font-weight:800;letter-spacing:1px;margin-left:8px;">🔥 TODAY</span>';
-                else if (dCanada === tomorrowStr) urgencyBadge = '<span style="background:#f5c842;color:#000;padding:3px 10px;border-radius:6px;font-size:0.72rem;font-weight:800;letter-spacing:1px;margin-left:8px;">📅 TOMORROW</span>';
-                return `
-                <div style="background: rgba(0, 191, 165, 0.15); border: 2px solid rgba(0, 191, 165, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
-                  <div style="font-weight: 700; color: #017d8e; margin-bottom: 5px;">🚚 Scheduled Delivery${urgencyBadge}</div>
-                  <div style="font-size: 1rem; font-weight: 600;">📅 ${dObj.toLocaleDateString('en-CA', { timeZone: 'America/Toronto', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>
+              <div class="summary-main">
+                <div class="summary-line1">
+                  <span class="order-number">${order.order_number}</span>
+                  ${urgencyPill}
+                  <span style="color:#888;font-size:0.78rem;">${cupCount} cup${cupCount===1?'':'s'}</span>
                 </div>
-                `;
-              })() : ''}
-              
+                <div class="summary-line2">👤 ${order.customer_name}</div>
+              </div>
+              <span class="summary-chevron">▾</span>
+            </div>
+
+            <div class="order-details">
+              ${dateLabel ? `
+                <div style="background: rgba(0, 191, 165, 0.15); border: 2px solid rgba(0, 191, 165, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                  <div style="font-weight: 700; color: #017d8e; margin-bottom: 5px;">🚚 Scheduled Delivery</div>
+                  <div style="font-size: 1rem; font-weight: 600;">📅 ${dateLabel}</div>
+                </div>
+              ` : ''}
+
               <div class="customer-info">
-                <div class="customer-name">👤 ${order.customer_name}</div>
                 ${order.customer_address ? `
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(order.customer_address)}" target="_blank" rel="noopener" class="contact-link map-link">
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(order.customer_address)}" target="_blank" rel="noopener" class="contact-link map-link" onclick="event.stopPropagation()">
                     <span class="map-text">📍 ${order.customer_address}</span>
                     <span class="contact-cta">Navigate →</span>
                   </a>
                 ` : ''}
                 ${order.customer_phone ? `
                   <div class="contact-row">
-                    <a href="tel:${order.customer_phone.replace(/[^0-9+]/g,'')}" class="contact-link phone-link">📞 ${order.customer_phone}</a>
-                    <a href="sms:${order.customer_phone.replace(/[^0-9+]/g,'')}?&body=${encodeURIComponent('Hi! Your Strong Spoon order is here. I\'m at your door 🍫💪')}" class="contact-pill">💬 Text</a>
+                    <a href="tel:${order.customer_phone.replace(/[^0-9+]/g,'')}" class="contact-link phone-link" onclick="event.stopPropagation()">📞 ${order.customer_phone}</a>
+                    <a href="sms:${order.customer_phone.replace(/[^0-9+]/g,'')}?&body=${encodeURIComponent('Hi! Your Strong Spoon order is here. I\'m at your door 🍫💪')}" class="contact-pill" onclick="event.stopPropagation()">💬 Text</a>
                   </div>
                 ` : ''}
               </div>
-              
+
               <div class="order-items-list">
                 ${items.length > 0 ? items.map(item => `
                   <div class="order-item">
@@ -1352,17 +1606,25 @@
                   </div>
                 `).join('') : '<div class="order-item">No items</div>'}
               </div>
-              
+
               <div style="color: #aaa; font-size: 0.85rem; margin-bottom: 15px;">
-                📅 Ordered: ${date.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' })} ${date.toLocaleTimeString('en-CA', { timeZone: 'America/Toronto' })}
+                📅 Ordered: ${orderedAt.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' })} ${orderedAt.toLocaleTimeString('en-CA', { timeZone: 'America/Toronto' })}
               </div>
-              
-              <button class="deliver-btn" onclick="openDeliveryModal(${order.id}, '${order.order_number}')">
+
+              <button class="deliver-btn" onclick="event.stopPropagation(); openDeliveryModal(${order.id}, '${order.order_number}')">
                 ✅ Mark as Delivered
               </button>
             </div>
-          `;
-        }).join('');
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleOrderCard(id) {
+      if (expandedCards.has(id)) expandedCards.delete(id);
+      else expandedCards.add(id);
+      const card = document.querySelector(`.order-card[data-oid="${id}"]`);
+      if (card) card.classList.toggle('expanded');
     }
 
     function openDeliveryModal(orderId, orderNumber) {
