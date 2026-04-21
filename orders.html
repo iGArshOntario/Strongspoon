@@ -228,6 +228,21 @@
       display: block;
     }
     .reschedule-btn:hover { background: rgba(245,200,66,0.2); border-color: #f5c842; }
+    .remind-btn {
+      background: rgba(1,125,142,0.12);
+      border: 1px solid rgba(1,125,142,0.35);
+      color: #4fd1c5;
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 4px;
+      font-weight: 600;
+      transition: all 0.18s ease;
+      display: block;
+    }
+    .remind-btn:hover { background: rgba(1,125,142,0.22); border-color: #017d8e; }
+    .remind-btn:disabled { opacity: 0.5; cursor: default; }
 
     /* Reschedule modal */
     #rescheduleModal {
@@ -1662,6 +1677,29 @@
       document.getElementById('rescheduleModal').classList.add('active');
     }
 
+    async function sendManualReminder(orderId, orderNum, btn) {
+      if (!confirm('Send the "Delivery Tomorrow" reminder email to this customer now?')) return;
+      const originalText = btn.textContent;
+      btn.disabled = true; btn.textContent = '⏳ Sending…';
+      try {
+        const res = await fetch('/admin/orders/' + orderId + '/send-reminder', {
+          method: 'POST',
+          headers: { 'Authorization': 'Basic ' + adminCredentials }
+        });
+        const data = await res.json();
+        if (res.ok) {
+          btn.textContent = '✓ Sent';
+          setTimeout(() => { btn.disabled = false; btn.textContent = '📧 Resend'; }, 2200);
+        } else {
+          alert(data.error || 'Failed to send reminder.');
+          btn.disabled = false; btn.textContent = originalText;
+        }
+      } catch (e) {
+        alert('Network error. Try again.');
+        btn.disabled = false; btn.textContent = originalText;
+      }
+    }
+
     function closeRescheduleModal() {
       document.getElementById('rescheduleModal').classList.remove('active');
       currentRescheduleOrderId = null;
@@ -1906,7 +1944,7 @@
                     <td>
                       ${order.delivery_date ? `
                         <div style="font-weight: 600; color: #017d8e;">📅 ${new Date(order.delivery_date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-CA', { timeZone: 'America/Toronto', month: 'short', day: 'numeric', year: 'numeric' })}</div>
-                        ${order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "${order.delivery_date ? order.delivery_date.split("T")[0] : ""}") '>✏️ Reschedule</button>` : ''}
+                        ${order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "${order.delivery_date ? order.delivery_date.split("T")[0] : ""}") '>✏️ Reschedule</button><button class="remind-btn" onclick='sendManualReminder(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", this)'>📧 ${order.reminder_sent ? 'Resend' : 'Remind'}</button>` : ''}
                       ` : (order.order_type === 'delivery' ? `<button class="reschedule-btn" onclick='openRescheduleModal(${order.id}, "${(order.order_number||'').replace(/"/g,"&quot;")}", "${(order.customer_name||'').replace(/"/g,"&quot;")}", "") '>✏️ Set Date</button>` : '<span style="color: #666; font-size: 0.85rem;">Pickup</span>')}
                     </td>
                     <td>

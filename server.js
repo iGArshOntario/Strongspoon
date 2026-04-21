@@ -728,6 +728,7 @@ setInterval(async () => {
         AND order_status != 'delivered'
         AND reminder_sent = FALSE
         AND delivery_date IS NOT NULL
+        AND created_at < (NOW() - INTERVAL '12 hours')
         AND delivery_date::timestamp AT TIME ZONE 'America/Toronto'
             BETWEEN (NOW() AT TIME ZONE 'America/Toronto' + INTERVAL '20 hours')
                 AND (NOW() AT TIME ZONE 'America/Toronto' + INTERVAL '26 hours')
@@ -2228,6 +2229,28 @@ app.post('/admin/orders/:id/reschedule-email', async (req, res) => {
   } catch (err) {
     console.error('Reschedule email error:', err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Admin: manually send the 24h reminder email for an order ─────────────────
+app.post('/admin/orders/:id/send-reminder', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const { id } = req.params;
+    const result = await pool.query('SELECT * FROM orders WHERE id = $1', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Order not found' });
+    const order = result.rows[0];
+    if (order.order_type !== 'delivery') return res.status(400).json({ error: 'Pickup orders cannot get a delivery reminder.' });
+    if (!order.delivery_date) return res.status(400).json({ error: 'No delivery date set on this order.' });
+    if (order.order_status === 'delivered') return res.status(400).json({ error: 'Order is already delivered.' });
+
+    const r = await sendDeliveryReminderEmail(order);
+    if (!r.success) return res.status(500).json({ error: r.error || 'Failed to send reminder.' });
+    await pool.query('UPDATE orders SET reminder_sent = TRUE WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Manual reminder error:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
