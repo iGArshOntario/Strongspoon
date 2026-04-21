@@ -591,6 +591,130 @@
     .logout-btn:hover { background: rgba(244,67,54,0.3); }
     .logout-btn.hidden { display: none; }
 
+    /* ── Plan My Route panel ────────────────────────────────────── */
+    .route-panel {
+      background: linear-gradient(135deg, rgba(245,200,66,0.08), rgba(1,125,142,0.08));
+      border: 1px solid rgba(245,200,66,0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+    .route-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .route-panel-title {
+      font-weight: 700;
+      color: #f5c842;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+    }
+    .route-panel-toggle {
+      color: #888;
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+    .route-panel.expanded .route-panel-toggle { transform: rotate(180deg); }
+    .route-panel-body {
+      display: none;
+      margin-top: 14px;
+    }
+    .route-panel.expanded .route-panel-body { display: block; }
+    .route-field {
+      display: block;
+      color: #aaa;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      margin-top: 10px;
+    }
+    .route-input {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: #EFE8D8;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+    }
+    .route-input:focus { outline: none; border-color: #f5c842; }
+    .plan-route-btn {
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px;
+      background: linear-gradient(135deg, #f5c842, #d4a017);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .plan-route-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,200,66,0.3); }
+    .plan-route-btn:disabled { background: #444; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
+    .route-status {
+      margin-top: 12px;
+      padding: 10px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      color: #aaa;
+      font-size: 0.85rem;
+      text-align: center;
+      display: none;
+    }
+    .route-status.active { display: block; }
+    .open-route-maps {
+      display: none;
+      margin-top: 10px;
+      padding: 12px;
+      background: linear-gradient(135deg, #4285F4, #1a73e8);
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 8px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .open-route-maps.active { display: block; }
+    .route-position-badge {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #f5c842, #d4a017);
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(245,200,66,0.4);
+      border: 2px solid #000;
+      z-index: 5;
+    }
+    .order-card { position: relative; }
+    .clear-route-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      background: transparent;
+      color: #888;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: none;
+    }
+    .clear-route-btn.active { display: block; }
+
     /* ── Auto-refresh indicator ─────────────────────────────────── */
     .refresh-tag {
       text-align: center;
@@ -650,6 +774,26 @@
     </div>
 
     <div id="summaryBar" class="summary-bar" style="display:none;"></div>
+
+    <div id="routePanel" class="route-panel" style="display:none;">
+      <div class="route-panel-header" onclick="toggleRoutePanel()">
+        <div class="route-panel-title">🗺️ Plan My Route</div>
+        <div class="route-panel-toggle">▼</div>
+      </div>
+      <div class="route-panel-body">
+        <div style="color:#888;font-size:0.85rem;margin-bottom:6px;">
+          Pick how many you'll deliver, and we'll sort them closest-first from your starting point.
+        </div>
+        <label class="route-field">How many orders?</label>
+        <input type="number" id="routeCount" class="route-input" min="1" max="50" value="10">
+        <label class="route-field">Starting from (address or postal code)</label>
+        <input type="text" id="routeStart" class="route-input" placeholder="e.g. your kitchen address" value="Regina, SK">
+        <button class="plan-route-btn" id="planRouteBtn" onclick="planRoute()">🚀 Optimize Route</button>
+        <div class="route-status" id="routeStatus"></div>
+        <a class="open-route-maps" id="openRouteMaps" target="_blank" rel="noopener">🗺️ Open Full Route in Google Maps</a>
+        <button class="clear-route-btn" id="clearRouteBtn" onclick="clearRoute()">✖ Clear route &amp; show all orders</button>
+      </div>
+    </div>
 
     <div id="ordersContainer" class="loading-state">
       Loading orders...
@@ -774,6 +918,158 @@
       document.getElementById('loginOverlay').classList.remove('hidden');
     }
 
+    // ── Plan My Route ──────────────────────────────────────────────
+    let plannedRoute = null; // array of order IDs in optimized order
+    let lastLoadedOrders = []; // raw orders cached for replanning
+
+    function toggleRoutePanel() {
+      document.getElementById('routePanel').classList.toggle('expanded');
+    }
+
+    async function geocodeAddress(addr) {
+      if (!addr || !addr.trim()) return null;
+      const key = 'geo:' + addr.toLowerCase().trim();
+      const cached = localStorage.getItem(key);
+      if (cached) {
+        try { return JSON.parse(cached); } catch (e) {}
+      }
+      // Bias toward Regina, SK
+      const query = /regina|sk|saskatchewan/i.test(addr) ? addr : (addr + ', Regina, SK, Canada');
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`;
+      try {
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!data || !data.length) return null;
+        const coord = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+        localStorage.setItem(key, JSON.stringify(coord));
+        return coord;
+      } catch (e) {
+        console.error('Geocode failed:', addr, e);
+        return null;
+      }
+    }
+
+    function haversine(a, b) {
+      const R = 6371;
+      const dLat = (b.lat - a.lat) * Math.PI / 180;
+      const dLon = (b.lon - a.lon) * Math.PI / 180;
+      const lat1 = a.lat * Math.PI / 180;
+      const lat2 = b.lat * Math.PI / 180;
+      const h = Math.sin(dLat/2)**2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon/2)**2;
+      return 2 * R * Math.asin(Math.sqrt(h));
+    }
+
+    function nearestNeighbor(start, points) {
+      const remaining = points.slice();
+      const ordered = [];
+      let current = start;
+      while (remaining.length) {
+        let bestIdx = 0, bestDist = Infinity;
+        for (let i = 0; i < remaining.length; i++) {
+          const d = haversine(current, remaining[i].coord);
+          if (d < bestDist) { bestDist = d; bestIdx = i; }
+        }
+        const picked = remaining.splice(bestIdx, 1)[0];
+        ordered.push(picked);
+        current = picked.coord;
+      }
+      return ordered;
+    }
+
+    async function planRoute() {
+      const btn = document.getElementById('planRouteBtn');
+      const status = document.getElementById('routeStatus');
+      const count = Math.max(1, parseInt(document.getElementById('routeCount').value) || 10);
+      const startAddr = document.getElementById('routeStart').value.trim() || 'Regina, SK';
+
+      if (!lastLoadedOrders.length) {
+        status.textContent = 'No orders to plan yet.';
+        status.classList.add('active');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Geocoding addresses...';
+      status.classList.add('active');
+
+      // Pick first N orders that have addresses (by current sort order: soonest delivery first)
+      const candidates = lastLoadedOrders.filter(o => o.customer_address && o.customer_address.trim()).slice(0, count);
+      if (!candidates.length) {
+        status.textContent = 'No orders with delivery addresses found.';
+        btn.disabled = false; btn.textContent = '🚀 Optimize Route';
+        return;
+      }
+
+      status.textContent = `Looking up ${candidates.length} addresses + your start point...`;
+
+      // Geocode start
+      const startCoord = await geocodeAddress(startAddr);
+      if (!startCoord) {
+        status.textContent = `⚠️ Couldn't find "${startAddr}". Try a more specific address.`;
+        btn.disabled = false; btn.textContent = '🚀 Optimize Route';
+        return;
+      }
+
+      // Geocode all candidates (sequential to respect Nominatim 1 req/sec rate limit)
+      const points = [];
+      const failed = [];
+      for (let i = 0; i < candidates.length; i++) {
+        status.textContent = `Geocoding ${i+1}/${candidates.length}...`;
+        const coord = await geocodeAddress(candidates[i].customer_address);
+        if (coord) points.push({ order: candidates[i], coord });
+        else failed.push(candidates[i].order_number);
+        // Throttle: only delay if NOT served from cache (cache hit is instant; check by re-reading)
+        const wasCached = localStorage.getItem('geo:' + candidates[i].customer_address.toLowerCase().trim());
+        if (!wasCached || i === 0) await new Promise(r => setTimeout(r, 1100));
+      }
+
+      if (!points.length) {
+        status.textContent = '⚠️ Could not geocode any addresses. Try again later.';
+        btn.disabled = false; btn.textContent = '🚀 Optimize Route';
+        return;
+      }
+
+      // Nearest-neighbor sort
+      const ordered = nearestNeighbor(startCoord, points);
+      plannedRoute = ordered.map(p => p.order.id);
+
+      // Build Google Maps multi-stop URL
+      const origin = `${startCoord.lat},${startCoord.lon}`;
+      const last = ordered[ordered.length - 1].coord;
+      const destination = `${last.lat},${last.lon}`;
+      const waypoints = ordered.slice(0, -1).map(p => `${p.coord.lat},${p.coord.lon}`).join('|');
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}` +
+                      (waypoints ? `&waypoints=${encodeURIComponent(waypoints)}` : '');
+      const mapsLink = document.getElementById('openRouteMaps');
+      mapsLink.href = mapsUrl;
+      mapsLink.classList.add('active');
+
+      // Calculate total distance
+      let totalKm = haversine(startCoord, ordered[0].coord);
+      for (let i = 1; i < ordered.length; i++) totalKm += haversine(ordered[i-1].coord, ordered[i].coord);
+
+      let msg = `✅ Route ready: ${ordered.length} stops · ~${totalKm.toFixed(1)} km total`;
+      if (failed.length) msg += ` · ⚠️ ${failed.length} skipped (${failed.join(', ')})`;
+      status.textContent = msg;
+
+      document.getElementById('clearRouteBtn').classList.add('active');
+      btn.disabled = false;
+      btn.textContent = '🔄 Re-Optimize';
+
+      // Re-render orders with route badges
+      renderOrders(lastLoadedOrders);
+    }
+
+    function clearRoute() {
+      plannedRoute = null;
+      document.getElementById('routeStatus').classList.remove('active');
+      document.getElementById('openRouteMaps').classList.remove('active');
+      document.getElementById('clearRouteBtn').classList.remove('active');
+      document.getElementById('planRouteBtn').textContent = '🚀 Optimize Route';
+      renderOrders(lastLoadedOrders);
+    }
+
     let autoRefreshTimer = null;
     function startAutoRefresh() {
       stopAutoRefresh();
@@ -813,55 +1109,93 @@
         
         const data = await response.json();
         const orders = data.orders || [];
-        
-        const container = document.getElementById('ordersContainer');
-        
-        if (orders.length === 0) {
-          container.innerHTML = `
-            <div class="no-orders">
-              <h2>✅ All Caught Up!</h2>
-              <p>No orders pending delivery at the moment.</p>
-              <p style="margin-top: 20px; font-size: 0.9rem;">Check back soon for new deliveries.</p>
-            </div>
-          `;
-          document.getElementById('summaryBar').style.display = 'none';
-          document.getElementById('refreshTag').style.display = 'block';
-          return;
-        }
+        lastLoadedOrders = orders;
+        document.getElementById('routePanel').style.display = orders.length ? 'block' : 'none';
+        renderOrders(orders);
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        document.getElementById('ordersContainer').innerHTML = `
+          <div class="no-orders">
+            <h2>⚠️ Error Loading Orders</h2>
+            <p>Please check your connection and try again.</p>
+          </div>
+        `;
+      }
+    }
 
-        // Sort orders: soonest delivery date first, then by order date
-        orders.sort((a, b) => {
+    function renderOrders(rawOrders) {
+      const container = document.getElementById('ordersContainer');
+
+      if (!rawOrders || rawOrders.length === 0) {
+        container.innerHTML = `
+          <div class="no-orders">
+            <h2>✅ All Caught Up!</h2>
+            <p>No orders pending delivery at the moment.</p>
+            <p style="margin-top: 20px; font-size: 0.9rem;">Check back soon for new deliveries.</p>
+          </div>
+        `;
+        document.getElementById('summaryBar').style.display = 'none';
+        document.getElementById('refreshTag').style.display = 'block';
+        return;
+      }
+
+      // Sort: if a route is planned, follow that order. Otherwise soonest delivery first.
+      let orders;
+      if (plannedRoute && plannedRoute.length) {
+        const inRoute = [];
+        const notInRoute = [];
+        const idToOrder = {};
+        rawOrders.forEach(o => idToOrder[o.id] = o);
+        plannedRoute.forEach(id => { if (idToOrder[id]) inRoute.push(idToOrder[id]); });
+        const routeIds = new Set(plannedRoute);
+        rawOrders.forEach(o => { if (!routeIds.has(o.id)) notInRoute.push(o); });
+        notInRoute.sort((a, b) => {
           const ad = a.delivery_date ? a.delivery_date.split('T')[0] : '9999-12-31';
           const bd = b.delivery_date ? b.delivery_date.split('T')[0] : '9999-12-31';
           if (ad !== bd) return ad.localeCompare(bd);
           return new Date(a.created_at) - new Date(b.created_at);
         });
-
-        // Render summary bar: total orders, today count, total cups
-        const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
-        let todayCount = 0, totalCups = 0;
-        orders.forEach(o => {
-          if (o.delivery_date && o.delivery_date.split('T')[0] === todayStr) todayCount++;
-          let parsed = [];
-          try { parsed = Array.isArray(o.items) ? o.items : JSON.parse(o.items || '[]'); } catch (e) {}
-          parsed.forEach(it => { totalCups += parseInt(it.quantity) || 1; });
+        orders = [...inRoute, ...notInRoute];
+      } else {
+        orders = rawOrders.slice().sort((a, b) => {
+          const ad = a.delivery_date ? a.delivery_date.split('T')[0] : '9999-12-31';
+          const bd = b.delivery_date ? b.delivery_date.split('T')[0] : '9999-12-31';
+          if (ad !== bd) return ad.localeCompare(bd);
+          return new Date(a.created_at) - new Date(b.created_at);
         });
-        const summaryBar = document.getElementById('summaryBar');
-        summaryBar.innerHTML = `
-          <div class="summary-stat ${todayCount > 0 ? 'urgent' : ''}">
-            <span class="num">${todayCount}</span><span class="lbl">Today</span>
-          </div>
-          <div class="summary-stat">
-            <span class="num">${orders.length}</span><span class="lbl">Pending</span>
-          </div>
-          <div class="summary-stat">
-            <span class="num">${totalCups}</span><span class="lbl">Cups</span>
-          </div>
-        `;
-        summaryBar.style.display = 'flex';
-        document.getElementById('refreshTag').style.display = 'block';
+      }
 
-        container.innerHTML = orders.map(order => {
+      // Summary bar
+      const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+      let todayCount = 0, totalCups = 0;
+      orders.forEach(o => {
+        if (o.delivery_date && o.delivery_date.split('T')[0] === todayStr) todayCount++;
+        let parsed = [];
+        try { parsed = Array.isArray(o.items) ? o.items : JSON.parse(o.items || '[]'); } catch (e) {}
+        parsed.forEach(it => { totalCups += parseInt(it.quantity) || 1; });
+      });
+      const summaryBar = document.getElementById('summaryBar');
+      summaryBar.innerHTML = `
+        <div class="summary-stat ${todayCount > 0 ? 'urgent' : ''}">
+          <span class="num">${todayCount}</span><span class="lbl">Today</span>
+        </div>
+        <div class="summary-stat">
+          <span class="num">${orders.length}</span><span class="lbl">Pending</span>
+        </div>
+        <div class="summary-stat">
+          <span class="num">${totalCups}</span><span class="lbl">Cups</span>
+        </div>
+      `;
+      summaryBar.style.display = 'flex';
+      document.getElementById('refreshTag').style.display = 'block';
+
+      // Build a position lookup if route is planned
+      const routePos = {};
+      if (plannedRoute && plannedRoute.length) {
+        plannedRoute.forEach((id, idx) => { routePos[id] = idx + 1; });
+      }
+
+      container.innerHTML = orders.map(order => {
           // Safely parse items with fallback
           let items = [];
           try {
@@ -880,8 +1214,10 @@
           
           const date = new Date(order.created_at);
           
+          const posBadge = routePos[order.id] ? `<div class="route-position-badge">${routePos[order.id]}</div>` : '';
           return `
             <div class="order-card">
+              ${posBadge}
               <div class="order-card-header">
                 <span class="order-number">${order.order_number}</span>
                 <span class="order-status-badge">${order.order_status}</span>
@@ -939,15 +1275,6 @@
             </div>
           `;
         }).join('');
-      } catch (error) {
-        console.error('Error loading orders:', error);
-        document.getElementById('ordersContainer').innerHTML = `
-          <div class="no-orders">
-            <h2>⚠️ Error Loading Orders</h2>
-            <p>Please check your connection and try again.</p>
-          </div>
-        `;
-      }
     }
 
     function openDeliveryModal(orderId, orderNumber) {
