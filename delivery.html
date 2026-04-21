@@ -488,6 +488,131 @@
       font-size: 0.75rem;
       font-weight: 600;
     }
+
+    /* ── Tap-to-action contact links ─────────────────────────────── */
+    .contact-link {
+      display: block;
+      color: #017d8e;
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      background: rgba(1,125,142,0.08);
+      border: 1px solid rgba(1,125,142,0.25);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: rgba(1,125,142,0.3);
+    }
+    .contact-link:active { background: rgba(1,125,142,0.25); transform: scale(0.98); }
+    .contact-link:hover { background: rgba(1,125,142,0.18); border-color: #017d8e; }
+    .map-link { color: #4fd1c5; font-weight: 600; }
+    .map-link .contact-cta {
+      float: right;
+      background: #015A64;
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .phone-link { flex: 1; text-align: center; font-weight: 600; }
+    .contact-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+    .contact-pill {
+      background: linear-gradient(135deg, #015A64, #017d8e);
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: rgba(1,125,142,0.5);
+    }
+    .contact-pill:active { transform: scale(0.96); }
+
+    /* ── Summary stats bar ──────────────────────────────────────── */
+    .summary-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      animation: fadeIn 0.6s ease-out;
+    }
+    .summary-stat {
+      flex: 1;
+      background: rgba(1,125,142,0.1);
+      border: 1px solid rgba(1,125,142,0.3);
+      border-radius: 12px;
+      padding: 14px 8px;
+      text-align: center;
+    }
+    .summary-stat .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #4fd1c5;
+      display: block;
+      line-height: 1;
+    }
+    .summary-stat .lbl {
+      font-size: 0.7rem;
+      color: #888;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      display: block;
+    }
+    .summary-stat.urgent { background: rgba(244,67,54,0.12); border-color: rgba(244,67,54,0.4); }
+    .summary-stat.urgent .num { color: #ff6b6b; }
+
+    /* ── Logout button ──────────────────────────────────────────── */
+    .logout-btn {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      background: rgba(244,67,54,0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(244,67,54,0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+    .logout-btn:hover { background: rgba(244,67,54,0.3); }
+    .logout-btn.hidden { display: none; }
+
+    /* ── Auto-refresh indicator ─────────────────────────────────── */
+    .refresh-tag {
+      text-align: center;
+      color: #555;
+      font-size: 0.72rem;
+      margin: 8px 0 16px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .refresh-tag .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #4caf50;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -510,6 +635,8 @@
     </div>
   </div>
 
+  <button class="logout-btn hidden" id="logoutBtn" onclick="doLogout()">🚪 Logout</button>
+
   <div class="cart-nav">
     <a href="index.html" class="cart-icon">
       🏠 <span style="font-size: 0.9rem;">Home</span>
@@ -522,8 +649,14 @@
       <p class="delivery-subtitle">Orders ready for delivery</p>
     </div>
 
+    <div id="summaryBar" class="summary-bar" style="display:none;"></div>
+
     <div id="ordersContainer" class="loading-state">
       Loading orders...
+    </div>
+
+    <div class="refresh-tag" id="refreshTag" style="display:none;">
+      <span class="dot"></span>Live · Auto-refreshing every 60s
     </div>
 
     <h2 class="section-title">✅ Past Deliveries (24 Hours)</h2>
@@ -616,13 +749,43 @@
         }
         deliveryCredentials = creds;
         document.getElementById('loginOverlay').classList.add('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
         loadOrders();
         setTimeout(() => loadPastDeliveries(), 500);
+        startAutoRefresh();
       } catch(e) {
         errorEl.textContent = 'Connection error. Please try again.';
         btn.disabled = false;
         btn.textContent = 'Access Portal';
       }
+    }
+
+    function doLogout() {
+      if (!confirm('Log out of the delivery portal?')) return;
+      deliveryCredentials = null;
+      stopAutoRefresh();
+      document.getElementById('logoutBtn').classList.add('hidden');
+      document.getElementById('summaryBar').style.display = 'none';
+      document.getElementById('refreshTag').style.display = 'none';
+      document.getElementById('ordersContainer').innerHTML = '<div class="loading-state">Logged out</div>';
+      document.getElementById('pastDeliveriesContainer').innerHTML = '<p style="color: #888; text-align: center;">Login required to view past deliveries</p>';
+      document.getElementById('loginPasswordInput').value = '';
+      document.getElementById('loginError').textContent = '';
+      document.getElementById('loginOverlay').classList.remove('hidden');
+    }
+
+    let autoRefreshTimer = null;
+    function startAutoRefresh() {
+      stopAutoRefresh();
+      autoRefreshTimer = setInterval(() => {
+        if (deliveryCredentials && !document.getElementById('deliveryModal').classList.contains('active')) {
+          loadOrders();
+          loadPastDeliveries();
+        }
+      }, 60000);
+    }
+    function stopAutoRefresh() {
+      if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
     }
 
     // ── End Login Overlay ──────────────────────────────────────────
@@ -661,9 +824,43 @@
               <p style="margin-top: 20px; font-size: 0.9rem;">Check back soon for new deliveries.</p>
             </div>
           `;
+          document.getElementById('summaryBar').style.display = 'none';
+          document.getElementById('refreshTag').style.display = 'block';
           return;
         }
-        
+
+        // Sort orders: soonest delivery date first, then by order date
+        orders.sort((a, b) => {
+          const ad = a.delivery_date ? a.delivery_date.split('T')[0] : '9999-12-31';
+          const bd = b.delivery_date ? b.delivery_date.split('T')[0] : '9999-12-31';
+          if (ad !== bd) return ad.localeCompare(bd);
+          return new Date(a.created_at) - new Date(b.created_at);
+        });
+
+        // Render summary bar: total orders, today count, total cups
+        const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+        let todayCount = 0, totalCups = 0;
+        orders.forEach(o => {
+          if (o.delivery_date && o.delivery_date.split('T')[0] === todayStr) todayCount++;
+          let parsed = [];
+          try { parsed = Array.isArray(o.items) ? o.items : JSON.parse(o.items || '[]'); } catch (e) {}
+          parsed.forEach(it => { totalCups += parseInt(it.quantity) || 1; });
+        });
+        const summaryBar = document.getElementById('summaryBar');
+        summaryBar.innerHTML = `
+          <div class="summary-stat ${todayCount > 0 ? 'urgent' : ''}">
+            <span class="num">${todayCount}</span><span class="lbl">Today</span>
+          </div>
+          <div class="summary-stat">
+            <span class="num">${orders.length}</span><span class="lbl">Pending</span>
+          </div>
+          <div class="summary-stat">
+            <span class="num">${totalCups}</span><span class="lbl">Cups</span>
+          </div>
+        `;
+        summaryBar.style.display = 'flex';
+        document.getElementById('refreshTag').style.display = 'block';
+
         container.innerHTML = orders.map(order => {
           // Safely parse items with fallback
           let items = [];
@@ -690,18 +887,37 @@
                 <span class="order-status-badge">${order.order_status}</span>
               </div>
               
-              ${order.delivery_date ? `
+              ${order.delivery_date ? (() => {
+                const dStr = order.delivery_date.split('T')[0];
+                const dObj = new Date(dStr + 'T12:00:00');
+                const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+                const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrowStr = tomorrow.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+                const dCanada = dObj.toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+                let urgencyBadge = '';
+                if (dCanada === todayStr) urgencyBadge = '<span style="background:#f44336;color:#fff;padding:3px 10px;border-radius:6px;font-size:0.72rem;font-weight:800;letter-spacing:1px;margin-left:8px;">🔥 TODAY</span>';
+                else if (dCanada === tomorrowStr) urgencyBadge = '<span style="background:#f5c842;color:#000;padding:3px 10px;border-radius:6px;font-size:0.72rem;font-weight:800;letter-spacing:1px;margin-left:8px;">📅 TOMORROW</span>';
+                return `
                 <div style="background: rgba(0, 191, 165, 0.15); border: 2px solid rgba(0, 191, 165, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
-                  <div style="font-weight: 700; color: #017d8e; margin-bottom: 5px;">🚚 Scheduled Delivery</div>
-                  <div style="font-size: 1rem; font-weight: 600;">📅 ${new Date(order.delivery_date).toLocaleDateString('en-CA', { timeZone: 'America/Toronto', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>
-                  <div style="color: #e0e0e0; margin-top: 4px;">⏰ ${order.delivery_time_slot}</div>
+                  <div style="font-weight: 700; color: #017d8e; margin-bottom: 5px;">🚚 Scheduled Delivery${urgencyBadge}</div>
+                  <div style="font-size: 1rem; font-weight: 600;">📅 ${dObj.toLocaleDateString('en-CA', { timeZone: 'America/Toronto', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>
                 </div>
-              ` : ''}
+                `;
+              })() : ''}
               
               <div class="customer-info">
                 <div class="customer-name">👤 ${order.customer_name}</div>
-                ${order.customer_address ? `<div class="customer-address">📍 ${order.customer_address}</div>` : ''}
-                ${order.customer_phone ? `<div class="customer-phone">📞 ${order.customer_phone}</div>` : ''}
+                ${order.customer_address ? `
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(order.customer_address)}" target="_blank" rel="noopener" class="contact-link map-link">
+                    📍 ${order.customer_address} <span class="contact-cta">→ Navigate</span>
+                  </a>
+                ` : ''}
+                ${order.customer_phone ? `
+                  <div class="contact-row">
+                    <a href="tel:${order.customer_phone.replace(/[^0-9+]/g,'')}" class="contact-link phone-link">📞 ${order.customer_phone}</a>
+                    <a href="sms:${order.customer_phone.replace(/[^0-9+]/g,'')}?&body=${encodeURIComponent('Hi! Your Strong Spoon order is here. I\'m at your door 🍫💪')}" class="contact-pill">💬 Text</a>
+                  </div>
+                ` : ''}
               </div>
               
               <div class="order-items-list">
