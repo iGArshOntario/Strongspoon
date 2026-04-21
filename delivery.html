@@ -731,6 +731,28 @@
       box-sizing: border-box;
     }
     .route-input:focus { outline: none; border-color: #f5c842; }
+    .use-location-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      background: linear-gradient(135deg, rgba(76,175,80,0.15), rgba(76,175,80,0.05));
+      color: #6ee78f;
+      border: 1px solid rgba(76,175,80,0.4);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .use-location-btn:active { transform: scale(0.98); }
+    .use-location-btn:hover { background: rgba(76,175,80,0.2); border-color: #4caf50; }
+    .use-location-btn.active {
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: #fff;
+      border-color: #4caf50;
+      box-shadow: 0 4px 14px rgba(76,175,80,0.35);
+    }
     .plan-route-btn {
       width: 100%;
       margin-top: 14px;
@@ -1042,7 +1064,9 @@
           <div id="pickListItems"></div>
         </div>
 
-        <label class="route-field">Starting from (address or postal code)</label>
+        <label class="route-field">Starting from</label>
+        <button type="button" class="use-location-btn" id="useLocationBtn" onclick="useMyLocation()">📍 Use My Current Location</button>
+        <div style="text-align:center;color:#555;font-size:0.72rem;margin:6px 0;letter-spacing:1px;">— OR TYPE AN ADDRESS —</div>
         <input type="text" id="routeStart" class="route-input" placeholder="e.g. your kitchen address" value="Regina, SK">
         <button class="plan-route-btn" id="planRouteBtn" onclick="planRoute()">🚀 Optimize Route</button>
         <div class="route-status" id="routeStatus"></div>
@@ -1180,6 +1204,40 @@
     let routeScope = 'today'; // today | tomorrow | all | pick
     let pickedIds = new Set();
     const expandedCards = new Set(); // order IDs currently expanded
+    let myLocationCoord = null; // {lat, lon} from device GPS
+    let myLocationTimestamp = 0;
+
+    function useMyLocation() {
+      const btn = document.getElementById('useLocationBtn');
+      if (!navigator.geolocation) {
+        alert('Your browser does not support GPS location.');
+        return;
+      }
+      btn.textContent = '⏳ Getting your location...';
+      btn.disabled = true;
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          myLocationCoord = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+          myLocationTimestamp = Date.now();
+          btn.disabled = false;
+          btn.classList.add('active');
+          btn.textContent = `✅ Using your location (±${Math.round(pos.coords.accuracy)}m) · Tap to refresh`;
+          // Visually deactivate the address field
+          document.getElementById('routeStart').style.opacity = '0.5';
+        },
+        err => {
+          btn.disabled = false;
+          btn.classList.remove('active');
+          btn.textContent = '📍 Use My Current Location';
+          let msg = 'Could not get your location.';
+          if (err.code === 1) msg = 'Location permission denied. Enable it in your browser settings.';
+          else if (err.code === 2) msg = 'Location unavailable. Are you indoors with no GPS?';
+          else if (err.code === 3) msg = 'Location request timed out. Try again.';
+          alert(msg);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+      );
+    }
 
     function toggleRoutePanel() {
       document.getElementById('routePanel').classList.toggle('expanded');
@@ -1333,14 +1391,22 @@
       btn.textContent = '⏳ Geocoding addresses...';
       status.classList.add('active');
 
-      status.textContent = `Looking up ${candidates.length} addresses + your start point...`;
-
-      // Geocode start
-      const startCoord = await geocodeAddress(startAddr);
-      if (!startCoord) {
-        status.textContent = `⚠️ Couldn't find "${startAddr}". Try a more specific address.`;
-        btn.disabled = false; btn.textContent = '🚀 Optimize Route';
-        return;
+      // Use GPS location if active, otherwise geocode the address
+      let startCoord = null;
+      let startLabel = '';
+      if (myLocationCoord) {
+        startCoord = myLocationCoord;
+        startLabel = 'your current location';
+        status.textContent = `Using your GPS location · Looking up ${candidates.length} addresses...`;
+      } else {
+        status.textContent = `Looking up ${candidates.length} addresses + your start point...`;
+        startCoord = await geocodeAddress(startAddr);
+        startLabel = `"${startAddr}"`;
+        if (!startCoord) {
+          status.textContent = `⚠️ Couldn't find "${startAddr}". Try a more specific address or tap "Use My Current Location".`;
+          btn.disabled = false; btn.textContent = '🚀 Optimize Route';
+          return;
+        }
       }
 
       // Geocode all candidates (sequential to respect Nominatim 1 req/sec rate limit)
