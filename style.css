@@ -3237,6 +3237,19 @@ a.pricing-tier {
   color: #00e5cc;
 }
 
+.qty-delivery-hint {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-top: 2px;
+}
+.qty-delivery-free {
+  color: #4caf50;
+}
+.qty-delivery-fee {
+  color: #e57373;
+}
+
 .qty-tier-save {
   font-size: 0.62rem;
   font-weight: 700;

@@ -207,14 +207,17 @@
         <button class="qty-tier-card" data-qty="1">
           <span class="qty-tier-qty">1 cup</span>
           <span class="qty-tier-price" id="qtyPrice1">$12.99</span>
+          <span class="qty-delivery-hint qty-delivery-fee">+ delivery</span>
         </button>
         <button class="qty-tier-card" data-qty="2">
           <span class="qty-tier-qty">2 cups</span>
           <span class="qty-tier-price" id="qtyPrice2">$25.98</span>
+          <span class="qty-delivery-hint qty-delivery-free">free delivery</span>
         </button>
         <button class="qty-tier-card" data-qty="4">
           <span class="qty-tier-qty">4 cups</span>
           <span class="qty-tier-price" id="qtyPrice4">$51.96</span>
+          <span class="qty-delivery-hint qty-delivery-free">free delivery</span>
         </button>
       </div>
       <div class="qty-picker-actions">
@@ -287,6 +290,13 @@
         if (p2) p2.textContent = '$14';
         if (p4) p4.textContent = '$28';
         if (note) note.textContent = '🔥 Launch special — $7 per cup today only';
+        // 2-cup = $14, still under $25 free-delivery threshold on launch day
+        var hint2 = document.querySelector('.qty-tier-card[data-qty="2"] .qty-delivery-hint');
+        if (hint2) {
+          hint2.textContent = '+ delivery';
+          hint2.classList.remove('qty-delivery-free');
+          hint2.classList.add('qty-delivery-fee');
+        }
       }
     })();
   </script>
