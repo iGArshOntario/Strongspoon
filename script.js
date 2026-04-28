@@ -124,12 +124,12 @@ class ShoppingCart {
     const cupsTotal = Math.round(totalCups * getCurrentPrice() * 100) / 100;
     // Flat $1 for any paid toppings — Nutty Crumble free till May 10; all toppings free on launch day
     const ncFreeTill = new Date('2026-05-10T23:59:59-05:00').getTime();
-    const paidToppings = this.items.some(item =>
-      (item.toppings || []).some(t => !(t.name === 'Nutty Crumble' && Date.now() <= ncFreeTill))
-    );
+    const paidToppingCount = this.items.reduce((sum, item) =>
+      sum + (item.toppings || []).filter(t => !(t.name === 'Nutty Crumble' && Date.now() <= ncFreeTill)).length
+    , 0);
     const isLaunch = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
                      Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
-    const toppingsFee = (paidToppings && !isLaunch) ? 1 : 0;
+    const toppingsFee = isLaunch ? 0 : paidToppingCount;
     return Math.round((cupsTotal + toppingsFee) * 100) / 100;
   }
 

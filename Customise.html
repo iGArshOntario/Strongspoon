@@ -110,7 +110,7 @@
         <div class="section-header">
           <span class="section-icon">🥜</span>
           <h2>Add Toppings</h2>
-          <span class="free-badge">+$1 flat</span>
+          <span class="free-badge">+$1 each</span>
         </div>
         <div class="toppings-grid">
           <div class="topping-card">
@@ -159,7 +159,7 @@
         <div class="section-header">
           <span class="section-icon">🍎</span>
           <h2>Fresh Fruits</h2>
-          <span class="free-badge">+$1 flat</span>
+          <span class="free-badge">+$1 each</span>
         </div>
         <div class="toppings-grid">
           <div class="topping-card">
@@ -263,7 +263,7 @@
       const ncBadge = document.getElementById('ncBadge');
       if (ncBadge) {
         if (Date.now() > ncFreeTill) {
-          ncBadge.textContent = '+$1 flat';
+          ncBadge.textContent = '+$1 each';
           ncBadge.classList.add('paid');
         }
       }

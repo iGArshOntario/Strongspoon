@@ -33,7 +33,7 @@ function renderCart() {
           ${hasToppings ? `
             <p class="item-toppings">
               <strong>Toppings:</strong> ${item.toppings.map(t => t.name).join(', ')}
-              <span class="topping-fee-note">+$1 flat</span>
+              <span class="topping-fee-note">+$1 each</span>
             </p>
           ` : ''}
         </div>

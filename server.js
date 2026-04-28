@@ -1207,7 +1207,7 @@ app.post('/create-payment-intent', async (req, res) => {
 
     const validatedItems = [];
     let totalCups = 0;
-    let anyToppings = false;
+    let totalPaidToppings = 0;
 
     for (const item of items) {
       const product = PRODUCTS[item.id];
@@ -1239,7 +1239,7 @@ app.post('/create-payment-intent', async (req, res) => {
       const paidToppings = validatedToppings.filter(t =>
         !(t === 'Nutty Crumble' && Date.now() <= NUTTY_CRUMBLE_FREE_TILL.getTime())
       );
-      if (paidToppings.length > 0) anyToppings = true;
+      totalPaidToppings += paidToppings.length;
 
       validatedItems.push({
         name: product.name,
@@ -1249,10 +1249,10 @@ app.post('/create-payment-intent', async (req, res) => {
       });
     }
 
-    // Flat $1 topping fee — free during 24-hour launch window
+    // $1 per paid topping — free during 24-hour launch window
     const isLaunchDay = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
                         Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
-    const toppingsFee = (anyToppings && !isLaunchDay) ? 1 : 0;
+    const toppingsFee = isLaunchDay ? 0 : totalPaidToppings;
 
     // Flat per-cup pricing — $12.99/cup (tax included)
     const cupsTotal = Math.round(totalCups * getCurrentPrice() * 100) / 100;
