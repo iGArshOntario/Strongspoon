@@ -327,7 +327,7 @@ function getCurrentPrice() {
   const now = Date.now();
   const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
   const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
-  return (now >= launchStart && now < launchEnd) ? 7.00 : 11.99;
+  return (now >= launchStart && now < launchEnd) ? 7.00 : 12.99;
 }
 // PRODUCT_PRICE is called per-request via getCurrentPrice() to handle live pricing changes
 const PRODUCT_SIZE = '250g';
@@ -1254,20 +1254,9 @@ app.post('/create-payment-intent', async (req, res) => {
                         Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
     const toppingsFee = (anyToppings && !isLaunchDay) ? 1 : 0;
 
-    // Bundle pricing: 1 cup $11.99 | 2 cups $19.99 | 4 cups $35.99
-    function getBundleBaseTotal(cups) {
-      const isLaunchDay = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
-                          Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
-      if (isLaunchDay) return cups * getCurrentPrice();
-      let c = cups, total = 0;
-      while (c >= 4) { total += 35.99; c -= 4; }
-      if (c >= 2)    { total += 19.99; c -= 2; }
-      total += c * 11.99;
-      return Math.round(total * 100) / 100;
-    }
-
-    const bundleBase = getBundleBaseTotal(totalCups);
-    const itemsSubtotal = Math.round((bundleBase + toppingsFee) * 100) / 100;
+    // Flat per-cup pricing — $12.99/cup (tax included)
+    const cupsTotal = Math.round(totalCups * getCurrentPrice() * 100) / 100;
+    const itemsSubtotal = Math.round((cupsTotal + toppingsFee) * 100) / 100;
     const deliveryFee = (orderType === 'pickup') ? 0 : (itemsSubtotal < 25 ? 4.99 : 0);
 
     // Apply promo code discount (server-side validation)
@@ -1327,7 +1316,7 @@ app.post('/create-payment-intent', async (req, res) => {
         delivery_fee: deliveryFee.toFixed(2),
         amex_fee: amexFee > 0 ? amexFee.toFixed(2) : '0',
         card_brand: cardBrand || 'unknown',
-        pricing: `Flat rate $${getCurrentPrice().toFixed(2)} per cup (tax included)`,
+        pricing: `$${getCurrentPrice().toFixed(2)} per cup (tax included)`,
         test_mode: isTestMode ? 'true' : 'false',
         promo_code: validatedPromo ? validatedPromo.code : '',
         promo_discount: promoDiscount > 0 ? promoDiscount.toFixed(2) : '0'
@@ -2669,8 +2658,8 @@ async function startServer() {
       customer_phone: '+1 (306) 555-0199',
       customer_address: '123 Wascana St, Regina, SK',
       items: JSON.stringify([
-        { name: 'Brownie Issues', quantity: 2, price: 11.99, toppings: [{ name: 'Almonds' }, { name: 'Cashews' }] },
-        { name: 'Golden Scoop', quantity: 1, price: 11.99, toppings: [] },
+        { name: 'Brownie Issues', quantity: 2, price: 12.99, toppings: [{ name: 'Almonds' }, { name: 'Cashews' }] },
+        { name: 'Golden Scoop', quantity: 1, price: 12.99, toppings: [] },
       ]),
       total_amount: '35.97',
       created_at: new Date().toISOString(),

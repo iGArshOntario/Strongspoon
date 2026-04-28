@@ -36,7 +36,7 @@
     </div>
 
     <div class="product-price">
-      <h2 id="productPrice">$11.99</h2>
+      <h2 id="productPrice">$12.99</h2>
       <p class="product-size">Size: 250g</p>
     </div>
     <div id="launchPriceBadge" class="product-launch-badge" style="display:none;"></div>
@@ -57,23 +57,19 @@
     <div class="cart-popup qty-picker-popup">
       <div class="cart-popup-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
       <h2 class="cart-popup-title">How many cups?</h2>
-      <p class="qty-picker-note">Bundle price applies to your total cart</p>
+      <p class="qty-picker-note">$12.99 per cup · tax included</p>
       <div class="qty-tier-cards">
         <button class="qty-tier-card" data-qty="1">
           <span class="qty-tier-qty">1 cup</span>
-          <span class="qty-tier-price">$11.99</span>
+          <span class="qty-tier-price">$12.99</span>
         </button>
-        <button class="qty-tier-card popular" data-qty="2">
-          <div class="qty-tier-badge">Most popular</div>
+        <button class="qty-tier-card" data-qty="2">
           <span class="qty-tier-qty">2 cups</span>
-          <span class="qty-tier-price">$19.99</span>
-          <span class="qty-tier-save">Save $4</span>
+          <span class="qty-tier-price">$25.98</span>
         </button>
-        <button class="qty-tier-card best-val" data-qty="4">
-          <div class="qty-tier-badge best">Best value</div>
+        <button class="qty-tier-card" data-qty="4">
           <span class="qty-tier-qty">4 cups</span>
-          <span class="qty-tier-price">$35.99</span>
-          <span class="qty-tier-save">Save $12</span>
+          <span class="qty-tier-price">$51.96</span>
         </button>
       </div>
       <div class="qty-picker-actions">
@@ -108,7 +104,7 @@
       const badge = document.getElementById('launchPriceBadge');
       const priceEl = document.getElementById('productPrice');
       if (ts >= launchStart && ts < launchEnd) {
-        priceEl.innerHTML = '<s style="font-size:0.62em;opacity:0.38;vertical-align:middle;margin-right:6px">$11.99</s><span style="color:#f5c842">$7</span>';
+        priceEl.innerHTML = '<s style="font-size:0.62em;opacity:0.38;vertical-align:middle;margin-right:6px">$12.99</s><span style="color:#f5c842">$7</span>';
         badge.style.display = 'inline-block';
         badge.textContent = 'Launch Day · Today Only';
         badge.classList.add('plb-live');

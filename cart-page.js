@@ -15,15 +15,12 @@ function renderCart() {
     totalEl.textContent = '$0.00';
     if (taxIncludedEl) taxIncludedEl.style.display = 'none';
     checkoutBtn.style.display = 'none';
-    const savingsEl = document.getElementById('bundleSavingsBanner');
-    if (savingsEl) savingsEl.style.display = 'none';
     return;
   }
 
   checkoutBtn.style.display = 'inline-block';
 
   const totalCups = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-  const savings = getBundleSavings(totalCups);
 
   cartItemsContainer.innerHTML = cart.items.map((item, index) => {
     const hasToppings = item.toppings && item.toppings.length > 0;
@@ -51,17 +48,6 @@ function renderCart() {
       </div>
     `;
   }).join('');
-
-  // Bundle savings banner
-  const savingsEl = document.getElementById('bundleSavingsBanner');
-  if (savingsEl) {
-    if (savings > 0) {
-      savingsEl.innerHTML = `🎉 Bundle deal applied — you're saving <strong>$${savings.toFixed(2)}</strong>!`;
-      savingsEl.style.display = 'block';
-    } else {
-      savingsEl.style.display = 'none';
-    }
-  }
 
   const total = cart.getTotal();
   totalEl.textContent = `$${total.toFixed(2)}`;

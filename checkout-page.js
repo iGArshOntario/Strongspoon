@@ -119,19 +119,11 @@ function updateDeliveryFeeDisplay() {
   if (promoRow) promoRow.style.display = discount > 0 ? 'flex' : 'none';
   if (promoDisplay) promoDisplay.textContent = `-$${discount.toFixed(2)}`;
 
-  // Bundle savings row
-  const bundleSavingsRow = document.getElementById('bundleSavingsRow');
-  const bundleSavingsDisplay = document.getElementById('bundleSavingsDisplay');
-  const bundleSavings = getBundleSavings(totalCupsGlobal);
-  if (bundleSavingsRow) bundleSavingsRow.style.display = bundleSavings > 0 ? 'flex' : 'none';
-  if (bundleSavingsDisplay) bundleSavingsDisplay.textContent = `-$${bundleSavings.toFixed(2)}`;
-
-  // "You save" total row — shown when any savings exist
+  // "You save" total row — shown when promo discount is active
   const totalSavingsRow = document.getElementById('totalSavingsRow');
   const totalSavingsDisplay = document.getElementById('totalSavingsDisplay');
-  const totalSavings = Math.round((bundleSavings + discount) * 100) / 100;
-  if (totalSavingsRow) totalSavingsRow.style.display = totalSavings > 0 ? 'flex' : 'none';
-  if (totalSavingsDisplay) totalSavingsDisplay.textContent = `$${totalSavings.toFixed(2)}`;
+  if (totalSavingsRow) totalSavingsRow.style.display = discount > 0 ? 'flex' : 'none';
+  if (totalSavingsDisplay) totalSavingsDisplay.textContent = `$${discount.toFixed(2)}`;
 
   const total = getFinalTotal();
   if (totalEl) {
@@ -200,7 +192,6 @@ function renderCheckoutItems() {
 
   const totalCups = cart.items.reduce((sum, item) => sum + item.quantity, 0);
   totalCupsGlobal = totalCups;
-  const savings = getBundleSavings(totalCups);
 
   checkoutItemsContainer.innerHTML = cart.items.map((item, i) => {
     const hasToppings = item.toppings && item.toppings.length > 0;
