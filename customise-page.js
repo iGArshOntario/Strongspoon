@@ -162,12 +162,17 @@ if (customiseForm) {
     const hasToppings = selectedToppings.length > 0;
     const isLaunchNow = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
                         Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
+    const ncFreeTill = new Date('2026-05-10T23:59:59-05:00').getTime();
+    const isNcFree = Date.now() <= ncFreeTill;
+    // Only count toppings that actually cost money right now
+    const paidToppings = selectedToppings.filter(t => !(t.name === 'Nutty Crumble' && isNcFree));
+    const hasChargeableToppings = paidToppings.length > 0;
 
     pendingItem = {
       id: product.id,
       name: product.name,
       description: product.description,
-      price: product.price + (hasToppings && !isLaunchNow ? 1 : 0),
+      price: product.price + (hasChargeableToppings && !isLaunchNow ? 1 : 0),
       toppings: selectedToppings,
       image: product.image
     };

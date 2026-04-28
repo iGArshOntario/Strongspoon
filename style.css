@@ -4115,3 +4115,51 @@ input[type="radio"]:checked + label,
   color: #f5c842;
 }
 
+/* ── Nutty Crumble Exclusive Topping ─────────────────────────────── */
+.nutty-crumble-section {
+  border: 2px solid rgba(245,200,66,0.45) !important;
+  background: linear-gradient(145deg, rgba(245,200,66,0.07), rgba(1,90,100,0.12)) !important;
+  position: relative;
+  overflow: visible !important;
+}
+.nc-free-badge {
+  background: linear-gradient(135deg, #f5c842, #e6a800);
+  color: #000;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(245,200,66,0.4);
+}
+.nc-free-badge.paid {
+  background: linear-gradient(135deg, #555, #333);
+  color: #aaa;
+  box-shadow: none;
+}
+.nutty-crumble-card {
+  border: 1.5px solid rgba(245,200,66,0.35) !important;
+  background: rgba(245,200,66,0.05) !important;
+}
+.nutty-crumble-card label {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 14px 16px !important;
+}
+.nutty-crumble-card input[type="checkbox"]:checked + label {
+  border-color: #f5c842 !important;
+  background: rgba(245,200,66,0.12) !important;
+}
+.nutty-crumble-card input[type="checkbox"]:checked + label .topping-name {
+  color: #f5c842 !important;
+}
+.nc-sub {
+  font-size: 0.72rem;
+  color: #888;
+  line-height: 1.3;
+}
+

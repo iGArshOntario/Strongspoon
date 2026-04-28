@@ -773,14 +773,17 @@ const PRODUCTS = {
 };
 
 const TOPPINGS = {
-  'almonds': { name: 'Almonds', price: 0 },
-  'cashews': { name: 'Cashews', price: 0 },
-  'peanuts': { name: 'Peanuts', price: 0 },
-  'raisins': { name: 'Raisins', price: 0 },
-  'walnut': { name: 'Walnut', price: 0 },
-  'apple': { name: 'Apple', price: 0 },
-  'blueberries': { name: 'Blueberries', price: 0 }
+  'almonds':       { name: 'Almonds',       price: 0 },
+  'cashews':       { name: 'Cashews',       price: 0 },
+  'peanuts':       { name: 'Peanuts',       price: 0 },
+  'raisins':       { name: 'Raisins',       price: 0 },
+  'walnut':        { name: 'Walnut',        price: 0 },
+  'apple':         { name: 'Apple',         price: 0 },
+  'blueberries':   { name: 'Blueberries',   price: 0 },
+  'nutty-crumble': { name: 'Nutty Crumble', price: 0, freeTill: '2026-05-10' }
 };
+// Toppings that are complimentary (don't trigger $1 fee) within their free window
+const NUTTY_CRUMBLE_FREE_TILL = new Date('2026-05-10T23:59:59-05:00');
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -1232,7 +1235,11 @@ app.post('/create-payment-intent', async (req, res) => {
       }
 
       totalCups += item.quantity;
-      if (validatedToppings.length > 0) anyToppings = true;
+      // Nutty Crumble is free (doesn't trigger $1 fee) until May 10 2026
+      const paidToppings = validatedToppings.filter(t =>
+        !(t === 'Nutty Crumble' && Date.now() <= NUTTY_CRUMBLE_FREE_TILL.getTime())
+      );
+      if (paidToppings.length > 0) anyToppings = true;
 
       validatedItems.push({
         name: product.name,

@@ -71,11 +71,12 @@ const PRODUCTS = {
 
 // All toppings are included in base price - no extra charge
 const TOPPINGS = {
-  'almonds': { name: 'Almonds', price: 0 },
-  'cashews': { name: 'Cashews', price: 0 },
-  'peanuts': { name: 'Peanuts', price: 0 },
-  'raisins': { name: 'Raisins', price: 0 },
-  'walnut': { name: 'Walnut', price: 0 },
-  'apple': { name: 'Apple', price: 0 },
-  'blueberries': { name: 'Blueberries', price: 0 }
+  'almonds':       { name: 'Almonds',       price: 0 },
+  'cashews':       { name: 'Cashews',       price: 0 },
+  'peanuts':       { name: 'Peanuts',       price: 0 },
+  'raisins':       { name: 'Raisins',       price: 0 },
+  'walnut':        { name: 'Walnut',        price: 0 },
+  'apple':         { name: 'Apple',         price: 0 },
+  'blueberries':   { name: 'Blueberries',   price: 0 },
+  'nutty-crumble': { name: 'Nutty Crumble', price: 0, freeTill: '2026-05-10' }
 };
