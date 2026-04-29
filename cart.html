@@ -59,6 +59,34 @@
     }
   </script>
 
+  <!-- ── Edit Item Modal ── -->
+  <div class="cart-popup-overlay" id="editModalOverlay" onclick="closeEditModal(event)">
+    <div class="cart-popup edit-modal-popup">
+      <h2 class="cart-popup-title" style="margin-bottom:18px;">Edit Item</h2>
+
+      <!-- Flavour picker -->
+      <div class="edit-section-label">Flavour</div>
+      <div class="edit-flavour-grid" id="editFlavourGrid"></div>
+
+      <!-- Qty stepper -->
+      <div class="edit-section-label" style="margin-top:18px;">Quantity</div>
+      <div class="edit-qty-row">
+        <button class="edit-qty-btn" onclick="editQtyChange(-1)">−</button>
+        <span class="edit-qty-display" id="editQtyDisplay">1</span>
+        <button class="edit-qty-btn" onclick="editQtyChange(1)">+</button>
+      </div>
+
+      <!-- Toppings -->
+      <div class="edit-section-label" style="margin-top:18px;">Toppings <span class="edit-topping-note">+$1 each</span></div>
+      <div class="edit-toppings-grid" id="editToppingsGrid"></div>
+
+      <div class="cart-popup-actions" style="margin-top:22px;">
+        <button class="cart-popup-btn secondary" onclick="closeEditModal()">Cancel</button>
+        <button class="cart-popup-btn primary" onclick="saveEditModal()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
   <script src="products.js"></script>
   <script src="script.js"></script>
   <script src="cart-page.js"></script>

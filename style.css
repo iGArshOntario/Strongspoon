@@ -2335,6 +2335,175 @@ footer a:hover {
   transform: scale(1.1);
 }
 
+/* Edit item button */
+.item-action-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  justify-content: flex-end;
+}
+
+.edit-item-btn {
+  background: rgba(1,90,100,0.15);
+  border: 1px solid rgba(1,125,142,0.45);
+  color: #017d8e;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.edit-item-btn:hover {
+  background: rgba(1,125,142,0.28);
+  color: #EFE8D8;
+}
+
+/* ── Edit Modal ── */
+.edit-modal-popup {
+  max-height: 85vh;
+  overflow-y: auto;
+  width: min(420px, 94vw);
+}
+
+.edit-section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.edit-topping-note {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: #555;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 6px;
+}
+
+/* Flavour grid */
+.edit-flavour-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.edit-flavour-card {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.18s ease;
+  color: #EFE8D8;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+.edit-flavour-card:hover {
+  border-color: rgba(1,125,142,0.5);
+  background: rgba(1,90,100,0.1);
+}
+.edit-flavour-card.selected {
+  border-color: #017d8e;
+  background: rgba(1,125,142,0.2);
+  color: #EFE8D8;
+}
+.edit-flavour-emoji {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+.edit-flavour-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: left;
+  line-height: 1.2;
+}
+
+/* Qty stepper */
+.edit-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.edit-qty-btn {
+  width: 38px;
+  height: 38px;
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  color: #EFE8D8;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.edit-qty-btn:hover {
+  background: rgba(1,125,142,0.25);
+  border-color: #017d8e;
+}
+.edit-qty-display {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #EFE8D8;
+  min-width: 32px;
+  text-align: center;
+}
+
+/* Topping grid */
+.edit-toppings-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.edit-topping-card {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 8px 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+.edit-topping-card:hover {
+  border-color: rgba(1,125,142,0.4);
+}
+.edit-topping-card.checked {
+  border-color: #017d8e;
+  background: rgba(1,125,142,0.2);
+}
+.edit-topping-emoji {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+.edit-topping-name {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #EFE8D8;
+  text-align: center;
+  line-height: 1.2;
+}
+.nutty-free-tag {
+  display: block;
+  font-size: 0.52rem;
+  color: #4caf50;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
 .empty-cart {
   padding: 60px 20px;
   text-align: center;
