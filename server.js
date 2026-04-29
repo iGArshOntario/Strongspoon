@@ -855,6 +855,25 @@ pool.query(`
   )
 `).catch(err => console.error('Feedback table error:', err));
 
+// Create trainer_codes table
+pool.query(`
+  CREATE TABLE IF NOT EXISTS trainer_codes (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    trainer_name VARCHAR(100) NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )
+`).catch(err => console.error('Trainer codes table error:', err));
+
+// Add trainer columns to orders table
+pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS trainer_code VARCHAR(50)`)
+  .catch(err => console.error('trainer_code column error:', err));
+pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS trainer_free_topping BOOLEAN DEFAULT FALSE`)
+  .catch(err => console.error('trainer_free_topping column error:', err));
+pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS trainer_free_cup BOOLEAN DEFAULT FALSE`)
+  .catch(err => console.error('trainer_free_cup column error:', err));
+
 // Waitlist signup
 app.post('/waitlist', async (req, res) => {
   try {
@@ -1171,6 +1190,82 @@ app.delete('/admin/promo-codes/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: 'Failed to delete promo code' }); }
 });
 
+// ── Trainer codes: public validate ───────────────────────────────────────────
+app.post('/api/validate-trainer-code', async (req, res) => {
+  try {
+    const { code, email } = req.body;
+    if (!code || !email) return res.status(400).json({ error: 'code and email required' });
+    const tcResult = await pool.query(
+      `SELECT * FROM trainer_codes WHERE UPPER(code) = UPPER($1) AND active = TRUE`, [code.trim()]
+    );
+    if (tcResult.rows.length === 0) return res.json({ valid: false, error: 'Trainer code not found or inactive' });
+    const trainer = tcResult.rows[0];
+    // Count past orders with this email + trainer code
+    const countResult = await pool.query(
+      `SELECT COUNT(*) AS cnt FROM orders WHERE LOWER(customer_email) = LOWER($1) AND UPPER(trainer_code) = UPPER($2)`,
+      [email.trim(), code.trim()]
+    );
+    const pastOrders = parseInt(countResult.rows[0].cnt, 10);
+    const loyaltyCount = pastOrders % 10; // progress towards next free cup
+    const isNewCustomer = pastOrders === 0;
+    const freeCupThisOrder = pastOrders % 10 === 9;
+    res.json({ valid: true, trainerName: trainer.trainer_name, code: trainer.code, loyaltyCount, isNewCustomer, freeCupThisOrder, pastOrders });
+  } catch (err) {
+    console.error('Validate trainer code error:', err);
+    res.status(500).json({ error: 'Validation error' });
+  }
+});
+
+// ── Admin: trainer codes CRUD ─────────────────────────────────────────────────
+app.get('/admin/trainer-codes', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const result = await pool.query(`
+      SELECT tc.*, 
+        COUNT(o.id) AS total_orders,
+        (COUNT(o.id) * 2) AS commission_owed
+      FROM trainer_codes tc
+      LEFT JOIN orders o ON UPPER(o.trainer_code) = UPPER(tc.code)
+      GROUP BY tc.id
+      ORDER BY tc.created_at DESC
+    `);
+    res.json({ codes: result.rows });
+  } catch (err) { res.status(500).json({ error: 'Failed to load trainer codes' }); }
+});
+
+app.post('/admin/trainer-codes', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const { code, trainer_name } = req.body;
+    if (!code || !trainer_name) return res.status(400).json({ error: 'code and trainer_name required' });
+    const result = await pool.query(
+      `INSERT INTO trainer_codes (code, trainer_name) VALUES (UPPER($1), $2) RETURNING *`,
+      [code.trim(), trainer_name.trim()]
+    );
+    res.json({ success: true, trainer: result.rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(400).json({ error: 'Code already exists' });
+    res.status(500).json({ error: 'Failed to create trainer code' });
+  }
+});
+
+app.patch('/admin/trainer-codes/:id', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const { active } = req.body;
+    await pool.query('UPDATE trainer_codes SET active = $1 WHERE id = $2', [active, req.params.id]);
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Failed to update trainer code' }); }
+});
+
+app.delete('/admin/trainer-codes/:id', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    await pool.query('DELETE FROM trainer_codes WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Failed to delete trainer code' }); }
+});
+
 // ── Admin: customers CRM ──────────────────────────────────────────────────────
 app.get('/admin/customers', async (req, res) => {
   if (!requireAdmin(req, res)) return;
@@ -1199,7 +1294,7 @@ app.get('/admin/customers', async (req, res) => {
 
 app.post('/create-payment-intent', async (req, res) => {
   try {
-    const { customer, items, orderType, deliveryDate, deliveryTimeSlot, cardBrand, testMode, promoCode } = req.body;
+    const { customer, items, orderType, deliveryDate, deliveryTimeSlot, cardBrand, testMode, promoCode, trainerCode } = req.body;
     
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
@@ -1287,7 +1382,41 @@ app.post('/create-payment-intent', async (req, res) => {
       }
     }
 
-    const baseTotal = Math.max(0, Math.round((itemsSubtotal + deliveryFee - promoDiscount) * 100) / 100);
+    // Apply trainer code discount (server-side validation)
+    let trainerDiscount = 0;
+    let validatedTrainer = null;
+    let trainerFreeTopping = false;
+    let trainerFreeCup = false;
+    if (trainerCode && customer && customer.email) {
+      try {
+        const tcResult = await pool.query(
+          `SELECT * FROM trainer_codes WHERE UPPER(code) = UPPER($1) AND active = TRUE`, [trainerCode.trim()]
+        );
+        if (tcResult.rows.length > 0) {
+          validatedTrainer = tcResult.rows[0];
+          const countResult = await pool.query(
+            `SELECT COUNT(*) AS cnt FROM orders WHERE LOWER(customer_email) = LOWER($1) AND UPPER(trainer_code) = UPPER($2)`,
+            [customer.email.trim(), trainerCode.trim()]
+          );
+          const pastOrders = parseInt(countResult.rows[0].cnt, 10);
+          const isNewCustomer = pastOrders === 0;
+          const freeCupThisOrder = pastOrders % 10 === 9;
+          if (isNewCustomer && toppingsFee > 0) {
+            trainerFreeTopping = true;
+            trainerDiscount += 1; // 1 topping free
+          }
+          if (freeCupThisOrder) {
+            trainerFreeCup = true;
+            trainerDiscount += getCurrentPrice(); // 1 cup free
+          }
+          trainerDiscount = Math.min(Math.round(trainerDiscount * 100) / 100, itemsSubtotal);
+        }
+      } catch (tcErr) {
+        console.warn('Trainer code validation error (non-fatal):', tcErr.message);
+      }
+    }
+
+    const baseTotal = Math.max(0, Math.round((itemsSubtotal + deliveryFee - promoDiscount - trainerDiscount) * 100) / 100);
     const amexFee = (cardBrand === 'amex') ? Math.round(baseTotal * 0.006 * 100) / 100 : 0;
     const serverTotal = Math.round((baseTotal + amexFee) * 100) / 100;
 
@@ -1319,7 +1448,11 @@ app.post('/create-payment-intent', async (req, res) => {
         pricing: `$${getCurrentPrice().toFixed(2)} per cup (tax included)`,
         test_mode: isTestMode ? 'true' : 'false',
         promo_code: validatedPromo ? validatedPromo.code : '',
-        promo_discount: promoDiscount > 0 ? promoDiscount.toFixed(2) : '0'
+        promo_discount: promoDiscount > 0 ? promoDiscount.toFixed(2) : '0',
+        trainer_code: validatedTrainer ? validatedTrainer.code : '',
+        trainer_discount: trainerDiscount > 0 ? trainerDiscount.toFixed(2) : '0',
+        trainer_free_topping: trainerFreeTopping ? 'true' : 'false',
+        trainer_free_cup: trainerFreeCup ? 'true' : 'false'
       },
     });
 
@@ -1335,7 +1468,9 @@ app.post('/create-payment-intent', async (req, res) => {
     res.json({
       clientSecret: paymentIntent.client_secret,
       promoDiscount,
-      promoCode: validatedPromo ? validatedPromo.code : null
+      promoCode: validatedPromo ? validatedPromo.code : null,
+      trainerDiscount,
+      trainerCode: validatedTrainer ? validatedTrainer.code : null
     });
   } catch (error) {
     console.error('Payment Intent Error:', error);
@@ -1380,8 +1515,11 @@ app.post('/save-order', async (req, res) => {
         order_status,
         order_type,
         delivery_date,
-        delivery_time_slot
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        delivery_time_slot,
+        trainer_code,
+        trainer_free_topping,
+        trainer_free_cup
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING id, order_number, created_at
     `;
     
@@ -1397,7 +1535,10 @@ app.post('/save-order', async (req, res) => {
       'pending',
       metadata.order_type || 'delivery',
       metadata.delivery_date || null,
-      metadata.delivery_time_slot || null
+      metadata.delivery_time_slot || null,
+      metadata.trainer_code || null,
+      metadata.trainer_free_topping === 'true',
+      metadata.trainer_free_cup === 'true'
     ];
     
     const result = await pool.query(query, values);

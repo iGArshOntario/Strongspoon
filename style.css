@@ -3237,6 +3237,30 @@ a.pricing-tier {
   color: #00e5cc;
 }
 
+/* Trainer loyalty bar in checkout */
+.trainer-loyalty-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.trainer-loyalty-label {
+  font-size: 0.78rem;
+  color: #EFE8D8;
+  font-weight: 500;
+}
+.trainer-loyalty-track {
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  height: 8px;
+  overflow: hidden;
+}
+.trainer-loyalty-fill {
+  background: linear-gradient(90deg, #015A64, #4caf50);
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.8s ease;
+}
+
 .qty-delivery-hint {
   font-size: 0.65rem;
   font-weight: 600;

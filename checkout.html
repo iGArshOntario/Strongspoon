@@ -616,6 +616,10 @@
             <span class="checkout-fee-label" style="color:#4caf50;">🏷️ Promo discount</span>
             <span class="checkout-fee-amount" id="promoDiscountDisplay" style="color:#4caf50;">-$0.00</span>
           </div>
+          <div id="trainerDiscountRow" class="checkout-fee-row" style="display:none;">
+            <span class="checkout-fee-label" id="trainerDiscountLabel" style="color:#4caf50;">🏋️ Trainer perk</span>
+            <span class="checkout-fee-amount" id="trainerDiscountDisplay" style="color:#4caf50;">-$0.00</span>
+          </div>
           <div id="totalSavingsRow" style="display:none; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#1a3a1a,#0d2e0d); border:1.5px solid #4caf50; border-radius:10px; padding:10px 14px; margin:6px 0 4px; font-weight:700; font-size:0.95rem;">
             <span style="display:flex; flex-direction:column; gap:2px;">
               <span style="color:#4caf50; letter-spacing:0.3px;">💚 You save</span>
@@ -724,6 +728,20 @@
                 style="background:#015A64;color:#EFE8D8;border:none;padding:0 18px;border-radius:8px;font-weight:600;font-size:0.9rem;cursor:pointer;white-space:nowrap;transition:background 0.2s;">Apply</button>
             </div>
             <div id="promoMessage" style="font-size:0.82rem;margin-top:6px;font-weight:600;min-height:18px;"></div>
+          </div>
+
+          <div class="checkout-section-label">Trainer Code <span style="font-size:0.72rem;color:#888;font-weight:400;">(optional — enter your gym trainer's code)</span></div>
+
+          <div class="form-group" style="margin-bottom:18px;">
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="trainerCodeInput" placeholder="e.g. COACH_MIKE" autocomplete="off"
+                style="flex:1;text-transform:uppercase;letter-spacing:1px;"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();applyTrainerCode();}">
+              <button type="button" id="trainerApplyBtn" onclick="applyTrainerCode()"
+                style="background:#015A64;color:#EFE8D8;border:none;padding:0 18px;border-radius:8px;font-weight:600;font-size:0.9rem;cursor:pointer;white-space:nowrap;transition:background 0.2s;">Apply</button>
+            </div>
+            <div id="trainerMessage" style="font-size:0.82rem;margin-top:6px;font-weight:600;min-height:18px;"></div>
+            <div id="trainerLoyalty" style="display:none;margin-top:8px;"></div>
           </div>
 
           <div class="checkout-section-label">Payment</div>

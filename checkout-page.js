@@ -8,6 +8,7 @@ let orderType = 'delivery';
 let cartSubtotal = 0;
 let cardBrand = null;
 let appliedPromo = null; // { code, type, value, min_spend }
+let appliedTrainer = null; // { code, trainerName, loyaltyCount, isNewCustomer, freeCupThisOrder }
 let totalCupsGlobal = 0;
 
 function getDeliveryFee() {
@@ -25,16 +26,35 @@ function getPromoDiscount() {
   return Math.round(cartSubtotal * (appliedPromo.value / 100) * 100) / 100;
 }
 
+function hasPaidToppingsInCart() {
+  if (!cart || !cart.items) return false;
+  const ncFreeTill = new Date('2026-05-10T23:59:59-05:00').getTime();
+  const isLaunch = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
+                   Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
+  if (isLaunch) return false;
+  return cart.items.some(item =>
+    (item.toppings || []).some(t => !(t.name === 'Nutty Crumble' && Date.now() <= ncFreeTill))
+  );
+}
+
+function getTrainerDiscount() {
+  if (!appliedTrainer) return 0;
+  let discount = 0;
+  if (appliedTrainer.isNewCustomer && hasPaidToppingsInCart()) discount += 1;
+  if (appliedTrainer.freeCupThisOrder) discount += PRODUCT_PRICE;
+  return Math.min(Math.round(discount * 100) / 100, cartSubtotal);
+}
+
 function getAmexFee() {
   if (cardBrand !== 'amex') return 0;
-  const afterPromo = Math.max(0, getBaseTotal() - getPromoDiscount());
-  return Math.round(afterPromo * AMEX_SURCHARGE_RATE * 100) / 100;
+  const afterDiscount = Math.max(0, getBaseTotal() - getPromoDiscount() - getTrainerDiscount());
+  return Math.round(afterDiscount * AMEX_SURCHARGE_RATE * 100) / 100;
 }
 
 function getFinalTotal() {
   if (IS_TEST_MODE) return 1.00;
-  const afterPromo = Math.max(0, getBaseTotal() - getPromoDiscount());
-  return Math.round((afterPromo + getAmexFee()) * 100) / 100;
+  const afterDiscount = Math.max(0, getBaseTotal() - getPromoDiscount() - getTrainerDiscount());
+  return Math.round((afterDiscount + getAmexFee()) * 100) / 100;
 }
 
 // Promo code validation
@@ -79,6 +99,87 @@ async function applyPromoCode() {
   }
 }
 
+// Trainer code validation
+async function applyTrainerCode() {
+  const input = document.getElementById('trainerCodeInput');
+  const btn = document.getElementById('trainerApplyBtn');
+  const msg = document.getElementById('trainerMessage');
+  const loyaltyEl = document.getElementById('trainerLoyalty');
+  const emailInput = document.getElementById('email');
+  const code = input ? input.value.trim() : '';
+  const email = emailInput ? emailInput.value.trim() : '';
+  if (!code) return;
+  if (!email) {
+    msg.textContent = 'Please enter your email address first';
+    msg.style.color = '#f44336';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = '…';
+  msg.textContent = '';
+  if (loyaltyEl) loyaltyEl.style.display = 'none';
+  try {
+    const res = await fetch('/api/validate-trainer-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, email })
+    });
+    const data = await res.json();
+    if (res.ok && data.valid) {
+      appliedTrainer = { code: data.code, trainerName: data.trainerName, loyaltyCount: data.loyaltyCount, isNewCustomer: data.isNewCustomer, freeCupThisOrder: data.freeCupThisOrder };
+      let perks = [];
+      if (data.isNewCustomer && hasPaidToppingsInCart()) perks.push('1 topping free');
+      if (data.freeCupThisOrder) perks.push('1 cup FREE 🎉');
+      const perkNote = perks.length ? ` — ${perks.join(', ')}` : '';
+      msg.textContent = `✅ ${data.trainerName}'s code applied${perkNote}`;
+      msg.style.color = '#4caf50';
+      input.disabled = true;
+      btn.textContent = 'Remove';
+      btn.disabled = false;
+      btn.onclick = removeTrainerCode;
+      // Show loyalty progress
+      if (loyaltyEl) {
+        const next = data.loyaltyCount;
+        const pct = Math.round((next / 10) * 100);
+        if (data.freeCupThisOrder) {
+          loyaltyEl.innerHTML = `<div class="trainer-loyalty-bar-wrap"><span class="trainer-loyalty-label">🎁 This is your 10th order — enjoy your <strong>FREE cup</strong>!</span></div>`;
+        } else {
+          loyaltyEl.innerHTML = `
+            <div class="trainer-loyalty-bar-wrap">
+              <span class="trainer-loyalty-label">Loyalty: <strong>${next}/10</strong> orders towards a free cup</span>
+              <div class="trainer-loyalty-track"><div class="trainer-loyalty-fill" style="width:${pct}%"></div></div>
+            </div>`;
+        }
+        loyaltyEl.style.display = 'block';
+      }
+      updateDeliveryFeeDisplay();
+    } else {
+      msg.textContent = data.error || 'Invalid trainer code';
+      msg.style.color = '#f44336';
+      btn.textContent = 'Apply';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    msg.textContent = 'Could not validate code';
+    msg.style.color = '#f44336';
+    btn.textContent = 'Apply';
+    btn.disabled = false;
+  }
+}
+
+function removeTrainerCode() {
+  appliedTrainer = null;
+  const input = document.getElementById('trainerCodeInput');
+  const btn = document.getElementById('trainerApplyBtn');
+  const msg = document.getElementById('trainerMessage');
+  const loyaltyEl = document.getElementById('trainerLoyalty');
+  if (input) { input.value = ''; input.disabled = false; }
+  if (btn) { btn.textContent = 'Apply'; btn.onclick = applyTrainerCode; btn.disabled = false; }
+  if (msg) msg.textContent = '';
+  if (loyaltyEl) loyaltyEl.style.display = 'none';
+  updateDeliveryFeeDisplay();
+}
+
 function removePromoCode() {
   appliedPromo = null;
   const input = document.getElementById('promoCodeInput');
@@ -119,11 +220,25 @@ function updateDeliveryFeeDisplay() {
   if (promoRow) promoRow.style.display = discount > 0 ? 'flex' : 'none';
   if (promoDisplay) promoDisplay.textContent = `-$${discount.toFixed(2)}`;
 
-  // "You save" total row — shown when promo discount is active
+  const trainerDiscountRow = document.getElementById('trainerDiscountRow');
+  const trainerDiscountDisplay = document.getElementById('trainerDiscountDisplay');
+  const trainerDiscountLabel = document.getElementById('trainerDiscountLabel');
+  const td = getTrainerDiscount();
+  if (trainerDiscountRow) trainerDiscountRow.style.display = td > 0 ? 'flex' : 'none';
+  if (trainerDiscountDisplay) trainerDiscountDisplay.textContent = `-$${td.toFixed(2)}`;
+  if (trainerDiscountLabel && appliedTrainer) {
+    let label = `🏋️ ${appliedTrainer.trainerName}'s code`;
+    if (appliedTrainer.isNewCustomer && hasPaidToppingsInCart()) label += ' (free topping)';
+    if (appliedTrainer.freeCupThisOrder) label += ' (free cup)';
+    trainerDiscountLabel.textContent = label;
+  }
+
+  // "You save" total row — shown when any discount active
   const totalSavingsRow = document.getElementById('totalSavingsRow');
   const totalSavingsDisplay = document.getElementById('totalSavingsDisplay');
-  if (totalSavingsRow) totalSavingsRow.style.display = discount > 0 ? 'flex' : 'none';
-  if (totalSavingsDisplay) totalSavingsDisplay.textContent = `$${discount.toFixed(2)}`;
+  const totalSaved = discount + td;
+  if (totalSavingsRow) totalSavingsRow.style.display = totalSaved > 0 ? 'flex' : 'none';
+  if (totalSavingsDisplay) totalSavingsDisplay.textContent = `$${totalSaved.toFixed(2)}`;
 
   const total = getFinalTotal();
   if (totalEl) {
@@ -367,6 +482,7 @@ form.addEventListener('submit', async (e) => {
     cardBrand: cardBrand || 'unknown',
     testMode: IS_TEST_MODE,
     promoCode: appliedPromo ? appliedPromo.code : null,
+    trainerCode: appliedTrainer ? appliedTrainer.code : null,
   };
 
   try {
@@ -405,6 +521,15 @@ form.addEventListener('submit', async (e) => {
         messageDiv.textContent = `✅ Payment successful! Order #${saveData.orderNumber} confirmed${testTag}. Check your email — redirecting…`;
         messageDiv.className = 'payment-message success';
         cart.clear();
+        if (appliedTrainer) {
+          sessionStorage.setItem('ss_trainer_loyalty', JSON.stringify({
+            trainerName: appliedTrainer.trainerName,
+            loyaltyCount: appliedTrainer.loyaltyCount + 1, // +1 for this order
+            freeCupThisOrder: appliedTrainer.freeCupThisOrder
+          }));
+        } else {
+          sessionStorage.removeItem('ss_trainer_loyalty');
+        }
         setTimeout(() => { window.location.href = `order-success.html?order=${encodeURIComponent(saveData.orderNumber)}`; }, 2500);
       } catch (saveError) {
         console.error('Error saving order:', saveError);

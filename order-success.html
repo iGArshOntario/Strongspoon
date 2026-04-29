@@ -239,6 +239,10 @@
       </div>
     </div>
 
+    <div id="trainerLoyaltyCard" style="display:none;margin:18px 0;padding:16px 20px;background:linear-gradient(135deg,rgba(1,90,100,0.18),rgba(0,0,0,0));border:1.5px solid rgba(1,125,142,0.35);border-radius:16px;text-align:left;">
+      <div id="trainerLoyaltyContent"></div>
+    </div>
+
     <a href="index.html?preview=strongspoon" class="btn-home">Back to Home</a>
     <a href="feedback.html" class="btn-feedback">⭐ Leave a Review</a>
 
@@ -252,6 +256,32 @@
       document.getElementById('orderNumberDisplay').textContent = orderNum;
       document.getElementById('orderBadge').style.display = 'inline-block';
     }
+    // Show trainer loyalty progress if applicable
+    try {
+      const loyaltyRaw = sessionStorage.getItem('ss_trainer_loyalty');
+      if (loyaltyRaw) {
+        const loyalty = JSON.parse(loyaltyRaw);
+        sessionStorage.removeItem('ss_trainer_loyalty');
+        const card = document.getElementById('trainerLoyaltyCard');
+        const content = document.getElementById('trainerLoyaltyContent');
+        if (card && content) {
+          const count = loyalty.loyaltyCount;
+          const pct = Math.round(((count % 10) / 10) * 100);
+          if (loyalty.freeCupThisOrder) {
+            content.innerHTML = `<div style="font-size:1.1rem;font-weight:700;color:#4caf50;margin-bottom:6px;">🎁 You earned a FREE cup!</div><div style="font-size:0.82rem;color:rgba(239,232,216,0.65);">Congrats on your 10th order with ${loyalty.trainerName}'s code. Your next 10-order cycle has started!</div>`;
+          } else {
+            const displayCount = count % 10;
+            content.innerHTML = `
+              <div style="font-size:0.78rem;font-weight:700;color:#017d8e;letter-spacing:0.5px;margin-bottom:6px;">🏋️ ${loyalty.trainerName}'s Loyalty Reward</div>
+              <div style="font-size:0.85rem;color:#EFE8D8;margin-bottom:10px;">You're at <strong>${displayCount}/10</strong> orders — ${10 - displayCount} more to unlock a <strong>free cup</strong>!</div>
+              <div style="background:rgba(255,255,255,0.08);border-radius:20px;height:10px;overflow:hidden;">
+                <div style="background:linear-gradient(90deg,#015A64,#4caf50);height:100%;width:${pct}%;border-radius:20px;transition:width 1s ease;"></div>
+              </div>`;
+          }
+          card.style.display = 'block';
+        }
+      }
+    } catch(e) {}
   </script>
 <script src="/track.js" defer></script>
 </body>

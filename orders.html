@@ -610,9 +610,10 @@
       font-weight: 600;
     }
 
-    /* ── Settings + Promo + Customers ── */
+    /* ── Settings + Promo + Trainer + Customers ── */
     .settings-section,
     .promo-section,
+    .trainer-section,
     .customers-section {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.1);
@@ -1444,6 +1445,27 @@
       <div id="promoCodesTable"><p style="color:#888;font-size:0.85rem;">Loading…</p></div>
     </div>
 
+    <!-- ── TRAINER CODES ───────────────────────────────────────────── -->
+    <h2 class="section-title">🏋️ Trainer Codes</h2>
+    <div class="trainer-section">
+      <div class="promo-form" style="grid-template-columns:1fr 1fr auto;">
+        <div>
+          <label style="color:#888;font-size:0.78rem;display:block;margin-bottom:4px;">Code *</label>
+          <input type="text" id="newTrainerCode" placeholder="e.g. COACH_MIKE" style="text-transform:uppercase;width:100%;">
+        </div>
+        <div>
+          <label style="color:#888;font-size:0.78rem;display:block;margin-bottom:4px;">Trainer Name *</label>
+          <input type="text" id="newTrainerName" placeholder="e.g. Mike Johnson" style="width:100%;">
+        </div>
+        <div style="align-self:flex-end;">
+          <button class="promo-create-btn" onclick="createTrainerCode()">+ Add Trainer</button>
+        </div>
+      </div>
+      <div id="trainerCreateMsg" style="font-size:0.82rem;font-weight:600;margin-bottom:14px;"></div>
+      <p style="color:#888;font-size:0.8rem;margin-bottom:12px;">Perks: new customers get 1 free topping · every 10th order per customer = 1 free cup · trainer earns $2 commission per order (tracked below)</p>
+      <div id="trainerCodesTable"><p style="color:#888;font-size:0.85rem;">Loading…</p></div>
+    </div>
+
     <!-- ── CUSTOMERS CRM ───────────────────────────────────────────── -->
     <h2 class="section-title">👥 Customers</h2>
     <div class="customers-section">
@@ -1865,6 +1887,7 @@
         loadFeedback();
         loadSettings();
         loadPromos();
+        loadTrainerCodes();
         loadCustomers();
         
         // Render orders table
@@ -2486,6 +2509,83 @@
         headers: { 'Authorization': 'Basic ' + adminCredentials }
       });
       loadPromos();
+    }
+
+    // ── Trainer Codes ─────────────────────────────────────────────────────────
+    async function loadTrainerCodes() {
+      if (!adminCredentials) return;
+      try {
+        const res = await fetch('/admin/trainer-codes', { headers: { 'Authorization': 'Basic ' + adminCredentials } });
+        if (!res.ok) return;
+        const { codes } = await res.json();
+        const container = document.getElementById('trainerCodesTable');
+        if (!codes.length) { container.innerHTML = '<p style="color:#888;font-size:0.85rem;">No trainer codes yet. Add one above.</p>'; return; }
+        container.innerHTML = `
+          <table class="promo-table">
+            <thead><tr>
+              <th>Code</th><th>Trainer</th><th>Orders</th><th>Commission Owed</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody>
+              ${codes.map(c => `<tr>
+                <td><strong style="color:#017d8e;font-family:monospace;letter-spacing:1px;">${c.code}</strong></td>
+                <td>${c.trainer_name}</td>
+                <td>${c.total_orders}</td>
+                <td style="color:#f5c842;font-weight:700;">$${(parseFloat(c.commission_owed)||0).toFixed(2)}</td>
+                <td class="${c.active ? 'promo-badge-active' : 'promo-badge-inactive'}">${c.active ? '● Active' : '● Off'}</td>
+                <td>
+                  <button class="promo-action-btn btn-toggle-promo" onclick="toggleTrainer(${c.id}, ${!c.active})">${c.active ? 'Pause' : 'Enable'}</button>
+                  <button class="promo-action-btn btn-del-promo" onclick="deleteTrainer(${c.id})">Delete</button>
+                </td>
+              </tr>`).join('')}
+            </tbody>
+          </table>`;
+      } catch(e) { console.error('Trainer codes load error', e); }
+    }
+
+    async function createTrainerCode() {
+      if (!adminCredentials) return;
+      const code = document.getElementById('newTrainerCode').value.trim();
+      const trainer_name = document.getElementById('newTrainerName').value.trim();
+      const msg = document.getElementById('trainerCreateMsg');
+      if (!code || !trainer_name) { msg.textContent = '⚠️ Code and trainer name are required.'; msg.style.color = '#f44336'; return; }
+      try {
+        const res = await fetch('/admin/trainer-codes', {
+          method: 'POST',
+          headers: { 'Authorization': 'Basic ' + adminCredentials, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, trainer_name })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = `✅ ${data.trainer.code} created for ${trainer_name}!`;
+          msg.style.color = '#4caf50';
+          document.getElementById('newTrainerCode').value = '';
+          document.getElementById('newTrainerName').value = '';
+          loadTrainerCodes();
+        } else {
+          msg.textContent = '❌ ' + (data.error || 'Failed');
+          msg.style.color = '#f44336';
+        }
+      } catch(e) { msg.textContent = '❌ Server error'; msg.style.color = '#f44336'; }
+    }
+
+    async function toggleTrainer(id, active) {
+      if (!adminCredentials) return;
+      await fetch(`/admin/trainer-codes/${id}`, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Basic ' + adminCredentials, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active })
+      });
+      loadTrainerCodes();
+    }
+
+    async function deleteTrainer(id) {
+      if (!adminCredentials) return;
+      if (!confirm('Delete this trainer code?')) return;
+      await fetch(`/admin/trainer-codes/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Basic ' + adminCredentials }
+      });
+      loadTrainerCodes();
     }
 
     // ── Customers CRM ─────────────────────────────────────────────────────────
