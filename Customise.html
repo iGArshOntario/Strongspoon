@@ -85,21 +85,21 @@
         </div>
       </div>
 
-      <!-- ✨ Exclusive Nutty Crumble -->
+      <!-- ✨ Exclusive Nutty Crumble — always included free -->
       <div class="premium-section nutty-crumble-section" id="nuttyCrumbleSection">
         <div class="section-header" style="flex-wrap:wrap;gap:6px;">
           <span class="section-icon">✨</span>
-          <h2 style="margin:0;">Exclusive Topping</h2>
-          <span class="nc-free-badge" id="ncBadge">FREE till May 10</span>
+          <h2 style="margin:0;">Signature Topping</h2>
+          <span class="nc-free-badge" id="ncBadge">Always FREE</span>
         </div>
         <div class="toppings-grid" style="grid-template-columns:1fr;">
           <div class="topping-card nutty-crumble-card" id="nuttyCrumbleCard">
-            <input type="checkbox" id="nutty-crumble" name="toppings" value="nutty-crumble">
+            <input type="checkbox" id="nutty-crumble" name="toppings" value="nutty-crumble" checked>
             <label for="nutty-crumble">
               <span class="topping-emoji">🥐</span>
               <div style="display:flex;flex-direction:column;gap:2px;">
                 <span class="topping-name" style="font-size:1.05rem;">Nutty Crumble</span>
-                <span class="nc-sub">Crunchy nut &amp; oat crumble blend · Limited exclusive</span>
+                <span class="nc-sub">Included with every order · Uncheck to remove</span>
               </div>
             </label>
           </div>
@@ -261,16 +261,6 @@
   <script src="customise-page.js"></script>
   <script>
     (function() {
-      // Nutty Crumble free period ends May 10 2026
-      const ncFreeTill = new Date('2026-05-10T23:59:59-05:00').getTime();
-      const ncBadge = document.getElementById('ncBadge');
-      if (ncBadge) {
-        if (Date.now() > ncFreeTill) {
-          ncBadge.textContent = '+$1 each';
-          ncBadge.classList.add('paid');
-        }
-      }
-
       const launchStart = new Date('2026-04-10T08:00:00-05:00').getTime();
       const launchEnd   = new Date('2026-04-11T08:00:00-05:00').getTime();
       const ts = Date.now();

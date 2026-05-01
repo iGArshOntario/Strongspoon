@@ -28,12 +28,11 @@ function getPromoDiscount() {
 
 function hasPaidToppingsInCart() {
   if (!cart || !cart.items) return false;
-  const ncFreeTill = new Date('2026-05-10T23:59:59-05:00').getTime();
   const isLaunch = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
                    Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();
   if (isLaunch) return false;
   return cart.items.some(item =>
-    (item.toppings || []).some(t => !(t.name === 'Nutty Crumble' && Date.now() <= ncFreeTill))
+    (item.toppings || []).some(t => t.name !== 'Nutty Crumble')
   );
 }
 

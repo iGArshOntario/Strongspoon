@@ -181,5 +181,8 @@ if (customiseForm) {
     flavourSelected.style.display    = 'none';
     flavourInput.value = '';
     flavourOptions.forEach(opt => opt.classList.remove('selected'));
+    // Re-check Nutty Crumble — it's always included by default
+    const ncCheckbox = document.getElementById('nutty-crumble');
+    if (ncCheckbox) ncCheckbox.checked = true;
   });
 }

@@ -122,10 +122,9 @@ class ShoppingCart {
   getTotal() {
     const totalCups = this.items.reduce((sum, item) => sum + item.quantity, 0);
     const cupsTotal = Math.round(totalCups * getCurrentPrice() * 100) / 100;
-    // Flat $1 for any paid toppings — Nutty Crumble free till May 10; all toppings free on launch day
-    const ncFreeTill = new Date('2026-05-10T23:59:59-05:00').getTime();
+    // Flat $1 for any paid toppings — Nutty Crumble is always free; all toppings free on launch day
     const paidToppingCount = this.items.reduce((sum, item) =>
-      sum + (item.toppings || []).filter(t => !(t.name === 'Nutty Crumble' && Date.now() <= ncFreeTill)).length
+      sum + (item.toppings || []).filter(t => t.name !== 'Nutty Crumble').length
     , 0);
     const isLaunch = Date.now() >= new Date('2026-04-10T08:00:00-05:00').getTime() &&
                      Date.now() <  new Date('2026-04-11T08:00:00-05:00').getTime();

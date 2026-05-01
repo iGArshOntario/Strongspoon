@@ -125,13 +125,11 @@ function openEditModal(index) {
   `).join('');
 
   // Render topping checkboxes
-  const ncFreeTill = new Date('2026-05-10T23:59:59-05:00').getTime();
-  const isNcFree = Date.now() <= ncFreeTill;
   const toppingGrid = document.getElementById('editToppingsGrid');
   toppingGrid.innerHTML = Object.entries(TOPPINGS).map(([key, t]) => {
     const checked = editSelectedToppings.includes(t.name);
     const isNutty = t.name === 'Nutty Crumble';
-    const freeTag = isNutty && isNcFree ? '<span class="nutty-free-tag">FREE</span>' : '';
+    const freeTag = isNutty ? '<span class="nutty-free-tag">FREE</span>' : '';
     return `
       <label class="edit-topping-card ${checked ? 'checked' : ''}" data-name="${t.name}" onclick="toggleEditTopping('${t.name}', this)">
         <input type="checkbox" ${checked ? 'checked' : ''} style="display:none;">

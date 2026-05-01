@@ -64,5 +64,5 @@ const TOPPINGS = {
   'walnut':        { name: 'Walnut',        price: 0 },
   'apple':         { name: 'Apple',         price: 0 },
   'blueberries':   { name: 'Blueberries',   price: 0 },
-  'nutty-crumble': { name: 'Nutty Crumble', price: 0, freeTill: '2026-05-10' }
+  'nutty-crumble': { name: 'Nutty Crumble', price: 0, alwaysFree: true }
 };
