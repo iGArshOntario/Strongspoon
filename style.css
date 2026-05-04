@@ -240,13 +240,12 @@ body {
 
 @media (max-width: 480px) {
   .tagline {
-    font-size: 3.15vw;
+    font-size: 1.15rem;
     letter-spacing: 0;
     margin-top: 20px;
-    white-space: nowrap;
   }
   .tagline-sub {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 }
 
