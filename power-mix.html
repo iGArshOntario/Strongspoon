@@ -50,8 +50,40 @@
       <button class="btn-quick-add" id="quickAddBtn">🛒 Add to Cart</button>
     </div>
 
+    <button class="btn-nutrition" onclick="document.getElementById('nutritionOverlay').classList.add('active')">📊 Nutrition Facts</button>
     <a href="Html2.html" class="back-link">← Back to Flavours</a>
   </section>
+
+  <!-- Nutrition Facts Modal -->
+  <div class="cart-popup-overlay" id="nutritionOverlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="cart-popup nutrition-popup">
+      <div class="nf-card-header">
+        <div class="nf-brand">Strong Spoon</div>
+        <div class="nf-flavour-name">Power Mix</div>
+        <div class="nf-flavour-sub">High-protein dessert · 250g serving</div>
+        <span class="nf-pill" style="background:#faeeda;color:#633806;">Creamy PB</span>
+      </div>
+      <div class="nf-divider-teal"></div>
+      <div class="nf-body">
+        <div class="nf-title">Nutrition Facts</div>
+        <div class="nf-serving">Per 250g serving · Dairy base + protein blend</div>
+        <div class="nf-cal-row"><span class="nf-cal-label">Calories</span><span class="nf-cal-val">301</span></div>
+        <div class="nf-row bold"><span>Fat</span><span>6.4g</span></div>
+        <div class="nf-row indent"><span>Saturated fat</span><span>4.0g</span></div>
+        <div class="nf-row indent"><span>Trans fat</span><span>0g</span></div>
+        <div class="nf-row bold"><span>Carbohydrate</span><span>13.6g</span></div>
+        <div class="nf-row indent"><span>Sugars</span><span>8.6g</span></div>
+        <div class="nf-row indent"><span>Fibre</span><span>0g</span></div>
+        <div class="nf-row bold"><span>Protein</span><span>46.9g</span></div>
+        <div class="nf-row"><span>Cholesterol</span><span>120mg</span></div>
+        <div class="nf-row"><span>Sodium</span><span>114mg</span></div>
+        <div class="nf-row"><span>Potassium</span><span>547mg</span></div>
+        <div class="nf-row"><span>Calcium</span><span>247mg</span></div>
+        <div class="nf-protein-bar"><span class="nf-plabel">Total protein per serving</span><span class="nf-pval">46.9g</span></div>
+      </div>
+      <button class="cart-popup-btn secondary" style="margin:14px auto 0;display:block;width:100%;" onclick="document.getElementById('nutritionOverlay').classList.remove('active')">Close</button>
+    </div>
+  </div>
 
   <div class="cart-popup-overlay" id="qtyPickerOverlay">
     <div class="cart-popup qty-picker-popup">

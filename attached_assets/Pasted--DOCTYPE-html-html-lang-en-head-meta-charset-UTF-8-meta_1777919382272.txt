@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strong Spoon — Nutrition Labels</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 40px 20px; }
+  h1 { text-align: center; font-size: 22px; font-weight: 600; color: #015A64; margin-bottom: 6px; }
+  .tagline { text-align: center; font-size: 13px; color: #666; margin-bottom: 32px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 1100px; margin: 0 auto; }
+  .card { background: #fff; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; }
+  .card-header { padding: 14px 16px 12px; background: #fff; }
+  .brand { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #015A64; text-transform: uppercase; margin-bottom: 4px; }
+  .flavour-name { font-size: 20px; font-weight: 700; color: #111; }
+  .flavour-sub { font-size: 12px; color: #888; margin-top: 2px; }
+  .flavour-pill { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 20px; margin-top: 6px; font-weight: 600; }
+  .divider-teal { height: 4px; background: #015A64; }
+  .nf { padding: 12px 16px 16px; }
+  .nf-title { font-size: 24px; font-weight: 900; color: #000; border-bottom: 10px solid #000; padding-bottom: 4px; margin-bottom: 4px; }
+  .nf-serving { font-size: 11px; color: #444; margin-bottom: 8px; line-height: 1.5; }
+  .cal-row { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 5px solid #000; padding-bottom: 4px; margin-bottom: 4px; }
+  .cal-label { font-size: 14px; font-weight: 700; color: #000; }
+  .cal-val { font-size: 28px; font-weight: 900; color: #000; }
+  .row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 0.5px solid #ccc; font-size: 13px; color: #111; }
+  .row.indent { padding-left: 14px; color: #555; font-size: 12px; }
+  .row.bold { font-weight: 700; }
+  .protein-bar { background: #015A64; border-radius: 8px; padding: 10px 14px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .protein-bar .plabel { font-size: 12px; color: #9FE1CB; }
+  .protein-bar .pval { font-size: 20px; font-weight: 700; color: #EFE8D8; }
+  @media print {
+    body { background: #fff; padding: 10px; }
+    .grid { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+<h1>Strong Spoon</h1>
+<p class="tagline">High-protein dessert — Nutrition Facts per 250g serving</p>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="card-header">
+      <div class="brand">Strong Spoon</div>
+      <div class="flavour-name">Chocolate</div>
+      <div class="flavour-sub">High-protein dessert</div>
+      <span class="flavour-pill" style="background:#e8d5c4; color:#5c3a1e;">Dark Chocolate</span>
+    </div>
+    <div class="divider-teal"></div>
+    <div class="nf">
+      <div class="nf-title">Nutrition Facts</div>
+      <div class="nf-serving">Per 250g serving<br>Dairy base + protein blend</div>
+      <div class="cal-row"><span class="cal-label">Calories</span><span class="cal-val">301</span></div>
+      <div class="row bold"><span>Fat</span><span>6.4g</span></div>
+      <div class="row indent"><span>Saturated fat</span><span>4.0g</span></div>
+      <div class="row indent"><span>Trans fat</span><span>0g</span></div>
+      <div class="row bold"><span>Carbohydrate</span><span>13.6g</span></div>
+      <div class="row indent"><span>Sugars</span><span>8.6g</span></div>
+      <div class="row indent"><span>Fibre</span><span>0g</span></div>
+      <div class="row bold"><span>Protein</span><span>46.9g</span></div>
+      <div class="row"><span>Cholesterol</span><span>120mg</span></div>
+      <div class="row"><span>Sodium</span><span>114mg</span></div>
+      <div class="row"><span>Potassium</span><span>547mg</span></div>
+      <div class="row"><span>Calcium</span><span>247mg</span></div>
+      <div class="protein-bar">
+        <span class="plabel">Total protein per serving</span>
+        <span class="pval">46.9g</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="brand">Strong Spoon</div>
+      <div class="flavour-name">Peanut Butter</div>
+      <div class="flavour-sub">High-protein dessert</div>
+      <span class="flavour-pill" style="background:#faeeda; color:#633806;">Creamy PB</span>
+    </div>
+    <div class="divider-teal"></div>
+    <div class="nf">
+      <div class="nf-title">Nutrition Facts</div>
+      <div class="nf-serving">Per 250g serving<br>Dairy base + protein blend</div>
+      <div class="cal-row"><span class="cal-label">Calories</span><span class="cal-val">301</span></div>
+      <div class="row bold"><span>Fat</span><span>6.4g</span></div>
+      <div class="row indent"><span>Saturated fat</span><span>4.0g</span></div>
+      <div class="row indent"><span>Trans fat</span><span>0g</span></div>
+      <div class="row bold"><span>Carbohydrate</span><span>13.6g</span></div>
+      <div class="row indent"><span>Sugars</span><span>8.6g</span></div>
+      <div class="row indent"><span>Fibre</span><span>0g</span></div>
+      <div class="row bold"><span>Protein</span><span>46.9g</span></div>
+      <div class="row"><span>Cholesterol</span><span>120mg</span></div>
+      <div class="row"><span>Sodium</span><span>114mg</span></div>
+      <div class="row"><span>Potassium</span><span>547mg</span></div>
+      <div class="row"><span>Calcium</span><span>247mg</span></div>
+      <div class="protein-bar">
+        <span class="plabel">Total protein per serving</span>
+        <span class="pval">46.9g</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="brand">Strong Spoon</div>
+      <div class="flavour-name">Vanilla</div>
+      <div class="flavour-sub">High-protein dessert</div>
+      <span class="flavour-pill" style="background:#e1f5ee; color:#0f6e56;">Smooth Vanilla</span>
+    </div>
+    <div class="divider-teal"></div>
+    <div class="nf">
+      <div class="nf-title">Nutrition Facts</div>
+      <div class="nf-serving">Per 250g serving<br>Dairy base + protein blend</div>
+      <div class="cal-row"><span class="cal-label">Calories</span><span class="cal-val">291</span></div>
+      <div class="row bold"><span>Fat</span><span>5.4g</span></div>
+      <div class="row indent"><span>Saturated fat</span><span>4.0g</span></div>
+      <div class="row indent"><span>Trans fat</span><span>0g</span></div>
+      <div class="row bold"><span>Carbohydrate</span><span>13.6g</span></div>
+      <div class="row indent"><span>Sugars</span><span>8.6g</span></div>
+      <div class="row indent"><span>Fibre</span><span>0g</span></div>
+      <div class="row bold"><span>Protein</span><span>46.9g</span></div>
+      <div class="row"><span>Cholesterol</span><span>120mg</span></div>
+      <div class="row"><span>Sodium</span><span>114mg</span></div>
+      <div class="row"><span>Potassium</span><span>476mg</span></div>
+      <div class="row"><span>Calcium</span><span>242mg</span></div>
+      <div class="protein-bar">
+        <span class="plabel">Total protein per serving</span>
+        <span class="pval">46.9g</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="brand">Strong Spoon</div>
+      <div class="flavour-name">Cookies &amp; Cream</div>
+      <div class="flavour-sub">High-protein dessert</div>
+      <span class="flavour-pill" style="background:#eeedfe; color:#3c3489;">Classic C&amp;C</span>
+    </div>
+    <div class="divider-teal"></div>
+    <div class="nf">
+      <div class="nf-title">Nutrition Facts</div>
+      <div class="nf-serving">Per 250g serving<br>Dairy base + protein blend</div>
+      <div class="cal-row"><span class="cal-label">Calories</span><span class="cal-val">291</span></div>
+      <div class="row bold"><span>Fat</span><span>5.4g</span></div>
+      <div class="row indent"><span>Saturated fat</span><span>4.0g</span></div>
+      <div class="row indent"><span>Trans fat</span><span>0g</span></div>
+      <div class="row bold"><span>Carbohydrate</span><span>13.6g</span></div>
+      <div class="row indent"><span>Sugars</span><span>8.6g</span></div>
+      <div class="row indent"><span>Fibre</span><span>0g</span></div>
+      <div class="row bold"><span>Protein</span><span>46.9g</span></div>
+      <div class="row"><span>Cholesterol</span><span>120mg</span></div>
+      <div class="row"><span>Sodium</span><span>114mg</span></div>
+      <div class="row"><span>Potassium</span><span>476mg</span></div>
+      <div class="row"><span>Calcium</span><span>242mg</span></div>
+      <div class="protein-bar">
+        <span class="plabel">Total protein per serving</span>
+        <span class="pval">46.9g</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
