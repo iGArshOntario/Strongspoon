@@ -198,20 +198,27 @@ body {
 
 .tagline {
   font-family: 'Playfair Display', serif;
-  font-size: 3rem;
+  font-size: 2.6rem;
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: 0.5px;
   margin-top: 30px;
   margin-bottom: 0;
-  text-transform: uppercase;
   color: #EFE8D8;
-  animation: slideUp 1s ease-out 0.3s both;
   background: linear-gradient(135deg, #fff, #017d8e, #fff);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: slideUp 1s ease-out 0.3s both, gradientShift 8s ease infinite;
+}
+
+.tagline-sub {
+  font-size: 0.88rem;
+  color: #888;
+  letter-spacing: 0.4px;
+  margin: 10px auto 0;
+  font-style: italic;
+  animation: slideUp 1s ease-out 0.5s both;
 }
 
 .tagline-accent {
